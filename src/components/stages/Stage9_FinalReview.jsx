@@ -236,9 +236,10 @@ function generatePDF(state, brandCore, colors) {
   }
 
   // ============================================================
-  // PAGE 3 - BRAND CORE
+  // BRAND CORE (continues on same page if space)
   // ============================================================
-  newPage();
+  y += 10;
+  addPageIfNeeded(60);
 
   sectionHeader('Brand Core');
   y += 4;
@@ -314,9 +315,10 @@ function generatePDF(state, brandCore, colors) {
   }
 
   // ============================================================
-  // PAGE 4 - COLOR PALETTE
+  // COLOR PALETTE (continues on same page if space)
   // ============================================================
-  newPage();
+  y += 10;
+  addPageIfNeeded(60);
 
   sectionHeader('Color Palette');
   y += 2;
@@ -386,10 +388,11 @@ function generatePDF(state, brandCore, colors) {
   y += swatchH + 22;
 
   // ============================================================
-  // PAGE 5 - TYPOGRAPHY
+  // TYPOGRAPHY (continues on same page if space)
   // ============================================================
   if (brandCore?.fonts) {
-    newPage();
+    y += 10;
+    addPageIfNeeded(50);
 
     sectionHeader('Typography');
     y += 6;
@@ -465,9 +468,10 @@ function generatePDF(state, brandCore, colors) {
   }
 
   // ============================================================
-  // PAGE 6 - CANDIDATE PROFILE
+  // CANDIDATE PROFILE (continues on same page if space)
   // ============================================================
-  newPage();
+  y += 10;
+  addPageIfNeeded(50);
 
   sectionHeader('Candidate Profile');
   y += 4;
@@ -559,9 +563,10 @@ function generatePDF(state, brandCore, colors) {
   }
 
   // ============================================================
-  // PAGE 7 - COLLATERAL PRIORITY MATRIX
+  // COLLATERAL PRIORITY MATRIX (continues on same page if space)
   // ============================================================
-  newPage();
+  y += 10;
+  addPageIfNeeded(40);
 
   sectionHeader('Collateral Priority Matrix');
   y += 4;
@@ -615,7 +620,8 @@ function generatePDF(state, brandCore, colors) {
   // PAGE 8 - LOGO TYPE (if selected)
   // ============================================================
   if (state.logoType) {
-    newPage();
+    y += 10;
+    addPageIfNeeded(40);
 
     sectionHeader('Logo Type');
     y += 6;
@@ -988,8 +994,8 @@ export default function Stage9_FinalReview() {
                   className="transition-all duration-300"
                 >
                   <div
-                    className="aspect-[4/3] rounded-xl shadow-sm border border-black/5"
-                    style={{ backgroundColor: swatch.hex }}
+                    className="aspect-[4/3] rounded-xl shadow-sm"
+                    style={{ backgroundColor: swatch.hex, border: isLightColor(swatch.hex) ? '2px solid #e0e0e0' : '1px solid rgba(0,0,0,0.05)' }}
                   />
                   <p className="mt-2.5 text-sm font-semibold" style={{ color: '#1a1a1a', opacity: 0.85 }}>{swatch.label}</p>
                   <p className="text-xs font-mono mt-0.5" style={{ color: '#1a1a1a', opacity: 0.6 }}>{swatch.hex}</p>
@@ -1001,8 +1007,10 @@ export default function Stage9_FinalReview() {
             <div className="h-3 rounded-full overflow-hidden flex mt-8 shadow-inner">
               <div className="flex-[3]" style={{ backgroundColor: primaryHex }} />
               <div className="flex-[2]" style={{ backgroundColor: secondaryHex }} />
-              <div className="flex-[1]" style={{ backgroundColor: accentHex }} />
-              <div className="flex-[1]" style={{ backgroundColor: highlightHex }} />
+              <div className="flex-[2]" style={{ backgroundColor: accentHex }} />
+              <div className="flex-[1] border-y border-black/5" style={{ backgroundColor: bgHex }} />
+              <div className="flex-[2]" style={{ backgroundColor: textHex }} />
+              <div className="flex-[2]" style={{ backgroundColor: highlightHex }} />
             </div>
           </TiltCard>
         </div>

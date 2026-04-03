@@ -197,7 +197,8 @@ export default function Stage8_CollateralPriority() {
 
   const stats = useMemo(() => {
     const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
-    Object.values(state.collateralPriorities).forEach((p) => {
+    COLLATERAL_TYPES.forEach((ct) => {
+      const p = state.collateralPriorities[ct.type] || 'LOW';
       counts[p] = (counts[p] || 0) + 1;
     });
     return counts;

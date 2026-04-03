@@ -23,61 +23,176 @@ function ConfettiPiece({ index }) {
 function generatePDF(state, brandCore, colors) {
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageW = 210;
+  const pageH = 297;
   const margin = 20;
   const contentW = pageW - margin * 2;
   let y = 0;
+  let pageNum = 0;
+
+  const hexToRgb = (hex) => {
+    const h = (hex || '#000000').replace('#', '');
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  };
+
+  const primaryHex = colors.primary || '#1C2E5B';
+  const secondaryHex = colors.secondary || '#B22234';
+  const accentHex = colors.accent || '#FFD700';
+  const primaryRgb = hexToRgb(primaryHex);
+  const secondaryRgb = hexToRgb(secondaryHex);
+  const accentRgb = hexToRgb(accentHex);
+
+  const isLightColor = (hex) => {
+    const [r, g, b] = hexToRgb(hex);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 186;
+  };
+
+  const addFooter = () => {
+    pageNum++;
+    doc.setFontSize(8);
+    doc.setTextColor(160, 160, 160);
+    doc.text(`${state.candidate.fullName || 'Campaign'} Brand Guide`, margin, pageH - 10);
+    doc.text(`${pageNum}`, pageW - margin, pageH - 10, { align: 'right' });
+    // subtle footer line
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageH - 14, pageW - margin, pageH - 14);
+  };
+
+  const newPage = () => {
+    doc.addPage();
+    y = 30;
+    addFooter();
+  };
 
   const addPageIfNeeded = (needed = 30) => {
-    if (y + needed > 270) {
-      doc.addPage();
-      y = 25;
+    if (y + needed > pageH - 25) {
+      newPage();
     }
   };
 
-  const hexToRgb = (hex) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return [r, g, b];
+  // Draw a section header bar with primary color background and white text
+  const sectionHeader = (title) => {
+    addPageIfNeeded(20);
+    doc.setFillColor(...primaryRgb);
+    doc.roundedRect(margin, y - 6, contentW, 12, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(title.toUpperCase(), margin + 6, y + 1);
+    doc.setFont('helvetica', 'normal');
+    y += 14;
   };
 
-  // ---- COVER PAGE ----
-  const primaryRgb = hexToRgb(colors.primary || '#1C2E5B');
+  // Draw a sub-section label with left accent bar
+  const subSectionLabel = (title) => {
+    addPageIfNeeded(14);
+    doc.setFillColor(...secondaryRgb);
+    doc.rect(margin, y - 5, 3, 8, 'F');
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(title, margin + 7, y);
+    doc.setFont('helvetica', 'normal');
+    y += 8;
+  };
+
+  // Subtle horizontal divider
+  const divider = () => {
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 4;
+  };
+
+  // ============================================================
+  // PAGE 1 - COVER
+  // ============================================================
+  // Full page primary background
   doc.setFillColor(...primaryRgb);
-  doc.rect(0, 0, 210, 297, 'F');
+  doc.rect(0, 0, pageW, pageH, 'F');
 
+  // Decorative top accent bar
+  doc.setFillColor(...secondaryRgb);
+  doc.rect(0, 0, pageW, 4, 'F');
+
+  // Decorative accent rectangle at top-right corner
+  doc.setFillColor(...accentRgb);
+  doc.setGlobalAlpha && doc.setGlobalAlpha(0.15);
+  doc.rect(pageW - 60, 20, 60, 60, 'F');
+  doc.setGlobalAlpha && doc.setGlobalAlpha(1);
+
+  // "BRAND DISCOVERY GUIDE" label
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(12);
-  doc.text('BRAND DISCOVERY GUIDE', pageW / 2, 80, { align: 'center' });
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('BRAND DISCOVERY GUIDE', pageW / 2, 75, { align: 'center' });
 
-  doc.setFontSize(32);
-  doc.text(state.candidate.fullName || 'Campaign Brand Guide', pageW / 2, 110, { align: 'center' });
+  // Decorative line under label
+  doc.setDrawColor(...secondaryRgb);
+  doc.setLineWidth(0.8);
+  doc.line(pageW / 2 - 30, 79, pageW / 2 + 30, 79);
 
+  // Candidate name - large
+  doc.setFontSize(36);
+  doc.setFont('helvetica', 'bold');
+  const candidateName = state.candidate.fullName || 'Campaign Brand Guide';
+  const nameLines = doc.splitTextToSize(candidateName, contentW - 10);
+  doc.text(nameLines, pageW / 2, 100, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+
+  const nameEndY = 100 + nameLines.length * 14;
+
+  // Office / State / Year
   doc.setFontSize(14);
-  const subtitle = [state.candidate.office, state.candidate.state, state.candidate.district].filter(Boolean).join(' | ');
-  doc.text(subtitle || 'Political Brand Foundation', pageW / 2, 125, { align: 'center' });
-
-  if (brandCore) {
-    doc.setFontSize(10);
-    doc.text(`Brand Core: ${brandCore.name}`, pageW / 2, 145, { align: 'center' });
+  const subtitle = [state.candidate.office, state.candidate.state, state.candidate.electionYear].filter(Boolean).join('  |  ');
+  if (subtitle) {
+    doc.text(subtitle, pageW / 2, nameEndY + 8, { align: 'center' });
   }
 
-  const secondaryRgb = hexToRgb(colors.secondary || '#B22234');
+  // District if any
+  if (state.candidate.district) {
+    doc.setFontSize(11);
+    doc.text(state.candidate.district, pageW / 2, nameEndY + 20, { align: 'center' });
+  }
+
+  // Secondary color decorative divider line
   doc.setFillColor(...secondaryRgb);
-  doc.rect(margin, 160, contentW, 1, 'F');
+  doc.roundedRect(pageW / 2 - 40, nameEndY + 30, 80, 1.5, 0.75, 0.75, 'F');
 
+  // Brand Core name
+  if (brandCore) {
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`Brand Core: ${brandCore.name}`, pageW / 2, nameEndY + 45, { align: 'center' });
+  }
+
+  // Date generated
   doc.setFontSize(9);
-  doc.text(`Generated ${new Date().toLocaleDateString()}`, pageW / 2, 175, { align: 'center' });
+  doc.setTextColor(200, 200, 200);
+  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  doc.text(`Generated ${dateStr}`, pageW / 2, nameEndY + 58, { align: 'center' });
 
-  // ---- CANDIDATE BASICS ----
-  doc.addPage();
-  y = 25;
-  doc.setTextColor(30, 30, 30);
-  doc.setFontSize(18);
-  doc.text('Candidate Information', margin, y);
-  y += 12;
+  // Decorative footer area - secondary color bar at bottom
+  doc.setFillColor(...secondaryRgb);
+  doc.rect(0, pageH - 20, pageW, 20, 'F');
 
-  doc.setFontSize(10);
+  // Accent stripe above footer
+  doc.setFillColor(...accentRgb);
+  doc.rect(0, pageH - 22, pageW, 2, 'F');
+
+  // Footer text
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(8);
+  doc.text('Confidential Campaign Material', pageW / 2, pageH - 8, { align: 'center' });
+
+  // ============================================================
+  // PAGE 2 - CANDIDATE INFORMATION
+  // ============================================================
+  newPage();
+
+  sectionHeader('Candidate Information');
+  y += 2;
+
   const candidateRows = [
     ['Full Name', state.candidate.fullName],
     ['Office', state.candidate.office],
@@ -86,105 +201,124 @@ function generatePDF(state, brandCore, colors) {
     ['Election Year', state.candidate.electionYear],
     ['Race Focus', state.candidate.raceFocus],
     ['Candidate Type', state.candidate.candidateType],
-    ['Party', state.candidate.partyAffiliation],
+    ['Party Affiliation', state.candidate.partyAffiliation],
   ];
 
+  const colLabelW = 55;
+  let rowIdx = 0;
   candidateRows.forEach(([label, val]) => {
     if (!val) return;
-    doc.setTextColor(120, 120, 120);
-    doc.text(label, margin, y);
-    doc.setTextColor(30, 30, 30);
-    doc.text(String(val), margin + 50, y);
-    y += 7;
-  });
-
-  // ---- PROFILE ----
-  y += 8;
-  addPageIfNeeded(40);
-  doc.setFontSize(18);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Candidate Profile', margin, y);
-  y += 12;
-
-  doc.setFontSize(10);
-  if (state.profile.backgrounds?.length) {
-    doc.setTextColor(120, 120, 120);
-    doc.text('Backgrounds:', margin, y);
-    doc.setTextColor(30, 30, 30);
-    doc.text(state.profile.backgrounds.join(', '), margin + 50, y);
-    y += 7;
-  }
-  if (state.profile.policyPriorities?.length) {
-    doc.setTextColor(120, 120, 120);
-    doc.text('Policy Priorities:', margin, y);
-    y += 6;
-    doc.setTextColor(30, 30, 30);
-    state.profile.policyPriorities.forEach((p) => {
-      doc.text(`- ${p}`, margin + 5, y);
-      y += 5;
-    });
-    y += 2;
-  }
-  if (state.profile.definingStory) {
-    addPageIfNeeded(20);
-    doc.setTextColor(120, 120, 120);
-    doc.text('Defining Story:', margin, y);
-    y += 6;
-    doc.setTextColor(30, 30, 30);
-    const lines = doc.splitTextToSize(state.profile.definingStory, contentW);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 4;
-  }
-
-  // ---- BRAND CORE ----
-  doc.addPage();
-  y = 25;
-  doc.setFontSize(18);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Brand Core', margin, y);
-  y += 12;
-
-  if (brandCore) {
-    doc.setFontSize(14);
-    doc.text(brandCore.name, margin, y);
-    y += 8;
+    // Alternating row backgrounds
+    if (rowIdx % 2 === 0) {
+      doc.setFillColor(245, 245, 245);
+    } else {
+      doc.setFillColor(255, 255, 255);
+    }
+    doc.rect(margin, y - 5, contentW, 9, 'F');
 
     doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(brandCore.descriptor, margin, y);
-    y += 6;
-    doc.text(`"${brandCore.tagline}"`, margin, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(80, 80, 80);
+    doc.text(label, margin + 4, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(30, 30, 30);
+    doc.text(String(val), margin + colLabelW, y);
+    y += 9;
+    rowIdx++;
+  });
+
+  // Table border
+  if (rowIdx > 0) {
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.rect(margin, y - 9 * rowIdx - 5, contentW, 9 * rowIdx, 'S');
+  }
+
+  // ============================================================
+  // PAGE 3 - BRAND CORE
+  // ============================================================
+  newPage();
+
+  sectionHeader('Brand Core');
+  y += 4;
+
+  if (brandCore) {
+    // Brand core name - large
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryRgb);
+    doc.text(brandCore.name, margin, y);
+    doc.setFont('helvetica', 'normal');
     y += 10;
 
-    const posLines = doc.splitTextToSize(brandCore.positioning, contentW);
-    doc.text(posLines, margin, y);
-    y += posLines.length * 5 + 6;
+    // Descriptor - italic
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(100, 100, 100);
+    doc.text(brandCore.descriptor, margin, y);
+    y += 8;
+
+    // Tagline - italic, in quotes
+    doc.setFontSize(11);
+    const taglineLines = doc.splitTextToSize(`"${brandCore.tagline}"`, contentW);
+    doc.text(taglineLines, margin, y);
+    doc.setFont('helvetica', 'normal');
+    y += taglineLines.length * 5 + 6;
+
+    // Divider
+    divider();
+    y += 2;
+
+    // Positioning
+    subSectionLabel('Positioning');
+    y += 2;
+    doc.setFontSize(10);
+    doc.setTextColor(50, 50, 50);
+    const posLines = doc.splitTextToSize(brandCore.positioning, contentW - 5);
+    doc.text(posLines, margin + 2, y);
+    y += posLines.length * 5 + 8;
 
     // Sub-direction
     if (state.subDirection) {
       const subDir = brandCore.subDirections?.find((s) => s.id === state.subDirection);
       if (subDir) {
-        addPageIfNeeded(30);
-        doc.setTextColor(30, 30, 30);
+        addPageIfNeeded(40);
+        divider();
+        y += 2;
+
+        subSectionLabel('Sub-Direction');
+        y += 2;
+
+        // Light background box for sub-direction
+        const descLines = doc.splitTextToSize(subDir.desc, contentW - 16);
+        const boxH = 12 + descLines.length * 5;
+        doc.setFillColor(245, 247, 250);
+        doc.roundedRect(margin, y - 4, contentW, boxH, 3, 3, 'F');
+        doc.setDrawColor(200, 210, 225);
+        doc.setLineWidth(0.4);
+        doc.roundedRect(margin, y - 4, contentW, boxH, 3, 3, 'S');
+
         doc.setFontSize(12);
-        doc.text(`Sub-Direction: ${subDir.name}`, margin, y);
-        y += 7;
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 30, 30);
+        doc.text(subDir.name, margin + 8, y + 4);
+        doc.setFont('helvetica', 'normal');
+
         doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        const descLines = doc.splitTextToSize(subDir.desc, contentW);
-        doc.text(descLines, margin, y);
-        y += descLines.length * 5 + 4;
+        doc.setTextColor(80, 80, 80);
+        doc.text(descLines, margin + 8, y + 12);
+        y += boxH + 6;
       }
     }
   }
 
-  // ---- COLOR PALETTE ----
-  y += 8;
-  addPageIfNeeded(50);
-  doc.setFontSize(14);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Color Palette', margin, y);
-  y += 10;
+  // ============================================================
+  // PAGE 4 - COLOR PALETTE
+  // ============================================================
+  newPage();
+
+  sectionHeader('Color Palette');
+  y += 2;
 
   const swatches = [
     { label: 'Primary', hex: colors.primary },
@@ -193,86 +327,317 @@ function generatePDF(state, brandCore, colors) {
     { label: 'Background', hex: colors.background || '#F5F5F5' },
     { label: 'Text', hex: colors.text || '#333333' },
     { label: 'Highlight', hex: colors.highlight || colors.secondary },
-  ];
+  ].filter((s) => s.hex);
 
-  swatches.forEach((swatch) => {
-    if (!swatch.hex) return;
+  // Full-width palette bar at the top showing all colors side by side
+  const barH = 10;
+  const barSegW = contentW / swatches.length;
+  swatches.forEach((swatch, i) => {
     const rgb = hexToRgb(swatch.hex);
     doc.setFillColor(...rgb);
-    doc.rect(margin, y - 4, 15, 10, 'F');
-    doc.setDrawColor(200, 200, 200);
-    doc.rect(margin, y - 4, 15, 10, 'S');
+    doc.rect(margin + i * barSegW, y, barSegW, barH, 'F');
+  });
+  // Border around full bar
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.3);
+  doc.rect(margin, y, contentW, barH, 'S');
+  y += barH + 10;
 
-    doc.setTextColor(30, 30, 30);
+  // Grid of large color swatches - 3 per row
+  const swatchW = 40;
+  const swatchH = 25;
+  const gapX = (contentW - swatchW * 3) / 2;
+
+  swatches.forEach((swatch, i) => {
+    const col = i % 3;
+    if (col === 0 && i > 0) {
+      y += swatchH + 20;
+      addPageIfNeeded(swatchH + 20);
+    }
+    const sx = margin + col * (swatchW + gapX);
+    const sy = y;
+
+    const rgb = hexToRgb(swatch.hex);
+    doc.setFillColor(...rgb);
+    doc.roundedRect(sx, sy, swatchW, swatchH, 2, 2, 'F');
+
+    // Border for light colors
+    const needsBorder = swatch.hex && (swatch.hex.toUpperCase() === '#FFFFFF' || swatch.hex.toUpperCase() === '#F5F5F5' || isLightColor(swatch.hex));
+    if (needsBorder) {
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(sx, sy, swatchW, swatchH, 2, 2, 'S');
+    }
+
+    // Label below swatch
     doc.setFontSize(10);
-    doc.text(`${swatch.label}: ${swatch.hex}`, margin + 20, y + 2);
-    y += 14;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(30, 30, 30);
+    doc.text(swatch.label, sx + swatchW / 2, sy + swatchH + 6, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+
+    // Hex code below label
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+    doc.text(swatch.hex.toUpperCase(), sx + swatchW / 2, sy + swatchH + 12, { align: 'center' });
   });
 
-  // ---- FONTS ----
+  y += swatchH + 22;
+
+  // ============================================================
+  // PAGE 5 - TYPOGRAPHY
+  // ============================================================
   if (brandCore?.fonts) {
-    y += 4;
-    addPageIfNeeded(30);
-    doc.setFontSize(14);
-    doc.setTextColor(30, 30, 30);
-    doc.text('Typography', margin, y);
-    y += 10;
+    newPage();
+
+    sectionHeader('Typography');
+    y += 6;
+
+    // Heading font
+    const headingMeta = FONT_LIBRARY[brandCore.fonts.heading];
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryRgb);
+    doc.text(brandCore.fonts.heading, margin, y);
+    doc.setFont('helvetica', 'normal');
+    y += 8;
+
+    doc.setFontSize(9);
+    doc.setTextColor(140, 140, 140);
+    doc.text('HEADING FONT', margin, y);
+    y += 5;
+
+    if (headingMeta) {
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Category: ${headingMeta.category}`, margin + 2, y);
+      y += 5;
+      doc.text(`Personality: ${headingMeta.personality}`, margin + 2, y);
+      y += 8;
+    }
+
+    // Sample text for heading
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(margin, y - 4, contentW, 16, 2, 2, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Sample: The quick brown fox jumps over the lazy dog', margin + 6, y + 4);
+    doc.setFont('helvetica', 'normal');
+    y += 22;
+
+    divider();
+    y += 6;
+
+    // Body font
+    const bodyMeta = FONT_LIBRARY[brandCore.fonts.body];
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryRgb);
+    doc.text(brandCore.fonts.body, margin, y);
+    doc.setFont('helvetica', 'normal');
+    y += 8;
+
+    doc.setFontSize(9);
+    doc.setTextColor(140, 140, 140);
+    doc.text('BODY FONT', margin, y);
+    y += 5;
+
+    if (bodyMeta) {
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Category: ${bodyMeta.category}`, margin + 2, y);
+      y += 5;
+      doc.text(`Personality: ${bodyMeta.personality}`, margin + 2, y);
+      y += 8;
+    }
+
+    // Sample text for body
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(margin, y - 4, contentW, 16, 2, 2, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Sample: The quick brown fox jumps over the lazy dog', margin + 6, y + 4);
+    doc.setFont('helvetica', 'normal');
+    y += 20;
+  }
+
+  // ============================================================
+  // PAGE 6 - CANDIDATE PROFILE
+  // ============================================================
+  newPage();
+
+  sectionHeader('Candidate Profile');
+  y += 4;
+
+  // Professional backgrounds as pill/tag items
+  if (state.profile.backgrounds?.length) {
+    subSectionLabel('Professional Backgrounds');
+    y += 2;
+
+    let pillX = margin;
+    const pillH = 8;
+    const pillPadX = 5;
+    state.profile.backgrounds.forEach((bg) => {
+      const textW = doc.getStringUnitWidth(bg) * 9 / doc.internal.scaleFactor + pillPadX * 2;
+      if (pillX + textW > pageW - margin) {
+        pillX = margin;
+        y += pillH + 4;
+        addPageIfNeeded(pillH + 8);
+      }
+      // Pill background
+      doc.setFillColor(230, 235, 245);
+      doc.roundedRect(pillX, y - 5, textW, pillH, 3, 3, 'F');
+      doc.setDrawColor(...primaryRgb);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(pillX, y - 5, textW, pillH, 3, 3, 'S');
+
+      doc.setFontSize(9);
+      doc.setTextColor(...primaryRgb);
+      doc.text(bg, pillX + pillPadX, y);
+      pillX += textW + 4;
+    });
+    y += pillH + 8;
+  }
+
+  // Policy priorities as bulleted list
+  if (state.profile.policyPriorities?.length) {
+    addPageIfNeeded(20);
+    subSectionLabel('Policy Priorities');
+    y += 2;
 
     doc.setFontSize(10);
-    doc.text(`Heading Font: ${brandCore.fonts.heading}`, margin, y);
-    y += 6;
-    const headingMeta = FONT_LIBRARY[brandCore.fonts.heading];
-    if (headingMeta) {
-      doc.setTextColor(120, 120, 120);
-      doc.text(`${headingMeta.category} | ${headingMeta.personality}`, margin + 5, y);
-      y += 8;
-    }
-
-    doc.setTextColor(30, 30, 30);
-    doc.text(`Body Font: ${brandCore.fonts.body}`, margin, y);
-    y += 6;
-    const bodyMeta = FONT_LIBRARY[brandCore.fonts.body];
-    if (bodyMeta) {
-      doc.setTextColor(120, 120, 120);
-      doc.text(`${bodyMeta.category} | ${bodyMeta.personality}`, margin + 5, y);
-      y += 8;
-    }
+    doc.setTextColor(50, 50, 50);
+    state.profile.policyPriorities.forEach((p) => {
+      addPageIfNeeded(8);
+      // Bullet dot
+      doc.setFillColor(...secondaryRgb);
+      doc.circle(margin + 4, y - 1.2, 1.2, 'F');
+      doc.text(p, margin + 9, y);
+      y += 6;
+    });
+    y += 4;
   }
 
-  // ---- COLLATERAL ----
-  addPageIfNeeded(50);
-  if (y > 30) {
-    doc.addPage();
-    y = 25;
+  // Defining story as paragraph
+  if (state.profile.definingStory) {
+    addPageIfNeeded(25);
+    divider();
+    y += 2;
+    subSectionLabel('Defining Story');
+    y += 2;
+
+    doc.setFontSize(10);
+    doc.setTextColor(50, 50, 50);
+    const storyLines = doc.splitTextToSize(state.profile.definingStory, contentW - 4);
+    storyLines.forEach((line) => {
+      addPageIfNeeded(6);
+      doc.text(line, margin + 2, y);
+      y += 5;
+    });
+    y += 6;
   }
-  doc.setFontSize(18);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Collateral Priority Matrix', margin, y);
-  y += 12;
+
+  // Endorsements
+  if (state.profile.endorsements?.length) {
+    addPageIfNeeded(20);
+    divider();
+    y += 2;
+    subSectionLabel('Endorsements');
+    y += 2;
+
+    doc.setFontSize(10);
+    doc.setTextColor(50, 50, 50);
+    state.profile.endorsements.forEach((e) => {
+      addPageIfNeeded(6);
+      doc.text(`- ${e}`, margin + 4, y);
+      y += 6;
+    });
+    y += 4;
+  }
+
+  // ============================================================
+  // PAGE 7 - COLLATERAL PRIORITY MATRIX
+  // ============================================================
+  newPage();
+
+  sectionHeader('Collateral Priority Matrix');
+  y += 4;
 
   const priorities = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
-  const prioColors = { CRITICAL: [178, 34, 52], HIGH: [234, 120, 0], MEDIUM: [200, 170, 0], LOW: [150, 150, 150] };
+  const prioColors = {
+    CRITICAL: { bg: [220, 40, 50], light: [255, 235, 235] },
+    HIGH: { bg: [234, 120, 0], light: [255, 243, 230] },
+    MEDIUM: { bg: [200, 170, 0], light: [255, 252, 230] },
+    LOW: { bg: [150, 150, 150], light: [245, 245, 245] },
+  };
 
   priorities.forEach((prio) => {
     const items = Object.entries(state.collateralPriorities).filter(([, v]) => v === prio);
     if (items.length === 0) return;
-    addPageIfNeeded(20);
+    addPageIfNeeded(18 + items.length * 7);
 
+    // Priority header bar with colored background
+    const pc = prioColors[prio];
+    doc.setFillColor(...pc.bg);
+    doc.roundedRect(margin, y - 5, contentW, 10, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(11);
-    doc.setFillColor(...prioColors[prio]);
-    doc.rect(margin, y - 3, 3, 6, 'F');
-    doc.setTextColor(30, 30, 30);
-    doc.text(prio, margin + 6, y + 1);
-    y += 8;
-
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${prio}`, margin + 6, y + 1);
+    // Item count
     doc.setFontSize(9);
-    doc.setTextColor(80, 80, 80);
-    items.forEach(([type]) => {
-      doc.text(`- ${type}`, margin + 8, y);
-      y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${items.length} item${items.length !== 1 ? 's' : ''}`, pageW - margin - 6, y + 1, { align: 'right' });
+    y += 10;
+
+    // Items listed under each priority on light background
+    items.forEach(([type], idx) => {
+      if (idx % 2 === 0) {
+        doc.setFillColor(...pc.light);
+      } else {
+        doc.setFillColor(255, 255, 255);
+      }
+      doc.rect(margin, y - 4, contentW, 7, 'F');
+
+      doc.setFontSize(9);
+      doc.setTextColor(60, 60, 60);
+      doc.text(type, margin + 8, y);
+      y += 7;
     });
-    y += 4;
+
+    y += 6;
   });
+
+  // ============================================================
+  // PAGE 8 - LOGO TYPE (if selected)
+  // ============================================================
+  if (state.logoType) {
+    newPage();
+
+    sectionHeader('Logo Type');
+    y += 6;
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryRgb);
+    doc.text('Selected Logo Type', margin, y);
+    doc.setFont('helvetica', 'normal');
+    y += 10;
+
+    // Display logo type in a styled box
+    doc.setFillColor(245, 247, 250);
+    doc.roundedRect(margin, y - 4, contentW, 18, 3, 3, 'F');
+    doc.setDrawColor(...primaryRgb);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(margin, y - 4, contentW, 18, 3, 3, 'S');
+
+    doc.setFontSize(14);
+    doc.setTextColor(30, 30, 30);
+    doc.text(String(state.logoType), margin + 8, y + 7);
+    y += 24;
+  }
 
   // Save
   const fileName = `${(state.candidate.fullName || 'Campaign').replace(/\s+/g, '_')}_Brand_Guide.pdf`;

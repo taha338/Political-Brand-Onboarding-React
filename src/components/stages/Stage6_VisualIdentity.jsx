@@ -131,6 +131,9 @@ function luminance(hex) {
 function textOnColor(bgHex) {
   return luminance(bgHex) > 0.55 ? '#1a1a1a' : '#ffffff';
 }
+function isLightColor(hex) {
+  return luminance(hex) > 0.7;
+}
 
 /* ------------------------------------------------------------------ */
 /*  HERO SECTION                                                      */
@@ -364,6 +367,7 @@ function ColorPaletteImmersive({ colors, isCustom }) {
         { key: 'accent', label: 'Accent', hex: colors.accent },
         { key: 'background', label: 'Background', hex: colors.background },
         { key: 'text', label: 'Text', hex: colors.text },
+        ...(colors.highlight && colors.highlight !== colors.secondary ? [{ key: 'highlight', label: 'Highlight', hex: colors.highlight }] : []),
       ];
 
   return (
@@ -388,10 +392,10 @@ function ColorPaletteImmersive({ colors, isCustom }) {
       </div>
 
       {/* large immersive blocks */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {colorEntries.map(({ key, label, hex }, i) => {
           const fg = textOnColor(hex);
-          const isPrimary = key === 'primary';
+          const isLight = isLightColor(hex);
           return (
             <motion.div
               key={key}
@@ -400,10 +404,12 @@ function ColorPaletteImmersive({ colors, isCustom }) {
               viewport={{ once: true }}
               whileHover={{ scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
               transition={{ delay: 0.3 + i * 0.07, duration: 0.35 }}
-              className={`rounded-2xl overflow-hidden flex flex-col justify-between ${
-                isPrimary ? 'col-span-2 md:col-span-2 row-span-1' : ''
-              }`}
-              style={{ backgroundColor: hex, minHeight: isPrimary ? '200px' : '160px' }}
+              className="rounded-2xl overflow-hidden flex flex-col justify-between"
+              style={{
+                backgroundColor: hex,
+                minHeight: '180px',
+                border: isLight ? '2px solid #E5E7EB' : 'none',
+              }}
             >
               <div className="p-5 md:p-6">
                 <p className="text-xs font-bold uppercase tracking-wider opacity-70" style={{ color: fg }}>

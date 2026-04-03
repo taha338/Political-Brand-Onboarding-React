@@ -92,33 +92,9 @@ export default function Stage2_CandidateProfile() {
     <StageContainer
       stageNumber={2}
       title={`${state.candidate.fullName || 'Candidate'}'s Profile`}
-      subtitle="Your background and priorities shape your brand."
+      subtitle="Your background and priorities shape your brand. Select what defines you."
     >
       <style>{bounceKeyframes}</style>
-
-      {/* Hero Heading */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-10"
-      >
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">
-          <span style={{ color: NAVY }}>{(state.candidate.fullName || 'YOUR').toUpperCase()} </span>
-          <span
-            style={{
-              color: PRIMARY,
-              fontFamily: "'Georgia', 'Times New Roman', serif",
-              fontStyle: 'italic',
-            }}
-          >
-            PROFILE
-          </span>
-        </h1>
-        <p className="text-base text-gray-500 max-w-lg mx-auto">
-          Your background and priorities shape your brand. Select what defines you.
-        </p>
-      </motion.div>
 
       {/* ── SECTION 1: Professional Background ── */}
       <motion.section

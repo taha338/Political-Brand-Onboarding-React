@@ -91,7 +91,7 @@ export default function Stage2_CandidateProfile() {
   return (
     <StageContainer
       stageNumber={2}
-      title="Candidate Profile"
+      title={`${state.candidate.fullName || 'Candidate'}'s Profile`}
       subtitle="Your background and priorities shape your brand."
     >
       <style>{bounceKeyframes}</style>
@@ -104,7 +104,7 @@ export default function Stage2_CandidateProfile() {
         className="text-center mb-10"
       >
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">
-          <span style={{ color: NAVY }}>YOUR </span>
+          <span style={{ color: NAVY }}>{(state.candidate.fullName || 'YOUR').toUpperCase()} </span>
           <span
             style={{
               color: PRIMARY,

@@ -663,6 +663,14 @@ function textOnColor(hex) {
   return hexLuminance(hex || '#1C2E5B') > 0.4 ? '#1a1a1a' : '#ffffff';
 }
 
+function isLightColor(hex) {
+  const h = (hex || '#000000').replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 186;
+}
+
 /* Decorative dot pattern SVG background */
 const DotPattern = ({ color = '#1C2E5B', position = 'topRight' }) => {
   const posStyle = position === 'topRight'

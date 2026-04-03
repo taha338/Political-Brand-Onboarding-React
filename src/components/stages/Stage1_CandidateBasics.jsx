@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { OFFICES, US_STATES, ELECTION_YEARS, CANDIDATE_TYPES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import USMapSVG from '../USMapSVG';
 
 /* ── Design tokens ── */
 const accent = '#8B1A2B';
@@ -333,160 +334,251 @@ export default function Stage1_CandidateBasics() {
       </motion.section>
 
       {/* ──────────────────────────────────────────
-          3. STATE + DISTRICT — Side by side
+          3. STATE SELECTION — Interactive US Map
           ────────────────────────────────────────── */}
       <motion.section
         {...sectionVariant(0.45)}
         style={{ marginBottom: '2.5rem' }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-          {/* State autocomplete */}
-          <div style={{ position: 'relative' }}>
-            <label
+        <label
+          style={{
+            display: 'block',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: '#374151',
+            marginBottom: '0.75rem',
+          }}
+        >
+          Select Your State
+        </label>
+
+        {/* Selected state display */}
+        <AnimatePresence>
+          {candidate.state && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
               style={{
-                display: 'block',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '0.5rem',
+                textAlign: 'center',
+                marginBottom: '1rem',
+                padding: '0.6rem 1.25rem',
+                background: `${accent}0A`,
+                border: `1px solid ${accent}25`,
+                borderRadius: '12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
               }}
             >
-              State
-            </label>
-            <input
-              type="text"
-              value={showStates ? stateQuery : candidate.state || stateQuery}
-              onFocus={() => {
-                setShowStates(true);
-                setStateQuery(candidate.state || '');
-              }}
-              onChange={(e) => {
-                setStateQuery(e.target.value);
-                setShowStates(true);
-                if (!e.target.value) update({ state: '' });
-              }}
-              onBlur={() => setTimeout(() => setShowStates(false), 200)}
-              placeholder="Start typing your state..."
-              style={{
-                width: '100%',
-                padding: '0.85rem 1rem',
-                fontSize: '1rem',
-                border: `1px solid ${cardBorder}`,
-                borderRadius: '12px',
-                outline: 'none',
-                background: '#fff',
-                color: navy,
-                transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-              }}
-              onFocusCapture={(e) => {
-                e.target.style.boxShadow = `0 0 0 3px ${accent}30`;
-                e.target.style.borderColor = accent;
-              }}
-              onBlurCapture={(e) => {
-                e.target.style.boxShadow = 'none';
-                e.target.style.borderColor = cardBorder;
-              }}
-            />
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  background: accent,
+                  display: 'inline-block',
+                  boxShadow: `0 0 6px ${accent}60`,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  color: accent,
+                  fontFamily: "'Georgia', 'Times New Roman', serif",
+                  letterSpacing: '0.03em',
+                }}
+              >
+                {candidate.state}
+              </span>
+              <button
+                onClick={() => { update({ state: '' }); setStateQuery(''); }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#9CA3AF',
+                  cursor: 'pointer',
+                  fontSize: '1.1rem',
+                  lineHeight: 1,
+                  padding: '0 0.25rem',
+                  marginLeft: '0.25rem',
+                }}
+                title="Clear selection"
+              >
+                &times;
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-            <AnimatePresence>
-              {showStates && filteredStates.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.2 }}
-                  style={{
-                    position: 'absolute',
-                    zIndex: 30,
-                    top: '100%',
-                    marginTop: '4px',
-                    width: '100%',
-                    maxHeight: '240px',
-                    overflowY: 'auto',
-                    background: '#fff',
-                    border: `1px solid ${cardBorder}`,
-                    borderRadius: '12px',
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
-                  }}
-                >
-                  {filteredStates.map((s) => {
-                    const isActive = candidate.state === s;
-                    return (
-                      <button
-                        key={s}
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => {
-                          update({ state: s });
-                          setStateQuery(s);
-                          setShowStates(false);
-                        }}
-                        style={{
-                          width: '100%',
-                          textAlign: 'left',
-                          padding: '0.65rem 1rem',
-                          fontSize: '0.9rem',
-                          color: isActive ? accent : '#374151',
-                          fontWeight: isActive ? 700 : 400,
-                          background: isActive ? `${accent}08` : 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'background 0.15s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!isActive) e.currentTarget.style.background = '#F9FAFB';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = isActive ? `${accent}08` : 'transparent';
-                        }}
-                      >
-                        {s}
-                      </button>
-                    );
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+        {/* Interactive US Map */}
+        <div
+          style={{
+            background: '#fff',
+            border: `1px solid ${cardBorder}`,
+            borderRadius: '16px',
+            padding: '1rem 0.5rem 0.5rem',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+            overflow: 'hidden',
+          }}
+        >
+          <USMapSVG
+            selectedState={candidate.state}
+            onSelect={(stateName) => {
+              update({ state: stateName });
+              setStateQuery(stateName);
+            }}
+          />
+        </div>
 
-          {/* District */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '0.5rem',
-              }}
-            >
-              District
-            </label>
-            <input
-              type="text"
-              value={candidate.district}
-              onChange={(e) => update({ district: e.target.value })}
-              placeholder="e.g. 4"
-              style={{
-                width: '100%',
-                padding: '0.85rem 1rem',
-                fontSize: '1rem',
-                border: `1px solid ${cardBorder}`,
-                borderRadius: '12px',
-                outline: 'none',
-                background: '#fff',
-                color: navy,
-                transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-              }}
-              onFocus={(e) => {
-                e.target.style.boxShadow = `0 0 0 3px ${accent}30`;
-                e.target.style.borderColor = accent;
-              }}
-              onBlur={(e) => {
-                e.target.style.boxShadow = 'none';
-                e.target.style.borderColor = cardBorder;
-              }}
-            />
-          </div>
+        {/* Secondary text input for state */}
+        <div style={{ marginTop: '1rem', position: 'relative' }}>
+          <label
+            style={{
+              display: 'block',
+              fontSize: '0.8rem',
+              fontWeight: 500,
+              color: '#9CA3AF',
+              marginBottom: '0.4rem',
+            }}
+          >
+            Or type your state:
+          </label>
+          <input
+            type="text"
+            value={showStates ? stateQuery : candidate.state || stateQuery}
+            onFocus={() => {
+              setShowStates(true);
+              setStateQuery(candidate.state || '');
+            }}
+            onChange={(e) => {
+              setStateQuery(e.target.value);
+              setShowStates(true);
+              if (!e.target.value) update({ state: '' });
+            }}
+            onBlur={() => setTimeout(() => setShowStates(false), 200)}
+            placeholder="Start typing your state..."
+            style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
+              fontSize: '0.95rem',
+              border: `1px solid ${cardBorder}`,
+              borderRadius: '12px',
+              outline: 'none',
+              background: '#fff',
+              color: navy,
+              transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+            }}
+            onFocusCapture={(e) => {
+              e.target.style.boxShadow = `0 0 0 3px ${accent}30`;
+              e.target.style.borderColor = accent;
+            }}
+            onBlurCapture={(e) => {
+              e.target.style.boxShadow = 'none';
+              e.target.style.borderColor = cardBorder;
+            }}
+          />
+
+          <AnimatePresence>
+            {showStates && filteredStates.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: 'absolute',
+                  zIndex: 30,
+                  top: '100%',
+                  marginTop: '4px',
+                  width: '100%',
+                  maxHeight: '240px',
+                  overflowY: 'auto',
+                  background: '#fff',
+                  border: `1px solid ${cardBorder}`,
+                  borderRadius: '12px',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+                }}
+              >
+                {filteredStates.map((s) => {
+                  const isActive = candidate.state === s;
+                  return (
+                    <button
+                      key={s}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        update({ state: s });
+                        setStateQuery(s);
+                        setShowStates(false);
+                      }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '0.65rem 1rem',
+                        fontSize: '0.9rem',
+                        color: isActive ? accent : '#374151',
+                        fontWeight: isActive ? 700 : 400,
+                        background: isActive ? `${accent}08` : 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) e.currentTarget.style.background = '#F9FAFB';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isActive ? `${accent}08` : 'transparent';
+                      }}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* District input below the map */}
+        <div style={{ marginTop: '1.25rem' }}>
+          <label
+            style={{
+              display: 'block',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: '#374151',
+              marginBottom: '0.5rem',
+            }}
+          >
+            District
+          </label>
+          <input
+            type="text"
+            value={candidate.district}
+            onChange={(e) => update({ district: e.target.value })}
+            placeholder="e.g. 4"
+            style={{
+              width: '100%',
+              padding: '0.85rem 1rem',
+              fontSize: '1rem',
+              border: `1px solid ${cardBorder}`,
+              borderRadius: '12px',
+              outline: 'none',
+              background: '#fff',
+              color: navy,
+              transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = `0 0 0 3px ${accent}30`;
+              e.target.style.borderColor = accent;
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = 'none';
+              e.target.style.borderColor = cardBorder;
+            }}
+          />
         </div>
       </motion.section>
 

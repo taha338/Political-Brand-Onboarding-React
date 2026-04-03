@@ -1,6 +1,7 @@
 import { BrandProvider, useBrand } from './context/BrandContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import ProgressBar from './components/ProgressBar';
+import LiveColorStrip from './components/LiveColorStrip';
 import Stage1 from './components/stages/Stage1_CandidateBasics';
 import Stage2 from './components/stages/Stage2_CandidateProfile';
 import Stage3 from './components/stages/Stage3_BrandCore';
@@ -47,6 +48,7 @@ export default function App() {
   return (
     <BrandProvider>
       <AppContent />
+      <LiveColorStrip />
     </BrandProvider>
   );
 }

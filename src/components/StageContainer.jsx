@@ -1,10 +1,62 @@
-import { motion } from 'framer-motion';
+import { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../context/BrandContext';
+
+const CONFETTI_COLORS = ['#8B1A2B', '#1C2E5B', '#B22234', '#FFD700'];
+
+function ConfettiBurst({ onDone }) {
+  const particles = Array.from({ length: 25 }, (_, i) => ({
+    id: i,
+    x: (Math.random() - 0.5) * 300,
+    y: -(Math.random() * 200 + 80),
+    rotate: Math.random() * 720 - 360,
+    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    size: Math.random() * 6 + 4,
+    isCircle: Math.random() > 0.5,
+  }));
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 80,
+        left: '50%',
+        pointerEvents: 'none',
+        zIndex: 9998,
+      }}
+    >
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 1 }}
+          animate={{ x: p.x, y: p.y, opacity: 0, rotate: p.rotate, scale: 0.5 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          onAnimationComplete={() => {
+            if (p.id === 0 && onDone) onDone();
+          }}
+          style={{
+            position: 'absolute',
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.color,
+            borderRadius: p.isCircle ? '50%' : '2px',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function StageContainer({ children, title, subtitle, stageNumber }) {
   const { prevStage, nextStage, state } = useBrand();
   const isFirst = state.currentStage === 0;
   const isLast = state.currentStage === 8;
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const handleContinue = useCallback(() => {
+    setShowConfetti(true);
+    nextStage();
+  }, [nextStage]);
 
   return (
     <div className="relative">
@@ -102,7 +154,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber 
                   </button>
                 ) : <div />}
                 <button
-                  onClick={nextStage}
+                  onClick={handleContinue}
                   className="flex items-center gap-2 px-8 py-3.5 bg-navy-800 text-white rounded-xl hover:bg-navy-700 transition-all font-semibold glow-navy hover:glow-red hover:-translate-y-0.5"
                 >
                   Continue
@@ -113,6 +165,12 @@ export default function StageContainer({ children, title, subtitle, stageNumber 
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showConfetti && (
+          <ConfettiBurst onDone={() => setShowConfetti(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

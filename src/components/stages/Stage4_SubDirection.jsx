@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 const coreStyleMap = {
   commander: {
@@ -189,11 +191,8 @@ export default function Stage4_SubDirection() {
             const isLastOdd = index === subDirections.length - 1 && subDirections.length % 2 === 1;
 
             return (
-              <motion.button
+              <TiltCard
                 key={sub.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.07, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
                 onClick={() => dispatch({ type: 'SET_SUB_DIRECTION', payload: sub.id })}
                 className={`
                   relative text-left rounded-2xl overflow-hidden transition-all duration-500 cursor-pointer group
@@ -205,11 +204,6 @@ export default function Stage4_SubDirection() {
                     ? '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)'
                     : '0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
                 }}
-                whileHover={!isSelected ? {
-                  y: -3,
-                  scale: 1.02,
-                  boxShadow: `0 12px 40px -10px ${coreData.colors.primary}25, 0 0 0 2px ${styles.hoverBorder}60`,
-                } : {}}
               >
                 {/* Top accent strip */}
                 <div className="h-1.5 w-full" style={{ background: styles.numberBg }} />
@@ -246,22 +240,11 @@ export default function Stage4_SubDirection() {
                     </div>
 
                     {/* Selected checkmark */}
-                    <AnimatePresence>
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0, opacity: 0 }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center"
-                          style={{ backgroundColor: coreData.colors.secondary }}
-                        >
-                          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {isSelected && (
+                      <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                        <AnimatedCheckmark size={24} color={isSelected ? styles.selectedTextColor : coreData.colors.secondary} />
+                      </div>
+                    )}
                   </div>
 
                   {/* Description — opacity-based text hierarchy */}
@@ -309,7 +292,7 @@ export default function Stage4_SubDirection() {
                     </p>
                   </div>
                 </div>
-              </motion.button>
+              </TiltCard>
             );
           })}
         </div>

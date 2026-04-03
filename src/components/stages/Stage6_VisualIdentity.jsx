@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 /* ── Premium design tokens ── */
 const headingGradient = {
@@ -469,13 +471,8 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
       {/* headline examples as campaign poster cards */}
       <div className="grid md:grid-cols-3 gap-4 mb-12">
         {voiceTone.headlineExamples.map((ex, i) => (
-          <motion.div
+          <TiltCard
             key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}
-            transition={{ delay: 0.4 + i * 0.12, duration: 0.4 }}
             className="relative rounded-2xl overflow-hidden flex items-center justify-center text-center px-8 py-14 md:py-20"
             style={{
               backgroundColor: i === 0 ? coreColors.primary : i === 1 ? coreColors.secondary : '#111111',
@@ -497,7 +494,7 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
             >
               {ex}
             </h3>
-          </motion.div>
+          </TiltCard>
         ))}
       </div>
 

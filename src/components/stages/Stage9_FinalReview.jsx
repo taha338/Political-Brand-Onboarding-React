@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import jsPDF from 'jspdf';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
+import TiltCard from '../TiltCard';
 
 function ConfettiPiece({ index }) {
   const colors = ['#B22234', '#1C2E5B', '#FFD700', '#CC2029', '#2C4A7C', '#8B1A2B', '#B8860B', '#4CAF50', '#E91E63', '#9C27B0'];
@@ -888,7 +889,7 @@ export default function Stage9_FinalReview() {
           style={{ backgroundColor: bgHex }}
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+            <TiltCard style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
               <DotPattern />
               <LinePattern />
 
@@ -948,7 +949,7 @@ export default function Stage9_FinalReview() {
                   </motion.div>
                 )}
               </div>
-            </div>
+            </TiltCard>
           </div>
         </motion.section>
       )}
@@ -964,7 +965,7 @@ export default function Stage9_FinalReview() {
         className="bg-white"
       >
         <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-          <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
+          <TiltCard style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
             <DotPattern />
 
             <h3 style={{ ...gradientHeadingStyle, fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 32 }}>
@@ -1003,7 +1004,7 @@ export default function Stage9_FinalReview() {
               <div className="flex-[1]" style={{ backgroundColor: accentHex }} />
               <div className="flex-[1]" style={{ backgroundColor: highlightHex }} />
             </div>
-          </div>
+          </TiltCard>
         </div>
       </motion.section>
 
@@ -1019,7 +1020,7 @@ export default function Stage9_FinalReview() {
           style={{ backgroundColor: `${bgHex}` }}
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+            <TiltCard style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
               <DotPattern position="bottomLeft" />
               <LinePattern />
 
@@ -1085,7 +1086,7 @@ export default function Stage9_FinalReview() {
                   </p>
                 </motion.div>
               </div>
-            </div>
+            </TiltCard>
           </div>
         </motion.section>
       )}
@@ -1102,7 +1103,7 @@ export default function Stage9_FinalReview() {
           className="bg-white"
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
+            <TiltCard style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
               <DotPattern />
               <LinePattern />
 
@@ -1149,7 +1150,7 @@ export default function Stage9_FinalReview() {
                   </motion.div>
                 )}
               </div>
-            </div>
+            </TiltCard>
           </div>
         </motion.section>
       )}
@@ -1165,7 +1166,7 @@ export default function Stage9_FinalReview() {
         style={{ backgroundColor: bgHex }}
       >
         <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-          <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+          <TiltCard style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
             <DotPattern />
             <LinePattern />
 
@@ -1228,7 +1229,7 @@ export default function Stage9_FinalReview() {
                 })}
               </div>
             )}
-          </div>
+          </TiltCard>
         </div>
       </motion.section>
 

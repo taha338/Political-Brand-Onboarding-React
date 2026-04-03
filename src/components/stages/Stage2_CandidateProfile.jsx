@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { PROFESSIONAL_BACKGROUNDS, POLICY_PRIORITIES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 const PRIMARY = '#8B1A2B';
 const NAVY = '#1C2E5B';
@@ -120,18 +122,9 @@ export default function Stage2_CandidateProfile() {
             const emoji = BACKGROUND_EMOJIS[bg.id] || bg.icon;
 
             return (
-              <motion.button
+              <TiltCard
                 key={bg.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.04 * i }}
                 onClick={() => !disabled && toggleBackground(bg.id)}
-                whileHover={
-                  disabled
-                    ? {}
-                    : { y: -3, boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }
-                }
-                whileTap={disabled ? {} : { scale: 0.97 }}
                 className={`group flex flex-col items-center justify-center gap-2 px-3 py-5 rounded-xl border transition-all duration-200 ${
                   selected
                     ? 'text-white shadow-lg border-transparent'
@@ -145,6 +138,11 @@ export default function Stage2_CandidateProfile() {
                     : {}
                 }
               >
+                {selected && (
+                  <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                    <AnimatedCheckmark size={20} color="#FFFFFF" />
+                  </div>
+                )}
                 <span
                   className="text-2xl block"
                   style={{
@@ -169,7 +167,7 @@ export default function Stage2_CandidateProfile() {
                 >
                   {bg.label}
                 </span>
-              </motion.button>
+              </TiltCard>
             );
           })}
         </div>
@@ -199,18 +197,9 @@ export default function Stage2_CandidateProfile() {
             const emoji = POLICY_EMOJIS[policy.id] || policy.icon;
 
             return (
-              <motion.button
+              <TiltCard
                 key={policy.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.03 * i }}
                 onClick={() => !disabled && togglePriority(policy.id)}
-                whileHover={
-                  disabled
-                    ? {}
-                    : { y: -3, boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }
-                }
-                whileTap={disabled ? {} : { scale: 0.97 }}
                 className={`group flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-all duration-200 ${
                   selected
                     ? 'text-white shadow-lg border-transparent'
@@ -224,6 +213,11 @@ export default function Stage2_CandidateProfile() {
                     : {}
                 }
               >
+                {selected && (
+                  <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                    <AnimatedCheckmark size={20} color="#FFFFFF" />
+                  </div>
+                )}
                 <span
                   className="text-xl flex-shrink-0"
                   onMouseEnter={(e) => {
@@ -245,7 +239,7 @@ export default function Stage2_CandidateProfile() {
                 >
                   {policy.label}
                 </span>
-              </motion.button>
+              </TiltCard>
             );
           })}
         </div>

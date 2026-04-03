@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 const PRESET_PALETTES = [
   {
@@ -284,13 +286,11 @@ export default function Stage5_ColorPalette() {
               {PRESET_PALETTES.map((preset) => {
                 const isActive = activeTab === 'custom' && selectedPreset === preset.id;
                 return (
-                  <motion.button
+                  <TiltCard
                     key={preset.id}
-                    whileTap={{ scale: 0.97 }}
-                    whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
                     onClick={() => handlePresetSelect(preset.id)}
                     className={`
-                      text-left p-3 rounded-xl transition-all duration-200 cursor-pointer relative
+                      text-left p-3 rounded-xl transition-all duration-200 cursor-pointer
                       ${isActive
                         ? 'bg-gray-900 shadow-lg'
                         : 'bg-white hover:bg-gray-50'
@@ -316,16 +316,11 @@ export default function Stage5_ColorPalette() {
                       {preset.name}
                     </p>
                     {isActive && (
-                      <motion.div
-                        layoutId="preset-check"
-                        className="absolute top-2 right-2 w-4 h-4 rounded-full bg-white flex items-center justify-center"
-                      >
-                        <svg className="w-2.5 h-2.5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </motion.div>
+                      <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                        <AnimatedCheckmark size={20} color="#FFFFFF" />
+                      </div>
                     )}
-                  </motion.button>
+                  </TiltCard>
                 );
               })}
             </div>

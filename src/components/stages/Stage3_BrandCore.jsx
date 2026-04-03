@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 const BRAND_KEYS = ['commander', 'patriot', 'reformer', 'community', 'executive'];
 
@@ -179,15 +181,19 @@ export default function Stage3_BrandCore() {
             const isHovered = hoveredId === key;
 
             return (
-              <motion.div
+              <TiltCard
                 key={key}
+                onClick={() => selectBrand(key)}
+                className="relative cursor-pointer group"
+                style={{}}
+              >
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 onMouseEnter={() => setHoveredId(key)}
                 onMouseLeave={() => setHoveredId(null)}
-                onClick={() => selectBrand(key)}
-                className="relative cursor-pointer group"
+                className="relative"
               >
                 <motion.div
                   animate={{
@@ -298,22 +304,9 @@ export default function Stage3_BrandCore() {
 
                   {/* Selection indicator */}
                   {isSelected && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: brand.colors.secondary }}
-                    >
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </motion.div>
+                    <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                      <AnimatedCheckmark size={28} color={brand.colors.secondary} />
+                    </div>
                   )}
 
                   {/* Color bar at bottom when selected */}
@@ -332,6 +325,7 @@ export default function Stage3_BrandCore() {
                   </AnimatePresence>
                 </motion.div>
               </motion.div>
+              </TiltCard>
             );
           })}
         </div>

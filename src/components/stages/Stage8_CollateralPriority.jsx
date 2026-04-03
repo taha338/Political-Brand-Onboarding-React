@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import TiltCard from '../TiltCard';
+import AnimatedCheckmark from '../AnimatedCheckmark';
 
 const COLLATERAL_TYPES = [
   { type: 'Yard Signs', icon: (
@@ -130,14 +132,16 @@ function CollateralCard({ item, priority, onChange, index, brandNote }) {
   const isHighPriority = priority === 'CRITICAL' || priority === 'HIGH';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.4 }}
-      whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+    <TiltCard
       className={`relative flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all duration-300 text-center ${config.bg} ${config.border} ${config.glow} ${config.ring}`}
-      style={isHighPriority ? selectedGlowStyle : {}}
+      style={{ ...(isHighPriority ? selectedGlowStyle : {}), position: 'relative' }}
     >
+      {isHighPriority && (
+        <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+          <AnimatedCheckmark size={24} color="#8B1A2B" />
+        </div>
+      )}
+
       <div className={`flex items-center justify-center w-12 h-12 rounded-xl transition-colors ${config.iconBg}`}>
         {item.icon}
       </div>
@@ -158,7 +162,7 @@ function CollateralCard({ item, priority, onChange, index, brandNote }) {
       {brandNote && (
         <p className="text-[10px] leading-snug mt-1 line-clamp-2" style={{ color: '#1a1a1a', opacity: 0.6 }}>{brandNote}</p>
       )}
-    </motion.div>
+    </TiltCard>
   );
 }
 

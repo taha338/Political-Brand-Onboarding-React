@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-50: #f0f3f9;
+  --color-navy-100: #d9e0ef;
+  --color-navy-200: #b3c1df;
+  --color-navy-300: #8da2cf;
+  --color-navy-400: #6783bf;
+  --color-navy-500: #4164af;
+  --color-navy-600: #34508c;
+  --color-navy-700: #273c69;
+  --color-navy-800: #1C2E5B;
+  --color-navy-900: #111b37;
+
+  --color-patriot-red: #B22234;
+  --color-reform-red: #CC2029;
+  --color-community-red: #C74B50;
+  --color-exec-red: #9B1B30;
+  --color-exec-gold: #B8860B;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Poppins', 'Inter', sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background-color: #f9fafb;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes float-anim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float { animation: float-anim 3s ease-in-out infinite; }
+
+.confetti-piece {
+  position: fixed;
+  top: -10px;
+  animation: confetti-fall 3s linear forwards;
+  z-index: 100;
+  pointer-events: none;
+}
+
+@media print {
+  body { background: white !important; font-size: 11pt; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .print-break { page-break-before: always; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

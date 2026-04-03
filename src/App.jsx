@@ -1,4 +1,5 @@
 import { BrandProvider, useBrand } from './context/BrandContext';
+import { AnimatePresence, motion } from 'framer-motion';
 import ProgressBar from './components/ProgressBar';
 import Stage1 from './components/stages/Stage1_CandidateBasics';
 import Stage2 from './components/stages/Stage2_CandidateProfile';
@@ -12,14 +13,32 @@ import Stage9 from './components/stages/Stage9_FinalReview';
 
 const stages = [Stage1, Stage2, Stage3, Stage4, Stage5, Stage6, Stage7, Stage8, Stage9];
 
+const stageVariants = {
+  initial: { opacity: 0, x: 60 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -60 },
+};
+
 function AppContent() {
   const { state } = useBrand();
   const StageComponent = stages[state.currentStage];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 noise-overlay">
+      {/* Noise texture is applied via the noise-overlay class pseudo-element */}
       <ProgressBar />
-      <StageComponent key={state.currentStage} />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={state.currentStage}
+          variants={stageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <StageComponent />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

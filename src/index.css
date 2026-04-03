@@ -35,6 +35,68 @@
   }
 }
 
+/* --- Noise / Grain Texture Overlay --- */
+.noise-overlay {
+  position: relative;
+}
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* --- Text Gradient (navy to red) --- */
+.text-gradient {
+  background: linear-gradient(135deg, #1C2E5B 0%, #B22234 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Glow Shadow Utilities --- */
+.glow-red {
+  box-shadow: 0 0 20px rgba(178, 34, 52, 0.4), 0 0 60px rgba(178, 34, 52, 0.15);
+}
+.glow-navy {
+  box-shadow: 0 0 20px rgba(28, 46, 91, 0.4), 0 0 60px rgba(28, 46, 91, 0.15);
+}
+
+/* --- Dot Grid Background Pattern --- */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(28, 46, 91, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* --- Wave / Curved Section Divider --- */
+.wave-divider {
+  position: relative;
+  overflow: visible;
+}
+.wave-divider::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 48px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 48' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0 24C240 4 480 44 720 24C960 4 1200 44 1440 24V48H0Z' fill='%23f3f4f6' opacity='0.5'/%3E%3C/svg%3E") no-repeat center;
+  background-size: 100% 100%;
+}
+
+/* --- Text Hierarchy (opacity-based) --- */
+.text-muted {
+  opacity: 0.5;
+}
+.text-soft {
+  opacity: 0.7;
+}
+
+/* --- Keyframes --- */
+
 @keyframes confetti-fall {
   0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
@@ -45,7 +107,33 @@
   50% { transform: translateY(-10px); }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes stage-slide-in {
+  0% { opacity: 0; transform: translateX(60px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes stage-slide-out {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-60px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(139, 26, 43, 0.4), 0 0 24px rgba(139, 26, 43, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(139, 26, 43, 0.6), 0 0 48px rgba(139, 26, 43, 0.3);
+  }
+}
+
 .animate-float { animation: float-anim 3s ease-in-out infinite; }
+.animate-marquee { animation: marquee 20s linear infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 
 .confetti-piece {
   position: fixed;

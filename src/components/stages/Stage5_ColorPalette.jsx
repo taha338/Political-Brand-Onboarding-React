@@ -63,6 +63,43 @@ function isLightColor(hex) {
   return (r * 299 + g * 587 + b * 114) / 1000 > 160;
 }
 
+/* ── Decorative SVG dot pattern ── */
+function DecorativeDots({ style }) {
+  return (
+    <svg
+      width="200" height="200"
+      style={{ position: 'absolute', pointerEvents: 'none', opacity: 0.04, ...style }}
+    >
+      {Array.from({ length: 10 }).map((_, row) =>
+        Array.from({ length: 10 }).map((_, col) => (
+          <circle key={`${row}-${col}`} cx={col * 20 + 10} cy={row * 20 + 10} r={2} fill="#1C2E5B" />
+        ))
+      )}
+    </svg>
+  );
+}
+
+/* ── Decorative SVG line pattern ── */
+function DecorativeLines({ style }) {
+  return (
+    <svg
+      width="300" height="300"
+      style={{ position: 'absolute', pointerEvents: 'none', opacity: 0.03, ...style }}
+    >
+      {Array.from({ length: 15 }).map((_, i) => (
+        <line key={i} x1={0} y1={i * 20} x2={300} y2={i * 20} stroke="#8B1A2B" strokeWidth={1} />
+      ))}
+    </svg>
+  );
+}
+
+/* ── Gradient heading style helper ── */
+const gradientHeadingStyle = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
 export default function Stage5_ColorPalette() {
   const { state, dispatch } = useBrand();
   const [activeTab, setActiveTab] = useState(state.colorMode || 'theme');
@@ -129,17 +166,23 @@ export default function Stage5_ColorPalette() {
         {/* LEFT PANEL — selection options */}
         <div className={`transition-all duration-500 ${showRightPanel ? 'w-3/5' : 'w-full'}`}>
 
-          {/* RECOMMENDED PALETTE — hero section */}
+          {/* RECOMMENDED PALETTE — hero section in rounded 40px container */}
           {themeColors && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-10"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
             >
+              {/* Decorative SVG backgrounds */}
+              <DecorativeDots style={{ top: -20, right: -20 }} />
+              <DecorativeLines style={{ bottom: -60, left: -60 }} />
+
               <button
                 onClick={handleRecommendedSelect}
                 className="w-full text-left group cursor-pointer"
+                style={{ position: 'relative', zIndex: 1 }}
               >
                 <div className="flex items-baseline gap-3 mb-1">
                   <span
@@ -162,10 +205,11 @@ export default function Stage5_ColorPalette() {
                   )}
                 </div>
 
-                <h3 className="text-2xl font-black text-gray-900 mt-3 mb-1 tracking-tight">
+                {/* Gradient heading */}
+                <h3 style={{ ...gradientHeadingStyle, fontSize: '1.5rem', fontWeight: 900, marginTop: 12, marginBottom: 4, display: 'inline-block', letterSpacing: '-0.02em' }}>
                   {coreData?.name} Palette
                 </h3>
-                <p className="text-sm text-gray-400 mb-5 max-w-md leading-relaxed">
+                <p className="text-sm mb-5 max-w-md leading-relaxed" style={{ opacity: 0.6 }}>
                   Curated for the <em>{coreData?.emotionalFeel?.toLowerCase()}</em> quality of
                   your {coreData?.name} brand core.
                 </p>
@@ -191,8 +235,8 @@ export default function Stage5_ColorPalette() {
                               : 'none',
                           }}
                         />
-                        <p className="text-[11px] font-semibold text-gray-700 mt-2">{label}</p>
-                        <p className="text-[10px] font-mono text-gray-300">{color}</p>
+                        <p className="text-[11px] font-semibold mt-2" style={{ opacity: 0.7 }}>{label}</p>
+                        <p className="text-[10px] font-mono" style={{ opacity: 0.4 }}>{color}</p>
                       </motion.div>
                     );
                   })}
@@ -215,59 +259,77 @@ export default function Stage5_ColorPalette() {
           {/* DIVIDER */}
           <div className="flex items-center gap-4 mb-7">
             <div className="h-px flex-1 bg-gray-100" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-300">
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ opacity: 0.4 }}>
               or pick a preset
             </span>
             <div className="h-px flex-1 bg-gray-100" />
           </div>
 
-          {/* PRESET PALETTE GRID */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {PRESET_PALETTES.map((preset) => {
-              const isActive = activeTab === 'custom' && selectedPreset === preset.id;
-              return (
-                <motion.button
-                  key={preset.id}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handlePresetSelect(preset.id)}
-                  className={`
-                    text-left p-3 rounded-xl transition-all duration-200 cursor-pointer relative
-                    ${isActive
-                      ? 'bg-gray-900 shadow-lg'
-                      : 'bg-white hover:bg-gray-50'
+          {/* PRESET PALETTE GRID — rounded 40px container */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
+          >
+            <DecorativeDots style={{ bottom: -20, left: -20 }} />
+
+            {/* Section heading with gradient */}
+            <h2 style={{ ...gradientHeadingStyle, fontSize: '1.25rem', fontWeight: 800, marginBottom: 20, display: 'inline-block' }}>
+              Preset Palettes
+            </h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3" style={{ position: 'relative', zIndex: 1 }}>
+              {PRESET_PALETTES.map((preset) => {
+                const isActive = activeTab === 'custom' && selectedPreset === preset.id;
+                return (
+                  <motion.button
+                    key={preset.id}
+                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
+                    onClick={() => handlePresetSelect(preset.id)}
+                    className={`
+                      text-left p-3 rounded-xl transition-all duration-200 cursor-pointer relative
+                      ${isActive
+                        ? 'bg-gray-900 shadow-lg'
+                        : 'bg-white hover:bg-gray-50'
+                      }
+                    `}
+                    style={
+                      isActive
+                        ? { boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)' }
+                        : { boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }
                     }
-                  `}
-                  style={!isActive ? {
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                  } : undefined}
-                >
-                  {/* Color strip */}
-                  <div className="flex h-8 rounded-md overflow-hidden mb-2.5">
-                    {COLOR_ROLES.map(({ key }) => (
-                      <div
-                        key={key}
-                        className="flex-1"
-                        style={{ backgroundColor: preset.colors[key] }}
-                      />
-                    ))}
-                  </div>
-                  <p className={`text-xs font-semibold truncate ${isActive ? 'text-white' : 'text-gray-700'}`}>
-                    {preset.name}
-                  </p>
-                  {isActive && (
-                    <motion.div
-                      layoutId="preset-check"
-                      className="absolute top-2 right-2 w-4 h-4 rounded-full bg-white flex items-center justify-center"
-                    >
-                      <svg className="w-2.5 h-2.5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </motion.div>
-                  )}
-                </motion.button>
-              );
-            })}
-          </div>
+                  >
+                    {/* Color strip */}
+                    <div className="flex h-8 rounded-md overflow-hidden mb-2.5">
+                      {COLOR_ROLES.map(({ key }) => (
+                        <div
+                          key={key}
+                          className="flex-1"
+                          style={{ backgroundColor: preset.colors[key] }}
+                        />
+                      ))}
+                    </div>
+                    <p className={`text-xs font-semibold truncate ${isActive ? 'text-white' : ''}`} style={!isActive ? { opacity: 0.7 } : undefined}>
+                      {preset.name}
+                    </p>
+                    {isActive && (
+                      <motion.div
+                        layoutId="preset-check"
+                        className="absolute top-2 right-2 w-4 h-4 rounded-full bg-white flex items-center justify-center"
+                      >
+                        <svg className="w-2.5 h-2.5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </motion.div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
 
         {/* RIGHT PANEL — spec sheet */}
@@ -281,67 +343,78 @@ export default function Stage5_ColorPalette() {
               transition={{ type: 'spring', damping: 28, stiffness: 260 }}
               className="sticky top-8 min-w-0 overflow-hidden"
             >
-              <div className="pl-8 border-l border-gray-100">
-                {/* Palette name, typographic */}
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300 mb-1">
-                  Selected Palette
-                </p>
-                <h2 className="text-xl font-black text-gray-900 tracking-tight mb-8">
-                  {activePaletteName}
-                </h2>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}
+              >
+                {/* Decorative background */}
+                <DecorativeLines style={{ top: -40, right: -40 }} />
 
-                {/* Vertical color spec list */}
-                <div className="space-y-5">
-                  {COLOR_ROLES.map(({ key, label, desc }, i) => {
-                    const color = activeColors[key];
-                    const light = isLightColor(color);
-                    return (
-                      <motion.div
-                        key={key}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.06, duration: 0.35 }}
-                        className="flex gap-4 items-start"
-                      >
-                        {/* Large swatch */}
-                        <div
-                          className="w-16 h-16 rounded-lg flex-shrink-0"
-                          style={{
-                            backgroundColor: color,
-                            boxShadow: light
-                              ? 'inset 0 0 0 1px rgba(0,0,0,0.08)'
-                              : '0 2px 8px rgba(0,0,0,0.12)',
-                          }}
-                        />
-                        {/* Details */}
-                        <div className="pt-0.5 min-w-0">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-sm font-bold text-gray-900">{label}</span>
-                            <span className="text-[11px] font-mono text-gray-300">{color}</span>
-                          </div>
-                          <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{desc}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* Full palette bar at bottom */}
-                <div className="mt-10">
-                  <div className="h-3 rounded-full overflow-hidden flex">
-                    {COLOR_ROLES.map(({ key }) => (
-                      <div
-                        key={key}
-                        className="flex-1 transition-colors duration-300"
-                        style={{ backgroundColor: activeColors[key] }}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-gray-300 mt-2 text-right font-mono">
-                    {COLOR_ROLES.map(({ key }) => activeColors[key]).join(' / ')}
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  {/* Palette name, typographic */}
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ opacity: 0.4 }}>
+                    Selected Palette
                   </p>
+                  <h2 style={{ ...gradientHeadingStyle, fontSize: '1.25rem', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 32, display: 'inline-block' }}>
+                    {activePaletteName}
+                  </h2>
+
+                  {/* Vertical color spec list */}
+                  <div className="space-y-5">
+                    {COLOR_ROLES.map(({ key, label, desc }, i) => {
+                      const color = activeColors[key];
+                      const light = isLightColor(color);
+                      return (
+                        <motion.div
+                          key={key}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.06, duration: 0.35 }}
+                          className="flex gap-4 items-start"
+                        >
+                          {/* Large swatch */}
+                          <div
+                            className="w-16 h-16 rounded-lg flex-shrink-0"
+                            style={{
+                              backgroundColor: color,
+                              boxShadow: light
+                                ? 'inset 0 0 0 1px rgba(0,0,0,0.08)'
+                                : '0 2px 8px rgba(0,0,0,0.12)',
+                            }}
+                          />
+                          {/* Details */}
+                          <div className="pt-0.5 min-w-0">
+                            <div className="flex items-baseline gap-2">
+                              <span className="text-sm font-bold" style={{ opacity: 0.9 }}>{label}</span>
+                              <span className="text-[11px] font-mono" style={{ opacity: 0.4 }}>{color}</span>
+                            </div>
+                            <p className="text-xs mt-0.5 leading-relaxed" style={{ opacity: 0.6 }}>{desc}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Full palette bar at bottom */}
+                  <div className="mt-10">
+                    <div className="h-3 rounded-full overflow-hidden flex">
+                      {COLOR_ROLES.map(({ key }) => (
+                        <div
+                          key={key}
+                          className="flex-1 transition-colors duration-300"
+                          style={{ backgroundColor: activeColors[key] }}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-[10px] mt-2 text-right font-mono" style={{ opacity: 0.4 }}>
+                      {COLOR_ROLES.map(({ key }) => activeColors[key]).join(' / ')}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

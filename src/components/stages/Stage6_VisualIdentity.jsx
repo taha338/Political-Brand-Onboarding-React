@@ -4,6 +4,82 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 
+/* ── Premium design tokens ── */
+const headingGradient = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
+const sectionContainer = {
+  borderRadius: 40,
+  background: 'white',
+  padding: 40,
+  marginBottom: 32,
+  position: 'relative',
+  overflow: 'hidden',
+};
+
+/* ── Decorative SVG dot pattern ── */
+function DecorativeDots({ style }) {
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        opacity: 0.04,
+        pointerEvents: 'none',
+        ...style,
+      }}
+      width="200"
+      height="200"
+      viewBox="0 0 200 200"
+      fill="none"
+    >
+      {Array.from({ length: 10 }).map((_, row) =>
+        Array.from({ length: 10 }).map((_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={col * 20 + 10}
+            cy={row * 20 + 10}
+            r="2"
+            fill="#1C2E5B"
+          />
+        ))
+      )}
+    </svg>
+  );
+}
+
+/* ── Decorative SVG line pattern ── */
+function DecorativeLines({ style }) {
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        opacity: 0.03,
+        pointerEvents: 'none',
+        ...style,
+      }}
+      width="300"
+      height="300"
+      viewBox="0 0 300 300"
+      fill="none"
+    >
+      {Array.from({ length: 15 }).map((_, i) => (
+        <line
+          key={i}
+          x1={0}
+          y1={i * 20}
+          x2={300}
+          y2={i * 20}
+          stroke="#1C2E5B"
+          strokeWidth="1"
+        />
+      ))}
+    </svg>
+  );
+}
+
 function useGoogleFonts(fonts) {
   useEffect(() => {
     if (!fonts || fonts.length === 0) return;
@@ -65,8 +141,12 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
   return (
     <motion.div
       variants={stagger.item}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
       className="relative -mx-4 md:-mx-0 md:rounded-3xl overflow-hidden"
-      style={{ backgroundColor: activeColors.primary }}
+      style={{ backgroundColor: activeColors.primary, borderRadius: 40 }}
     >
       {/* decorative secondary stripe */}
       <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: activeColors.secondary }} />
@@ -163,9 +243,17 @@ function FontShowcase({ fonts, coreColors, candidateName, voiceTone }) {
   const headline = voiceTone?.headlineExamples?.[0] || 'Lead With Conviction.';
 
   return (
-    <motion.div variants={stagger.item}>
+    <motion.div
+      variants={stagger.item}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+      style={sectionContainer}
+    >
+      <DecorativeDots style={{ top: -10, right: -10 }} />
       {/* section label */}
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400 mb-8 px-2">
+      <p className="text-xs font-bold uppercase tracking-[0.25em] mb-8 px-2" style={{ color: '#1C2E5B', opacity: 0.7 }}>
         Typography System
       </p>
 
@@ -279,8 +367,16 @@ function ColorPaletteImmersive({ colors, isCustom }) {
       ];
 
   return (
-    <motion.div variants={stagger.item}>
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400 mb-8 px-2">
+    <motion.div
+      variants={stagger.item}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+      style={sectionContainer}
+    >
+      <DecorativeLines style={{ bottom: -20, left: -20 }} />
+      <p className="text-xs font-bold uppercase tracking-[0.25em] mb-8 px-2" style={{ color: '#1C2E5B', opacity: 0.7 }}>
         Color Palette
       </p>
 
@@ -300,7 +396,9 @@ function ColorPaletteImmersive({ colors, isCustom }) {
             <motion.div
               key={key}
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
               transition={{ delay: 0.3 + i * 0.07, duration: 0.35 }}
               className={`rounded-2xl overflow-hidden flex flex-col justify-between ${
                 isPrimary ? 'col-span-2 md:col-span-2 row-span-1' : ''
@@ -333,18 +431,29 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
   const heaviestWeight = headingMeta?.weights?.[headingMeta.weights.length - 1] || 700;
 
   return (
-    <motion.div variants={stagger.item}>
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400 mb-8 px-2">
+    <motion.div
+      variants={stagger.item}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+      style={sectionContainer}
+    >
+      <DecorativeDots style={{ top: -10, left: -10 }} />
+      <DecorativeLines style={{ bottom: -20, right: -20 }} />
+      <p className="text-xs font-bold uppercase tracking-[0.25em] mb-8 px-2" style={{ color: '#1C2E5B', opacity: 0.7 }}>
         Voice &amp; Tone
       </p>
 
       {/* headline style description */}
       <div className="mb-10 px-2">
         <p
-          className="text-sm md:text-base leading-relaxed text-gray-500 max-w-2xl italic border-l-4 pl-5 py-1"
+          className="text-sm md:text-base leading-relaxed max-w-2xl italic border-l-4 pl-5 py-1"
           style={{
             fontFamily: `'${bodyFont}', sans-serif`,
             borderColor: activeColorsFallback(coreColors.secondary),
+            color: '#1C2E5B',
+            opacity: 0.6,
           }}
         >
           {voiceTone.headlineStyle}
@@ -357,7 +466,9 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}
             transition={{ delay: 0.4 + i * 0.12, duration: 0.4 }}
             className="relative rounded-2xl overflow-hidden flex items-center justify-center text-center px-8 py-14 md:py-20"
             style={{
@@ -388,10 +499,10 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
       <div className="grid md:grid-cols-12 gap-8">
         {/* body copy */}
         <div className="md:col-span-5">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Body Copy Style</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-4" style={{ color: '#1C2E5B', opacity: 0.7 }}>Body Copy Style</p>
           <p
-            className="text-base md:text-lg leading-relaxed text-gray-600"
-            style={{ fontFamily: `'${bodyFont}', sans-serif` }}
+            className="text-base md:text-lg leading-relaxed"
+            style={{ fontFamily: `'${bodyFont}', sans-serif`, color: '#1C2E5B', opacity: 0.6 }}
           >
             {voiceTone.bodyCopy}
           </p>
@@ -399,7 +510,7 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
 
         {/* CTAs as real buttons */}
         <div className="md:col-span-3">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Call-to-Action</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-4" style={{ color: '#1C2E5B', opacity: 0.7 }}>Call-to-Action</p>
           <div className="flex flex-col gap-3">
             {voiceTone.ctaLanguage.map((cta, i) => (
               <button
@@ -420,7 +531,7 @@ function VoiceToneEditorial({ voiceTone, coreColors, headingFont, bodyFont }) {
 
         {/* vocabulary as editorial callouts */}
         <div className="md:col-span-4">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Key Vocabulary</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-4" style={{ color: '#1C2E5B', opacity: 0.7 }}>Key Vocabulary</p>
           <div className="flex flex-wrap gap-2">
             {voiceTone.vocabulary.map((word, i) => {
               const sizes = ['text-2xl', 'text-xl', 'text-lg', 'text-base', 'text-lg', 'text-sm', 'text-xl', 'text-base', 'text-lg', 'text-sm'];
@@ -464,8 +575,16 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
   const cta = voiceTone?.ctaLanguage?.[0] || 'Learn More';
 
   return (
-    <motion.div variants={stagger.item}>
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400 mb-8 px-2">
+    <motion.div
+      variants={stagger.item}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+      style={sectionContainer}
+    >
+      <DecorativeDots style={{ bottom: -10, right: -10 }} />
+      <p className="text-xs font-bold uppercase tracking-[0.25em] mb-8 px-2" style={{ color: '#1C2E5B', opacity: 0.7 }}>
         Campaign Materials Preview
       </p>
 
@@ -828,7 +947,7 @@ export default function Stage6_VisualIdentity() {
     return (
       <StageContainer title="Visual Identity" subtitle="Your brand, revealed." stageNumber={6}>
         <div className="flex flex-col items-center justify-center py-20">
-          <p className="text-lg text-gray-500">Please complete the previous stages first.</p>
+          <p className="text-lg" style={{ color: '#1C2E5B', opacity: 0.6 }}>Please complete the previous stages first.</p>
         </div>
       </StageContainer>
     );

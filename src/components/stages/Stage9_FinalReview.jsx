@@ -291,6 +291,46 @@ function textOnColor(hex) {
   return hexLuminance(hex || '#1C2E5B') > 0.4 ? '#1a1a1a' : '#ffffff';
 }
 
+/* Decorative dot pattern SVG background */
+const DotPattern = ({ color = '#1C2E5B', position = 'topRight' }) => {
+  const posStyle = position === 'topRight'
+    ? { top: 0, right: 0 }
+    : { bottom: 0, left: 0 };
+  return (
+    <svg
+      style={{ position: 'absolute', ...posStyle, width: 200, height: 200, opacity: 0.04, pointerEvents: 'none' }}
+      viewBox="0 0 200 200"
+      fill="none"
+    >
+      {Array.from({ length: 10 }).map((_, row) =>
+        Array.from({ length: 10 }).map((_, col) => (
+          <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r={2} fill={color} />
+        ))
+      )}
+    </svg>
+  );
+};
+
+/* Decorative line pattern SVG background */
+const LinePattern = ({ color = '#8B1A2B' }) => (
+  <svg
+    style={{ position: 'absolute', bottom: 0, left: 0, width: 160, height: 160, opacity: 0.03, pointerEvents: 'none' }}
+    viewBox="0 0 160 160"
+    fill="none"
+  >
+    {Array.from({ length: 8 }).map((_, i) => (
+      <line key={i} x1={0} y1={i * 20 + 10} x2={160} y2={i * 20 + 10} stroke={color} strokeWidth={1} />
+    ))}
+  </svg>
+);
+
+const gradientHeadingStyle = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  display: 'inline-block',
+};
+
 export default function Stage9_FinalReview() {
   const { state, dispatch, prevStage, goToStage, getActiveColors } = useBrand();
   const brandCore = BRAND_CORES[state.brandCore];
@@ -400,6 +440,19 @@ export default function Stage9_FinalReview() {
         className="relative overflow-hidden"
         style={{ background: `linear-gradient(135deg, ${primaryHex} 0%, ${primaryHex}ee 60%, ${secondaryHex} 100%)` }}
       >
+        {/* Decorative SVG pattern on hero */}
+        <svg
+          style={{ position: 'absolute', top: 20, right: 20, width: 250, height: 250, opacity: 0.05, pointerEvents: 'none' }}
+          viewBox="0 0 250 250"
+          fill="none"
+        >
+          {Array.from({ length: 12 }).map((_, row) =>
+            Array.from({ length: 12 }).map((_, col) => (
+              <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r={2.5} fill="#ffffff" />
+            ))
+          )}
+        </svg>
+
         <div className="max-w-5xl mx-auto px-6 pt-10 pb-16 md:pt-14 md:pb-24 relative z-10">
           <motion.button
             initial={{ opacity: 0, x: -10 }}
@@ -458,70 +511,78 @@ export default function Stage9_FinalReview() {
       </div>
 
       {/* ================================================================ */}
-      {/* BRAND CORE - Prominent full-width section                        */}
+      {/* BRAND CORE - Prominent full-width section with 40px container    */}
       {/* ================================================================ */}
       {brandCore && (
         <motion.section
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.5 }}
           className="relative"
           style={{ backgroundColor: bgHex }}
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <div className="max-w-3xl">
-              <p
-                className="text-xs font-bold uppercase tracking-widest mb-5"
-                style={{ color: secondaryHex }}
-              >
-                Brand Core
-              </p>
+            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+              <DotPattern />
+              <LinePattern />
 
-              <h2
-                className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
-                style={{ color: textHex, fontFamily: headingFont }}
-              >
-                {brandCore.name}
-              </h2>
+              <div className="max-w-3xl">
+                <p
+                  className="text-xs font-bold uppercase tracking-widest mb-5"
+                  style={{ color: secondaryHex, opacity: 0.7 }}
+                >
+                  Brand Core
+                </p>
 
-              <p className="text-base mb-6" style={{ color: `${textHex}99` }}>
-                {brandCore.descriptor}
-              </p>
+                <h2
+                  className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
+                  style={{ ...gradientHeadingStyle, fontFamily: headingFont }}
+                >
+                  {brandCore.name}
+                </h2>
 
-              <blockquote
-                className="text-xl md:text-2xl font-medium italic mb-8 pl-5"
-                style={{
-                  color: primaryHex,
-                  borderLeft: `3px solid ${secondaryHex}`,
-                  fontFamily: headingFont,
-                }}
-              >
-                &ldquo;{brandCore.tagline}&rdquo;
-              </blockquote>
+                <p className="text-base mb-6" style={{ color: textHex, opacity: 0.6 }}>
+                  {brandCore.descriptor}
+                </p>
 
-              <p className="text-base leading-relaxed" style={{ color: `${textHex}cc` }}>
-                {brandCore.positioning}
-              </p>
-
-              {subDir && (
-                <div
-                  className="mt-10 rounded-xl p-6"
+                <blockquote
+                  className="text-xl md:text-2xl font-medium italic mb-8 pl-5"
                   style={{
-                    backgroundColor: `${primaryHex}0a`,
-                    border: `1px solid ${primaryHex}18`,
+                    color: primaryHex,
+                    borderLeft: `3px solid ${secondaryHex}`,
+                    fontFamily: headingFont,
                   }}
                 >
-                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: `${textHex}80` }}>
-                    Sub-Direction
-                  </p>
-                  <p className="text-lg font-semibold mb-1" style={{ color: textHex, fontFamily: headingFont }}>
-                    {subDir.name}
-                  </p>
-                  <p className="text-sm leading-relaxed" style={{ color: `${textHex}99` }}>
-                    {subDir.desc}
-                  </p>
-                </div>
-              )}
+                  &ldquo;{brandCore.tagline}&rdquo;
+                </blockquote>
+
+                <p className="text-base leading-relaxed" style={{ color: textHex, opacity: 0.6 }}>
+                  {brandCore.positioning}
+                </p>
+
+                {subDir && (
+                  <motion.div
+                    whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
+                    className="mt-10 rounded-xl p-6 transition-all duration-300"
+                    style={{
+                      backgroundColor: `${primaryHex}0a`,
+                      border: `1px solid ${primaryHex}18`,
+                      boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)',
+                    }}
+                  >
+                    <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: textHex, opacity: 0.7 }}>
+                      Sub-Direction
+                    </p>
+                    <p className="text-lg font-semibold mb-1" style={{ color: textHex, fontFamily: headingFont }}>
+                      {subDir.name}
+                    </p>
+                    <p className="text-sm leading-relaxed" style={{ color: textHex, opacity: 0.6 }}>
+                      {subDir.desc}
+                    </p>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
         </motion.section>
@@ -532,42 +593,51 @@ export default function Stage9_FinalReview() {
       {/* ================================================================ */}
       <motion.section
         initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
         className="bg-white"
       >
         <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">
-            Color Palette
-          </p>
+          <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
+            <DotPattern />
 
-          {/* Large swatch strip */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4 mb-4">
-            {[
-              { label: 'Primary', hex: primaryHex },
-              { label: 'Secondary', hex: secondaryHex },
-              { label: 'Accent', hex: accentHex },
-              { label: 'Background', hex: bgHex },
-              { label: 'Text', hex: textHex },
-              { label: 'Highlight', hex: highlightHex },
-            ].map((swatch) => (
-              <div key={swatch.label}>
-                <div
-                  className="aspect-[4/3] rounded-xl shadow-sm border border-black/5"
-                  style={{ backgroundColor: swatch.hex }}
-                />
-                <p className="mt-2.5 text-sm font-semibold text-gray-800">{swatch.label}</p>
-                <p className="text-xs font-mono text-gray-400 mt-0.5">{swatch.hex}</p>
-              </div>
-            ))}
-          </div>
+            <h3 style={{ ...gradientHeadingStyle, fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 32 }}>
+              Color Palette
+            </h3>
 
-          {/* Continuous palette bar */}
-          <div className="h-3 rounded-full overflow-hidden flex mt-8 shadow-inner">
-            <div className="flex-[3]" style={{ backgroundColor: primaryHex }} />
-            <div className="flex-[2]" style={{ backgroundColor: secondaryHex }} />
-            <div className="flex-[1]" style={{ backgroundColor: accentHex }} />
-            <div className="flex-[1]" style={{ backgroundColor: highlightHex }} />
+            {/* Large swatch strip */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4 mb-4">
+              {[
+                { label: 'Primary', hex: primaryHex },
+                { label: 'Secondary', hex: secondaryHex },
+                { label: 'Accent', hex: accentHex },
+                { label: 'Background', hex: bgHex },
+                { label: 'Text', hex: textHex },
+                { label: 'Highlight', hex: highlightHex },
+              ].map((swatch) => (
+                <motion.div
+                  key={swatch.label}
+                  whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+                  className="transition-all duration-300"
+                >
+                  <div
+                    className="aspect-[4/3] rounded-xl shadow-sm border border-black/5"
+                    style={{ backgroundColor: swatch.hex }}
+                  />
+                  <p className="mt-2.5 text-sm font-semibold" style={{ color: '#1a1a1a', opacity: 0.85 }}>{swatch.label}</p>
+                  <p className="text-xs font-mono mt-0.5" style={{ color: '#1a1a1a', opacity: 0.6 }}>{swatch.hex}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Continuous palette bar */}
+            <div className="h-3 rounded-full overflow-hidden flex mt-8 shadow-inner">
+              <div className="flex-[3]" style={{ backgroundColor: primaryHex }} />
+              <div className="flex-[2]" style={{ backgroundColor: secondaryHex }} />
+              <div className="flex-[1]" style={{ backgroundColor: accentHex }} />
+              <div className="flex-[1]" style={{ backgroundColor: highlightHex }} />
+            </div>
           </div>
         </div>
       </motion.section>
@@ -578,71 +648,77 @@ export default function Stage9_FinalReview() {
       {brandCore?.fonts && (
         <motion.section
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           style={{ backgroundColor: `${bgHex}` }}
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-10">
-              Typography
-            </p>
+            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+              <DotPattern position="bottomLeft" />
+              <LinePattern />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-              {/* Heading font */}
-              <div>
-                <p className="text-xs text-gray-400 font-medium mb-3">Heading / Display</p>
-                <p
-                  className="text-4xl md:text-5xl font-bold leading-tight mb-3"
-                  style={{ fontFamily: headingFont, color: primaryHex }}
-                >
-                  Aa Bb Cc
-                </p>
-                <p
-                  className="text-lg font-semibold mb-1"
-                  style={{ fontFamily: headingFont, color: textHex }}
-                >
-                  {brandCore.fonts.heading}
-                </p>
-                {headingMeta && (
-                  <p className="text-sm text-gray-400">
-                    {headingMeta.category} &middot; {headingMeta.personality}
-                  </p>
-                )}
-                <p
-                  className="mt-4 text-2xl leading-snug"
-                  style={{ fontFamily: headingFont, color: `${textHex}bb` }}
-                >
-                  The quick brown fox jumps over the lazy dog
-                </p>
-              </div>
+              <h3 style={{ ...gradientHeadingStyle, fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 40 }}>
+                Typography
+              </h3>
 
-              {/* Body font */}
-              <div>
-                <p className="text-xs text-gray-400 font-medium mb-3">Body / Running Text</p>
-                <p
-                  className="text-4xl md:text-5xl font-normal leading-tight mb-3"
-                  style={{ fontFamily: bodyFont, color: primaryHex }}
-                >
-                  Aa Bb Cc
-                </p>
-                <p
-                  className="text-lg font-semibold mb-1"
-                  style={{ fontFamily: bodyFont, color: textHex }}
-                >
-                  {brandCore.fonts.body}
-                </p>
-                {bodyMeta && (
-                  <p className="text-sm text-gray-400">
-                    {bodyMeta.category} &middot; {bodyMeta.personality}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+                {/* Heading font */}
+                <motion.div whileHover={{ scale: 1.02 }} className="transition-all duration-300">
+                  <p className="text-xs font-medium mb-3" style={{ color: '#1a1a1a', opacity: 0.6 }}>Heading / Display</p>
+                  <p
+                    className="text-4xl md:text-5xl font-bold leading-tight mb-3"
+                    style={{ fontFamily: headingFont, color: primaryHex }}
+                  >
+                    Aa Bb Cc
                   </p>
-                )}
-                <p
-                  className="mt-4 text-base leading-relaxed"
-                  style={{ fontFamily: bodyFont, color: `${textHex}bb` }}
-                >
-                  A strong campaign brand speaks with clarity and conviction. Every typeface, color,
-                  and word should reinforce the candidate&apos;s core promise to voters.
-                </p>
+                  <p
+                    className="text-lg font-semibold mb-1"
+                    style={{ fontFamily: headingFont, color: textHex }}
+                  >
+                    {brandCore.fonts.heading}
+                  </p>
+                  {headingMeta && (
+                    <p className="text-sm" style={{ color: '#1a1a1a', opacity: 0.6 }}>
+                      {headingMeta.category} &middot; {headingMeta.personality}
+                    </p>
+                  )}
+                  <p
+                    className="mt-4 text-2xl leading-snug"
+                    style={{ fontFamily: headingFont, color: `${textHex}bb` }}
+                  >
+                    The quick brown fox jumps over the lazy dog
+                  </p>
+                </motion.div>
+
+                {/* Body font */}
+                <motion.div whileHover={{ scale: 1.02 }} className="transition-all duration-300">
+                  <p className="text-xs font-medium mb-3" style={{ color: '#1a1a1a', opacity: 0.6 }}>Body / Running Text</p>
+                  <p
+                    className="text-4xl md:text-5xl font-normal leading-tight mb-3"
+                    style={{ fontFamily: bodyFont, color: primaryHex }}
+                  >
+                    Aa Bb Cc
+                  </p>
+                  <p
+                    className="text-lg font-semibold mb-1"
+                    style={{ fontFamily: bodyFont, color: textHex }}
+                  >
+                    {brandCore.fonts.body}
+                  </p>
+                  {bodyMeta && (
+                    <p className="text-sm" style={{ color: '#1a1a1a', opacity: 0.6 }}>
+                      {bodyMeta.category} &middot; {bodyMeta.personality}
+                    </p>
+                  )}
+                  <p
+                    className="mt-4 text-base leading-relaxed"
+                    style={{ fontFamily: bodyFont, color: `${textHex}bb` }}
+                  >
+                    A strong campaign brand speaks with clarity and conviction. Every typeface, color,
+                    and word should reinforce the candidate&apos;s core promise to voters.
+                  </p>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -655,53 +731,59 @@ export default function Stage9_FinalReview() {
       {(state.profile.backgrounds?.length > 0 || state.profile.policyPriorities?.length > 0 || state.profile.definingStory) && (
         <motion.section
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="bg-white"
         >
           <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">
-              Candidate Profile
-            </p>
+            <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
+              <DotPattern />
+              <LinePattern />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {state.profile.backgrounds?.length > 0 && (
-                <div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Background</p>
-                  <div className="flex flex-wrap gap-2">
-                    {state.profile.backgrounds.map((b) => (
-                      <span
-                        key={b}
-                        className="px-3 py-1.5 text-xs font-medium rounded-full"
-                        style={{ backgroundColor: `${primaryHex}0f`, color: primaryHex }}
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <h3 style={{ ...gradientHeadingStyle, fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 32 }}>
+                Candidate Profile
+              </h3>
 
-              {state.profile.policyPriorities?.length > 0 && (
-                <div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Policy Priorities</p>
-                  <ul className="space-y-1.5">
-                    {state.profile.policyPriorities.map((p) => (
-                      <li key={p} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: secondaryHex }} />
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                {state.profile.backgrounds?.length > 0 && (
+                  <motion.div whileHover={{ scale: 1.02 }} className="transition-all duration-300">
+                    <p className="text-sm font-semibold mb-3" style={{ color: '#1a1a1a', opacity: 0.7 }}>Background</p>
+                    <div className="flex flex-wrap gap-2">
+                      {state.profile.backgrounds.map((b) => (
+                        <span
+                          key={b}
+                          className="px-3 py-1.5 text-xs font-medium rounded-full"
+                          style={{ backgroundColor: `${primaryHex}0f`, color: primaryHex }}
+                        >
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
 
-              {state.profile.definingStory && (
-                <div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Defining Story</p>
-                  <p className="text-sm text-gray-500 leading-relaxed">{state.profile.definingStory}</p>
-                </div>
-              )}
+                {state.profile.policyPriorities?.length > 0 && (
+                  <motion.div whileHover={{ scale: 1.02 }} className="transition-all duration-300">
+                    <p className="text-sm font-semibold mb-3" style={{ color: '#1a1a1a', opacity: 0.7 }}>Policy Priorities</p>
+                    <ul className="space-y-1.5">
+                      {state.profile.policyPriorities.map((p) => (
+                        <li key={p} className="flex items-start gap-2 text-sm" style={{ color: '#1a1a1a', opacity: 0.6 }}>
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: secondaryHex }} />
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+
+                {state.profile.definingStory && (
+                  <motion.div whileHover={{ scale: 1.02 }} className="transition-all duration-300">
+                    <p className="text-sm font-semibold mb-3" style={{ color: '#1a1a1a', opacity: 0.7 }}>Defining Story</p>
+                    <p className="text-sm leading-relaxed" style={{ color: '#1a1a1a', opacity: 0.6 }}>{state.profile.definingStory}</p>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
         </motion.section>
@@ -712,60 +794,76 @@ export default function Stage9_FinalReview() {
       {/* ================================================================ */}
       <motion.section
         initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55, duration: 0.5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
         style={{ backgroundColor: bgHex }}
       >
         <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-10">
-            Collateral Priority Matrix
-          </p>
+          <div style={{ borderRadius: 40, background: 'white', padding: 40, position: 'relative', overflow: 'hidden' }}>
+            <DotPattern />
+            <LinePattern />
 
-          {Object.keys(state.collateralPriorities).length === 0 ? (
-            <p className="text-sm text-gray-400 italic">No priorities set</p>
-          ) : (
-            <div className="space-y-6">
-              {['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((prio) => {
-                const items = collateralByPriority[prio] || [];
-                if (items.length === 0) return null;
-                const cfg = prioConfig[prio];
-                return (
-                  <div key={prio} className="rounded-xl overflow-hidden" style={{ border: `1px solid ${cfg.border}` }}>
-                    <div
-                      className="flex items-center justify-between px-5 py-3"
-                      style={{ backgroundColor: cfg.bg }}
+            <h3 style={{ ...gradientHeadingStyle, fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 40 }}>
+              Collateral Priority Matrix
+            </h3>
+
+            {Object.keys(state.collateralPriorities).length === 0 ? (
+              <p className="text-sm italic" style={{ color: '#1a1a1a', opacity: 0.6 }}>No priorities set</p>
+            ) : (
+              <div className="space-y-6">
+                {['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((prio) => {
+                  const items = collateralByPriority[prio] || [];
+                  if (items.length === 0) return null;
+                  const cfg = prioConfig[prio];
+                  const isHighPriority = prio === 'CRITICAL' || prio === 'HIGH';
+                  return (
+                    <motion.div
+                      key={prio}
+                      whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
+                      className="rounded-xl overflow-hidden transition-all duration-300"
+                      style={{
+                        border: `1px solid ${cfg.border}`,
+                        ...(isHighPriority ? { boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)' } : {}),
+                      }}
                     >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: cfg.color }}
-                        />
-                        <span className="text-sm font-bold" style={{ color: cfg.color }}>
-                          {prio}
-                        </span>
-                        <span className="text-xs text-gray-400 hidden sm:inline">{cfg.label}</span>
-                      </div>
-                      <span className="text-xs font-medium text-gray-400">
-                        {items.length} item{items.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <div className="bg-white px-5 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        {items.map((type) => (
+                      <div
+                        className="flex items-center justify-between px-5 py-3"
+                        style={{ backgroundColor: cfg.bg }}
+                      >
+                        <div className="flex items-center gap-3">
                           <span
-                            key={type}
-                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-50 text-gray-700 border border-gray-100"
-                          >
-                            {type}
+                            className="w-2.5 h-2.5 rounded-full"
+                            style={{ backgroundColor: cfg.color }}
+                          />
+                          <span className="text-sm font-bold" style={{ color: cfg.color }}>
+                            {prio}
                           </span>
-                        ))}
+                          <span className="text-xs hidden sm:inline" style={{ color: '#1a1a1a', opacity: 0.6 }}>{cfg.label}</span>
+                        </div>
+                        <span className="text-xs font-medium" style={{ color: '#1a1a1a', opacity: 0.6 }}>
+                          {items.length} item{items.length !== 1 ? 's' : ''}
+                        </span>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      <div className="bg-white px-5 py-3">
+                        <div className="flex flex-wrap gap-2">
+                          {items.map((type) => (
+                            <span
+                              key={type}
+                              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-50 border border-gray-100"
+                              style={{ color: '#1a1a1a', opacity: 0.7 }}
+                            >
+                              {type}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </motion.section>
 
@@ -774,14 +872,37 @@ export default function Stage9_FinalReview() {
       {/* ================================================================ */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.65 }}
-        className="no-print"
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.1 }}
+        className="no-print relative overflow-hidden"
         style={{
           background: `linear-gradient(160deg, ${primaryHex} 0%, ${primaryHex}dd 50%, ${secondaryHex}cc 100%)`,
         }}
       >
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-20">
+        {/* Decorative SVG pattern on export section */}
+        <svg
+          style={{ position: 'absolute', bottom: 10, right: 10, width: 200, height: 200, opacity: 0.04, pointerEvents: 'none' }}
+          viewBox="0 0 200 200"
+          fill="none"
+        >
+          {Array.from({ length: 10 }).map((_, row) =>
+            Array.from({ length: 10 }).map((_, col) => (
+              <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r={2} fill="#ffffff" />
+            ))
+          )}
+        </svg>
+        <svg
+          style={{ position: 'absolute', top: 10, left: 10, width: 160, height: 160, opacity: 0.03, pointerEvents: 'none' }}
+          viewBox="0 0 160 160"
+          fill="none"
+        >
+          {Array.from({ length: 8 }).map((_, i) => (
+            <line key={i} x1={0} y1={i * 20 + 10} x2={160} y2={i * 20 + 10} stroke="#ffffff" strokeWidth={1} />
+          ))}
+        </svg>
+
+        <div className="max-w-5xl mx-auto px-6 py-16 md:py-20 relative z-10">
           <div className="max-w-2xl mx-auto text-center">
             <h2
               className="text-2xl md:text-3xl font-bold mb-3"
@@ -791,14 +912,14 @@ export default function Stage9_FinalReview() {
             </h2>
             <p
               className="text-sm mb-10 leading-relaxed"
-              style={{ color: `${textOnColor(primaryHex)}80` }}
+              style={{ color: textOnColor(primaryHex), opacity: 0.6 }}
             >
               Download a ready-to-share brand guide, or export the raw data for your design team.
             </p>
 
             {/* Primary CTA */}
             <motion.button
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -2, scale: 1.02, boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1), 0 25px 50px rgba(0,0,0,0.25)' }}
               whileTap={{ scale: 0.98 }}
               onClick={() => generatePDF(state, brandCore, colors)}
               className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-base font-semibold shadow-xl transition-shadow hover:shadow-2xl mb-8"
@@ -816,7 +937,7 @@ export default function Stage9_FinalReview() {
               <button
                 onClick={() => window.print()}
                 className="text-sm font-medium underline underline-offset-2 decoration-1 transition-opacity hover:opacity-100"
-                style={{ color: `${textOnColor(primaryHex)}80`, textDecorationColor: `${textOnColor(primaryHex)}40` }}
+                style={{ color: textOnColor(primaryHex), opacity: 0.6, textDecorationColor: `${textOnColor(primaryHex)}40` }}
               >
                 Print this page
               </button>
@@ -826,7 +947,7 @@ export default function Stage9_FinalReview() {
               <button
                 onClick={handleDownloadJSON}
                 className="text-sm font-medium underline underline-offset-2 decoration-1 transition-opacity hover:opacity-100"
-                style={{ color: `${textOnColor(primaryHex)}80`, textDecorationColor: `${textOnColor(primaryHex)}40` }}
+                style={{ color: textOnColor(primaryHex), opacity: 0.6, textDecorationColor: `${textOnColor(primaryHex)}40` }}
               >
                 Export as JSON
               </button>
@@ -836,7 +957,7 @@ export default function Stage9_FinalReview() {
               <button
                 onClick={handleReset}
                 className="text-sm font-medium underline underline-offset-2 decoration-1 transition-opacity hover:opacity-100"
-                style={{ color: `${textOnColor(primaryHex)}60`, textDecorationColor: `${textOnColor(primaryHex)}30` }}
+                style={{ color: textOnColor(primaryHex), opacity: 0.5, textDecorationColor: `${textOnColor(primaryHex)}30` }}
               >
                 Start over
               </button>

@@ -6,6 +6,29 @@ import StageContainer from '../StageContainer';
 
 const BRAND_KEYS = ['commander', 'patriot', 'reformer', 'community', 'executive'];
 
+/* ── Decorative SVG dot pattern ── */
+function DecorativeDots({ style }) {
+  return (
+    <svg
+      width="200" height="200"
+      style={{ position: 'absolute', pointerEvents: 'none', opacity: 0.04, ...style }}
+    >
+      {Array.from({ length: 10 }).map((_, row) =>
+        Array.from({ length: 10 }).map((_, col) => (
+          <circle key={`${row}-${col}`} cx={col * 20 + 10} cy={row * 20 + 10} r={2} fill="#1C2E5B" />
+        ))
+      )}
+    </svg>
+  );
+}
+
+/* ── Gradient heading style helper ── */
+const gradientHeadingStyle = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
 function CommanderSVG({ active }) {
   return (
     <svg viewBox="0 0 120 120" fill="none" className="w-full h-full">
@@ -131,169 +154,188 @@ export default function Stage3_BrandCore() {
       title="Choose Your Brand Core"
       subtitle="This is the defining moment. Select the brand archetype that best represents the candidate's identity and campaign."
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {BRAND_KEYS.map((key, index) => {
-          const brand = BRAND_CORES[key];
-          const SvgComponent = BRAND_SVGS[key];
-          const isSelected = selectedId === key;
-          const isHovered = hoveredId === key;
+      {/* Section container with rounded 40px corners and decorative bg */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
+      >
+        {/* Decorative SVG background patterns */}
+        <DecorativeDots style={{ top: -20, right: -20 }} />
+        <DecorativeDots style={{ bottom: -20, left: -20 }} />
 
-          return (
-            <motion.div
-              key={key}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              onMouseEnter={() => setHoveredId(key)}
-              onMouseLeave={() => setHoveredId(null)}
-              onClick={() => selectBrand(key)}
-              className="relative cursor-pointer group"
-            >
+        {/* Section heading with gradient */}
+        <h2 style={{ ...gradientHeadingStyle, fontSize: '1.75rem', fontWeight: 800, marginBottom: 24, display: 'inline-block' }}>
+          Select Your Archetype
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ position: 'relative', zIndex: 1 }}>
+          {BRAND_KEYS.map((key, index) => {
+            const brand = BRAND_CORES[key];
+            const SvgComponent = BRAND_SVGS[key];
+            const isSelected = selectedId === key;
+            const isHovered = hoveredId === key;
+
+            return (
               <motion.div
-                animate={{
-                  scale: isSelected ? 1.02 : 1,
-                  borderColor: isSelected ? brand.colors.secondary : isHovered ? brand.colors.primary : '#e5e7eb',
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                className="relative overflow-hidden rounded-2xl border-2 bg-white shadow-sm hover:shadow-xl transition-shadow"
-                style={
-                  isSelected
-                    ? {
-                        boxShadow: `0 20px 40px -12px ${brand.colors.primary}30, 0 0 0 2px ${brand.colors.secondary}`,
-                      }
-                    : {}
-                }
+                key={key}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                onMouseEnter={() => setHoveredId(key)}
+                onMouseLeave={() => setHoveredId(null)}
+                onClick={() => selectBrand(key)}
+                className="relative cursor-pointer group"
               >
-                {/* Colored top bar */}
                 <motion.div
                   animate={{
-                    height: isSelected ? 6 : 3,
-                    backgroundColor: isSelected ? brand.colors.secondary : isHovered ? brand.colors.primary : '#e5e7eb',
+                    scale: isSelected ? 1.02 : 1,
+                    borderColor: isSelected ? brand.colors.secondary : isHovered ? brand.colors.primary : '#e5e7eb',
                   }}
-                  className="w-full"
-                />
-
-                {/* SVG Illustration */}
-                <div className="px-8 pt-6 pb-2 flex justify-center">
-                  <div className="w-28 h-28">
-                    <SvgComponent active={isSelected || isHovered} />
-                  </div>
-                </div>
-
-                {/* Brand Name & Descriptor */}
-                <div className="px-8 pb-4 text-center">
-                  <motion.h3
+                  whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="relative overflow-hidden rounded-2xl border-2 bg-white shadow-sm transition-shadow"
+                  style={
+                    isSelected
+                      ? {
+                          boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)',
+                        }
+                      : {}
+                  }
+                >
+                  {/* Colored top bar */}
+                  <motion.div
                     animate={{
-                      color: isSelected ? brand.colors.primary : '#1f2937',
+                      height: isSelected ? 6 : 3,
+                      backgroundColor: isSelected ? brand.colors.secondary : isHovered ? brand.colors.primary : '#e5e7eb',
                     }}
-                    className="text-xl font-bold tracking-wide mb-1"
-                  >
-                    {brand.name}
-                  </motion.h3>
-                  <p className="text-sm font-medium text-gray-500">{brand.descriptor}</p>
-                </div>
+                    className="w-full"
+                  />
 
-                {/* Tagline always visible */}
-                <div className="px-8 pb-4 text-center">
-                  <p
-                    className="text-sm italic"
-                    style={{ color: isSelected ? brand.colors.secondary : '#9ca3af' }}
-                  >
-                    "{brand.tagline}"
-                  </p>
-                </div>
+                  {/* SVG Illustration */}
+                  <div className="px-8 pt-6 pb-2 flex justify-center">
+                    <div className="w-28 h-28">
+                      <SvgComponent active={isSelected || isHovered} />
+                    </div>
+                  </div>
 
-                {/* Expanded details on hover */}
-                <AnimatePresence>
-                  {(isHovered || isSelected) && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
+                  {/* Brand Name & Descriptor */}
+                  <div className="px-8 pb-4 text-center">
+                    <motion.h3
+                      animate={{
+                        color: isSelected ? brand.colors.primary : '#1f2937',
+                      }}
+                      className="text-xl font-bold tracking-wide mb-1"
                     >
-                      <div className="px-8 pb-6 space-y-3 border-t border-gray-100 pt-4 mx-4">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
-                            Positioning
-                          </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">{brand.positioning}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
-                            Emotional Feel
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {brand.emotionalFeel.split(', ').map((feel) => (
-                              <span
-                                key={feel}
-                                className="px-2.5 py-1 rounded-full text-xs font-semibold"
-                                style={{
-                                  backgroundColor: `${brand.colors.primary}15`,
-                                  color: brand.colors.primary,
-                                }}
-                              >
-                                {feel}
-                              </span>
-                            ))}
+                      {brand.name}
+                    </motion.h3>
+                    <p className="text-sm font-medium" style={{ opacity: 0.6 }}>{brand.descriptor}</p>
+                  </div>
+
+                  {/* Tagline always visible */}
+                  <div className="px-8 pb-4 text-center">
+                    <p
+                      className="text-sm italic"
+                      style={{ color: isSelected ? brand.colors.secondary : '#9ca3af', opacity: 0.7 }}
+                    >
+                      "{brand.tagline}"
+                    </p>
+                  </div>
+
+                  {/* Expanded details on hover */}
+                  <AnimatePresence>
+                    {(isHovered || isSelected) && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-8 pb-6 space-y-3 border-t border-gray-100 pt-4 mx-4">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ opacity: 0.7 }}>
+                              Positioning
+                            </p>
+                            <p className="text-sm leading-relaxed" style={{ opacity: 0.6 }}>{brand.positioning}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ opacity: 0.7 }}>
+                              Emotional Feel
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {brand.emotionalFeel.split(', ').map((feel) => (
+                                <span
+                                  key={feel}
+                                  className="px-2.5 py-1 rounded-full text-xs font-semibold"
+                                  style={{
+                                    backgroundColor: `${brand.colors.primary}15`,
+                                    color: brand.colors.primary,
+                                  }}
+                                >
+                                  {feel}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ opacity: 0.7 }}>
+                              Sample Tagline
+                            </p>
+                            <p
+                              className="text-sm font-bold italic"
+                              style={{ color: brand.colors.secondary }}
+                            >
+                              "{brand.voiceTone.headlineExamples[0]}"
+                            </p>
                           </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
-                            Sample Tagline
-                          </p>
-                          <p
-                            className="text-sm font-bold italic"
-                            style={{ color: brand.colors.secondary }}
-                          >
-                            "{brand.voiceTone.headlineExamples[0]}"
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                {/* Selection indicator */}
-                {isSelected && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: brand.colors.secondary }}
-                  >
-                    <svg
-                      className="w-4 h-4 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </motion.div>
-                )}
-
-                {/* Color bar at bottom when selected */}
-                <AnimatePresence>
+                  {/* Selection indicator */}
                   {isSelected && (
                     <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      exit={{ scaleX: 0 }}
-                      className="h-1.5 w-full origin-left"
-                      style={{
-                        background: `linear-gradient(to right, ${brand.colors.primary}, ${brand.colors.secondary}, ${brand.colors.accent === '#FFFFFF' ? brand.colors.primary : brand.colors.accent})`,
-                      }}
-                    />
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: brand.colors.secondary }}
+                    >
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </motion.div>
                   )}
-                </AnimatePresence>
+
+                  {/* Color bar at bottom when selected */}
+                  <AnimatePresence>
+                    {isSelected && (
+                      <motion.div
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        exit={{ scaleX: 0 }}
+                        className="h-1.5 w-full origin-left"
+                        style={{
+                          background: `linear-gradient(to right, ${brand.colors.primary}, ${brand.colors.secondary}, ${brand.colors.accent === '#FFFFFF' ? brand.colors.primary : brand.colors.accent})`,
+                        }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </motion.div>
 
       {/* Selected brand summary */}
       <AnimatePresence>
@@ -302,13 +344,30 @@ export default function Stage3_BrandCore() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="mt-10 p-8 rounded-2xl border-2"
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             style={{
-              borderColor: BRAND_CORES[selectedId].colors.primary,
+              borderRadius: 40,
+              background: 'white',
+              padding: 40,
+              marginBottom: 32,
+              position: 'relative',
+              overflow: 'hidden',
+              border: `2px solid ${BRAND_CORES[selectedId].colors.primary}`,
               backgroundColor: `${BRAND_CORES[selectedId].colors.primary}08`,
             }}
           >
-            <div className="flex items-start gap-6">
+            {/* Decorative line pattern */}
+            <svg
+              width="300" height="300"
+              style={{ position: 'absolute', top: -60, right: -60, pointerEvents: 'none', opacity: 0.03 }}
+            >
+              {Array.from({ length: 15 }).map((_, i) => (
+                <line key={i} x1={0} y1={i * 20} x2={300} y2={i * 20} stroke="#1C2E5B" strokeWidth={1} />
+              ))}
+            </svg>
+
+            <div className="flex items-start gap-6" style={{ position: 'relative', zIndex: 1 }}>
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                 style={{ backgroundColor: BRAND_CORES[selectedId].colors.primary }}
@@ -318,10 +377,10 @@ export default function Stage3_BrandCore() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                <h3 style={{ ...gradientHeadingStyle, fontSize: '1.125rem', fontWeight: 700, marginBottom: 4, display: 'inline-block' }}>
                   {BRAND_CORES[selectedId].name} Selected
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="leading-relaxed" style={{ opacity: 0.6 }}>
                   {BRAND_CORES[selectedId].philosophy}
                 </p>
                 <div className="flex gap-2 mt-4">
@@ -333,7 +392,7 @@ export default function Stage3_BrandCore() {
                           className="w-5 h-5 rounded-full border border-gray-200 shadow-sm"
                           style={{ backgroundColor: hex }}
                         />
-                        <span className="text-xs text-gray-500 capitalize">{key}</span>
+                        <span className="text-xs capitalize" style={{ opacity: 0.7 }}>{key}</span>
                       </div>
                     ))}
                 </div>

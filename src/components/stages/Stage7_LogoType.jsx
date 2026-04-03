@@ -6,6 +6,43 @@ import StageContainer from '../StageContainer';
 const accent = '#8B1A2B';
 const navy = '#1C2E5B';
 
+/* ── Gradient style for headings ── */
+const headingGradient = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
+/* ── Decorative SVG dot pattern ── */
+function DecorativeDots({ style }) {
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        opacity: 0.04,
+        pointerEvents: 'none',
+        ...style,
+      }}
+      width="200"
+      height="200"
+      viewBox="0 0 200 200"
+      fill="none"
+    >
+      {Array.from({ length: 10 }).map((_, row) =>
+        Array.from({ length: 10 }).map((_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={col * 20 + 10}
+            cy={row * 20 + 10}
+            r="2"
+            fill={navy}
+          />
+        ))
+      )}
+    </svg>
+  );
+}
+
 /* ── Keyframes ── */
 const keyframes = `
   @keyframes fadeSlideUp {
@@ -62,180 +99,205 @@ export default function Stage7_LogoType() {
     >
       <style>{keyframes}</style>
 
-      {/* ── Heading section ── */}
-      <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h2
-          style={{
-            fontFamily: 'Georgia, "Times New Roman", serif',
-            fontSize: 28,
-            fontWeight: 700,
-            color: navy,
-            margin: '0 0 8px',
-            letterSpacing: 1,
-          }}
-        >
-          Select Your Logo Type
-        </h2>
-        <p
-          style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: 15,
-            color: '#6B7280',
-            fontStyle: 'italic',
-            margin: 0,
-          }}
-        >
-          Each style communicates a different kind of authority and personality
-        </p>
-        {/* Decorative divider */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 16 }}>
-          <div style={{ width: 40, height: 1, background: accent, opacity: 0.3 }} />
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: accent, opacity: 0.5 }} />
-          <div style={{ width: 40, height: 1, background: accent, opacity: 0.3 }} />
-        </div>
-      </div>
-
-      {/* ── Logo type cards — single column, full-width image ── */}
-      <div
+      {/* ── Rounded section container with decorative background ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 28,
-          maxWidth: 900,
-          margin: '0 auto',
+          borderRadius: 40,
+          background: 'white',
+          padding: 40,
+          marginBottom: 32,
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        {LOGO_TYPES.map((logoType, index) => {
-          const isSelected = selected === logoType.id;
+        {/* Decorative SVG backgrounds */}
+        <DecorativeDots style={{ top: -20, right: -20 }} />
+        <DecorativeDots style={{ bottom: -20, left: -20 }} />
 
-          return (
-            <motion.div
-              key={logoType.id}
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.12, ease: [0.4, 0, 0.2, 1] }}
-              onClick={() => handleSelect(logoType.id)}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              style={{
-                position: 'relative',
-                background: isSelected ? '#FFF9FA' : '#FFFFFF',
-                border: `2px solid ${isSelected ? accent : '#E5E7EB'}`,
-                borderRadius: 16,
-                cursor: 'pointer',
-                boxShadow: isSelected
-                  ? `0 6px 24px rgba(139,26,43,0.18), 0 0 0 1px ${accent}`
-                  : '0 2px 8px rgba(0,0,0,0.06)',
-                transition: 'border-color 0.25s, box-shadow 0.25s, background 0.25s',
-                overflow: 'hidden',
-              }}
-            >
-              {/* Selected checkmark */}
-              {isSelected && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                  style={{
-                    position: 'absolute',
-                    top: 14,
-                    right: 14,
-                    width: 30,
-                    height: 30,
-                    borderRadius: '50%',
-                    background: accent,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 8px rgba(139,26,43,0.35)',
-                    zIndex: 2,
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M3 7.5L5.5 10L11 4"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </motion.div>
-              )}
+        {/* ── Heading section ── */}
+        <div style={{ textAlign: 'center', marginBottom: 40, position: 'relative', zIndex: 1 }}>
+          <h2
+            style={{
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontSize: 28,
+              fontWeight: 700,
+              margin: '0 0 8px',
+              letterSpacing: 1,
+              ...headingGradient,
+            }}
+          >
+            Select Your Logo Type
+          </h2>
+          <p
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 15,
+              color: navy,
+              opacity: 0.6,
+              fontStyle: 'italic',
+              margin: 0,
+            }}
+          >
+            Each style communicates a different kind of authority and personality
+          </p>
+          {/* Decorative divider */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 16 }}>
+            <div style={{ width: 40, height: 1, background: accent, opacity: 0.3 }} />
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: accent, opacity: 0.5 }} />
+            <div style={{ width: 40, height: 1, background: accent, opacity: 0.3 }} />
+          </div>
+        </div>
 
-              {/* Logo reference image */}
-              <div
+        {/* ── Logo type cards — single column, full-width image ── */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 28,
+            maxWidth: 900,
+            margin: '0 auto',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {LOGO_TYPES.map((logoType, index) => {
+            const isSelected = selected === logoType.id;
+
+            return (
+              <motion.div
+                key={logoType.id}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.12, ease: [0.4, 0, 0.2, 1] }}
+                onClick={() => handleSelect(logoType.id)}
+                whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+                whileTap={{ scale: 0.99 }}
                 style={{
-                  background: '#FFFFFF',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: 180,
+                  position: 'relative',
+                  background: isSelected ? '#FFF9FA' : '#FFFFFF',
+                  border: `2px solid ${isSelected ? accent : '#E5E7EB'}`,
+                  borderRadius: 16,
+                  cursor: 'pointer',
+                  boxShadow: isSelected
+                    ? '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)'
+                    : '0 2px 8px rgba(0,0,0,0.06)',
+                  transition: 'border-color 0.25s, box-shadow 0.25s, background 0.25s',
                   overflow: 'hidden',
-                  borderBottom: `1px solid ${isSelected ? 'rgba(139,26,43,0.12)' : '#F0F0F0'}`,
                 }}
               >
-                <img
-                  src={logoType.image}
-                  alt={`${logoType.name} logo examples`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              </div>
+                {/* Selected checkmark */}
+                {isSelected && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                    style={{
+                      position: 'absolute',
+                      top: 14,
+                      right: 14,
+                      width: 30,
+                      height: 30,
+                      borderRadius: '50%',
+                      background: accent,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 2px 8px rgba(139,26,43,0.35)',
+                      zIndex: 2,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path
+                        d="M3 7.5L5.5 10L11 4"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </motion.div>
+                )}
 
-              {/* Text content */}
-              <div style={{ padding: '18px 24px 20px' }}>
-                <h3
+                {/* Logo reference image */}
+                <div
                   style={{
-                    fontFamily: 'Georgia, "Times New Roman", serif',
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: isSelected ? accent : navy,
-                    margin: '0 0 6px',
-                    transition: 'color 0.25s',
+                    background: '#FFFFFF',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: 180,
+                    overflow: 'hidden',
+                    borderBottom: `1px solid ${isSelected ? 'rgba(139,26,43,0.12)' : '#F0F0F0'}`,
                   }}
                 >
-                  {logoType.name}
-                </h3>
+                  <img
+                    src={logoType.image}
+                    alt={`${logoType.name} logo examples`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                    }}
+                  />
+                </div>
 
-                <p
-                  style={{
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                    fontSize: 14,
-                    lineHeight: 1.55,
-                    color: '#6B7280',
-                    margin: 0,
-                  }}
-                >
-                  {logoType.description}
-                </p>
-              </div>
+                {/* Text content */}
+                <div style={{ padding: '18px 24px 20px' }}>
+                  <h3
+                    style={{
+                      fontFamily: 'Georgia, "Times New Roman", serif',
+                      fontSize: 20,
+                      fontWeight: 700,
+                      color: isSelected ? accent : navy,
+                      margin: '0 0 6px',
+                      transition: 'color 0.25s',
+                    }}
+                  >
+                    {logoType.name}
+                  </h3>
 
-              {/* Bottom accent bar when selected */}
-              {isSelected && (
-                <motion.div
-                  layoutId="selectedBar"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: 3,
-                    background: accent,
-                    borderRadius: '0 0 14px 14px',
-                  }}
-                />
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
+                  <p
+                    style={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      fontSize: 14,
+                      lineHeight: 1.55,
+                      color: navy,
+                      opacity: 0.6,
+                      margin: 0,
+                    }}
+                  >
+                    {logoType.description}
+                  </p>
+                </div>
+
+                {/* Bottom accent bar when selected */}
+                {isSelected && (
+                  <motion.div
+                    layoutId="selectedBar"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 3,
+                      background: accent,
+                      borderRadius: '0 0 14px 14px',
+                    }}
+                  />
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
 
       {/* Hover style for image zoom */}
       <style>{`

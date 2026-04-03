@@ -87,21 +87,62 @@ const PRIORITY_CONFIG = {
   },
 };
 
+/* Decorative dot pattern SVG background */
+const DotPattern = () => (
+  <svg
+    style={{ position: 'absolute', top: 0, right: 0, width: 200, height: 200, opacity: 0.04, pointerEvents: 'none' }}
+    viewBox="0 0 200 200"
+    fill="none"
+  >
+    {Array.from({ length: 10 }).map((_, row) =>
+      Array.from({ length: 10 }).map((_, col) => (
+        <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r={2} fill="#1C2E5B" />
+      ))
+    )}
+  </svg>
+);
+
+/* Decorative line pattern SVG background */
+const LinePattern = () => (
+  <svg
+    style={{ position: 'absolute', bottom: 0, left: 0, width: 160, height: 160, opacity: 0.03, pointerEvents: 'none' }}
+    viewBox="0 0 160 160"
+    fill="none"
+  >
+    {Array.from({ length: 8 }).map((_, i) => (
+      <line key={i} x1={0} y1={i * 20 + 10} x2={160} y2={i * 20 + 10} stroke="#8B1A2B" strokeWidth={1} />
+    ))}
+  </svg>
+);
+
+const gradientHeadingStyle = {
+  background: 'linear-gradient(135deg, #1C2E5B, #8B1A2B)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
+const selectedGlowStyle = {
+  boxShadow: '0 0 20px rgba(139,26,43,0.3), 0 0 40px rgba(139,26,43,0.1)',
+};
+
 function CollateralCard({ item, priority, onChange, index, brandNote }) {
   const config = PRIORITY_CONFIG[priority || 'LOW'];
+  const isHighPriority = priority === 'CRITICAL' || priority === 'HIGH';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04, duration: 0.4 }}
+      whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
       className={`relative flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all duration-300 text-center ${config.bg} ${config.border} ${config.glow} ${config.ring}`}
+      style={isHighPriority ? selectedGlowStyle : {}}
     >
       <div className={`flex items-center justify-center w-12 h-12 rounded-xl transition-colors ${config.iconBg}`}>
         {item.icon}
       </div>
 
-      <p className="text-sm font-semibold text-gray-800 leading-tight">{item.type}</p>
+      <p className="text-sm font-semibold leading-tight" style={{ color: '#1a1a1a', opacity: 0.85 }}>{item.type}</p>
 
       <select
         value={priority || 'LOW'}
@@ -115,7 +156,7 @@ function CollateralCard({ item, priority, onChange, index, brandNote }) {
       </select>
 
       {brandNote && (
-        <p className="text-[10px] text-gray-400 leading-snug mt-1 line-clamp-2">{brandNote}</p>
+        <p className="text-[10px] leading-snug mt-1 line-clamp-2" style={{ color: '#1a1a1a', opacity: 0.6 }}>{brandNote}</p>
       )}
     </motion.div>
   );
@@ -186,68 +227,115 @@ export default function Stage8_CollateralPriority() {
       subtitle="Set production priorities for your campaign materials. Use the dropdown on each card to select the priority level."
       stageNumber={7}
     >
-      {/* Priority legend */}
+      {/* Priority legend - rounded 40px container */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center gap-4 mb-8 p-4 rounded-xl bg-white border border-gray-100"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
       >
-        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Priority Levels:</span>
-        {PRIORITIES.map((p) => (
-          <div key={p} className="flex items-center gap-2">
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${PRIORITY_CONFIG[p].badge}`}>
-              {p}
-            </span>
-            <span className="text-xs text-gray-400 font-mono">{stats[p] || 0}</span>
-          </div>
-        ))}
-        <span className="text-[10px] text-gray-300 ml-auto hidden sm:block">Use dropdowns to set priority</span>
+        <DotPattern />
+
+        <h3 style={{ ...gradientHeadingStyle, fontSize: '1.25rem', fontWeight: 700, marginBottom: 16, display: 'inline-block' }}>
+          Priority Levels
+        </h3>
+
+        <div className="flex flex-wrap items-center gap-4 mb-2">
+          {PRIORITIES.map((p) => (
+            <div key={p} className="flex items-center gap-2">
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${PRIORITY_CONFIG[p].badge}`}>
+                {p}
+              </span>
+              <span className="text-xs font-mono" style={{ color: '#1a1a1a', opacity: 0.6 }}>{stats[p] || 0}</span>
+            </div>
+          ))}
+          <span className="text-[10px] ml-auto hidden sm:block" style={{ color: '#1a1a1a', opacity: 0.6 }}>Use dropdowns to set priority</span>
+        </div>
       </motion.div>
 
-      {/* Brand recommendation banner */}
+      {/* Brand recommendation banner - rounded 40px container */}
       {brandCore && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4 flex items-start gap-3"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
         >
-          <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
-            <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-indigo-900">
-              {brandCore.name} Brand Recommendations Applied
-            </p>
-            <p className="text-xs text-indigo-600/70 mt-0.5">
-              Priorities have been pre-populated based on your brand core. Adjust as needed for your specific campaign.
-            </p>
+          <LinePattern />
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-indigo-900">
+                {brandCore.name} Brand Recommendations Applied
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: '#4338ca', opacity: 0.6 }}>
+                Priorities have been pre-populated based on your brand core. Adjust as needed for your specific campaign.
+              </p>
+            </div>
           </div>
         </motion.div>
       )}
 
-      {/* Card grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {COLLATERAL_TYPES.map((item, i) => (
-          <CollateralCard
-            key={item.type}
-            item={item}
-            priority={getPriority(item.type)}
-            onChange={(value) => handleChange(item.type, value)}
-            index={i}
-            brandNote={getNote(item.type)}
-          />
-        ))}
-      </div>
-
-      {/* Summary bar */}
+      {/* Card grid - rounded 40px container */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="mt-10 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.15, duration: 0.5 }}
+        style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300 mb-4">Priority Summary</p>
+        <DotPattern />
+        <LinePattern />
+
+        <h3 style={{ ...gradientHeadingStyle, fontSize: '1.25rem', fontWeight: 700, marginBottom: 24, display: 'inline-block' }}>
+          Campaign Materials
+        </h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {COLLATERAL_TYPES.map((item, i) => (
+            <CollateralCard
+              key={item.type}
+              item={item}
+              priority={getPriority(item.type)}
+              onChange={(value) => handleChange(item.type, value)}
+              index={i}
+              brandNote={getNote(item.type)}
+            />
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Summary bar - rounded 40px container */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800"
+        style={{ borderRadius: 40, padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
+      >
+        {/* Decorative dot pattern for dark section */}
+        <svg
+          style={{ position: 'absolute', top: 0, right: 0, width: 200, height: 200, opacity: 0.05, pointerEvents: 'none' }}
+          viewBox="0 0 200 200"
+          fill="none"
+        >
+          {Array.from({ length: 10 }).map((_, row) =>
+            Array.from({ length: 10 }).map((_, col) => (
+              <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r={2} fill="#ffffff" />
+            ))
+          )}
+        </svg>
+
+        <h3
+          style={{ fontSize: '0.625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#818cf8', marginBottom: 16 }}
+        >
+          Priority Summary
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {PRIORITIES.map((p) => {
             const items = COLLATERAL_TYPES.filter((ct) => getPriority(ct.type) === p);
@@ -257,14 +345,14 @@ export default function Stage8_CollateralPriority() {
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${PRIORITY_CONFIG[p].badge}`}>
                     {p}
                   </span>
-                  <span className="text-white/40 text-xs font-mono">{items.length}</span>
+                  <span className="text-xs font-mono" style={{ color: '#ffffff', opacity: 0.4 }}>{items.length}</span>
                 </div>
                 <div className="space-y-1">
                   {items.map((ct) => (
-                    <p key={ct.type} className="text-xs text-white/60 truncate">{ct.type}</p>
+                    <p key={ct.type} className="text-xs truncate" style={{ color: '#ffffff', opacity: 0.6 }}>{ct.type}</p>
                   ))}
                   {items.length === 0 && (
-                    <p className="text-xs text-white/20 italic">None</p>
+                    <p className="text-xs italic" style={{ color: '#ffffff', opacity: 0.2 }}>None</p>
                   )}
                 </div>
               </div>

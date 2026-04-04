@@ -170,21 +170,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
                 </svg>
               </div>
 
-              <div className="flex items-center justify-between pt-6 px-0 no-print">
-                {!isFirst ? (
-                  <button
-                    onClick={prevStage}
-                    className="flex items-center gap-2 px-6 py-3 font-medium rounded-lg transition-colors"
-                    style={{
-                      color: '#1C2E5B',
-                      border: '2px solid #1C2E5B',
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                    Back
-                  </button>
-                ) : <div />}
+              <div className="flex items-center justify-end pt-6 px-0 no-print">
                 <button
                   onClick={handleContinue}
                   className="flex items-center justify-center gap-2 py-4 px-8 text-white rounded-xl font-bold uppercase tracking-wide transition-colors w-full sm:w-auto"

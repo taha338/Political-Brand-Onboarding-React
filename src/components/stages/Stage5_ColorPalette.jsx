@@ -93,75 +93,90 @@ function isLightColor(hex) {
 
 /* ── Palette Card Component ── */
 function PaletteCard({ name, colors, isActive, onClick, badge, description, index, fullWidth }) {
+  // The 4 "hero" colors shown in the thick band
+  const bandColors = [colors.primary, colors.secondary, colors.accent, colors.highlight || colors.secondary];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.4 }}
       onClick={onClick}
-      whileHover={!isActive ? { y: -1, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' } : {}}
+      whileHover={!isActive ? { y: -2, boxShadow: '0 6px 18px rgba(0,0,0,0.10)' } : {}}
       style={{
         position: 'relative',
         cursor: 'pointer',
-        padding: fullWidth ? '18px 20px' : '14px 16px',
+        overflow: 'hidden',
         background: isActive ? '#FDF2F2' : '#FFFFFF',
         border: isActive ? '2px solid #8B1A2B' : '1px solid #E5E7EB',
-        borderRadius: fullWidth ? 12 : 8,
+        borderRadius: fullWidth ? 12 : 10,
         boxShadow: isActive
           ? '0 0 0 3px rgba(139,26,43,0.12)'
-          : fullWidth ? '0 2px 8px rgba(0,0,0,0.07)' : '0 1px 3px rgba(0,0,0,0.06)',
-        transition: 'background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease',
-        display: fullWidth ? 'flex' : 'block',
-        alignItems: fullWidth ? 'center' : undefined,
-        gap: fullWidth ? 20 : undefined,
+          : fullWidth ? '0 2px 8px rgba(0,0,0,0.07)' : '0 1px 4px rgba(0,0,0,0.06)',
+        transition: 'background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease',
       }}
     >
-      {/* Left: name + badge + description */}
-      <div style={{ flex: fullWidth ? '0 0 auto' : undefined, minWidth: fullWidth ? 200 : undefined }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-          {isActive && (
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: 16, height: 16, borderRadius: '50%', backgroundColor: '#8B1A2B',
-              fontSize: 10, color: '#FFFFFF', fontWeight: 700, flexShrink: 0, lineHeight: 1,
-            }}>{'\u2713'}</span>
-          )}
-          {badge && (
-            <span style={{
-              fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em',
-              padding: '2px 7px', borderRadius: 4,
-              backgroundColor: colors.primary,
-              color: isLightColor(colors.primary) ? colors.text : '#FFFFFF',
-            }}>
-              {badge}
-            </span>
-          )}
-          <h3 style={{ fontSize: fullWidth ? 17 : 15, fontWeight: 700, color: '#1C2E5B', margin: 0, flex: 1 }}>
-            {name}
-          </h3>
-        </div>
-        {description && (
-          <p style={{ fontSize: 10, color: '#6B7280', margin: 0, lineHeight: 1.4, maxWidth: fullWidth ? 260 : undefined }}>{description}</p>
-        )}
+      {/* Thick color band at top — the key visual differentiator */}
+      <div style={{ display: 'flex', height: fullWidth ? 10 : 8 }}>
+        {bandColors.map((c, i) => (
+          <div key={i} style={{ flex: 1, backgroundColor: c }} />
+        ))}
       </div>
 
-      {/* Color swatches */}
-      <div style={{ display: 'flex', gap: fullWidth ? 8 : 6, flex: fullWidth ? 1 : undefined, marginTop: fullWidth ? 0 : 8 }}>
-        {COLOR_ROLES.map(({ key, label }) => {
-          const color = colors[key] || colors.secondary;
-          return (
-            <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0, flex: 1 }}>
-              <div style={{
-                width: fullWidth ? 44 : 36,
-                height: fullWidth ? 44 : 36,
-                borderRadius: 6,
-                backgroundColor: color,
-                boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none',
-              }} />
-              <span style={{ fontSize: 9, fontWeight: 600, marginTop: 3, color: '#374151', textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
-            </div>
-          );
-        })}
+      {/* Card body */}
+      <div style={{
+        padding: fullWidth ? '14px 20px' : '12px 14px',
+        display: fullWidth ? 'flex' : 'block',
+        alignItems: fullWidth ? 'center' : undefined,
+        gap: fullWidth ? 24 : undefined,
+      }}>
+        {/* Name + badge + description */}
+        <div style={{ flex: fullWidth ? '0 0 auto' : undefined, minWidth: fullWidth ? 200 : undefined }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: description ? 4 : 0 }}>
+            {isActive && (
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: 16, height: 16, borderRadius: '50%', backgroundColor: '#8B1A2B',
+                fontSize: 10, color: '#FFFFFF', fontWeight: 700, flexShrink: 0, lineHeight: 1,
+              }}>{'\u2713'}</span>
+            )}
+            {badge && (
+              <span style={{
+                fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em',
+                padding: '2px 7px', borderRadius: 4,
+                backgroundColor: colors.primary,
+                color: isLightColor(colors.primary) ? colors.text : '#FFFFFF',
+              }}>
+                {badge}
+              </span>
+            )}
+            <h3 style={{ fontSize: fullWidth ? 17 : 14, fontWeight: 700, color: '#1C2E5B', margin: 0, flex: 1 }}>
+              {name}
+            </h3>
+          </div>
+          {description && (
+            <p style={{ fontSize: 10, color: '#6B7280', margin: 0, lineHeight: 1.4, maxWidth: fullWidth ? 260 : undefined }}>{description}</p>
+          )}
+        </div>
+
+        {/* Color swatches row */}
+        <div style={{ display: 'flex', gap: fullWidth ? 10 : 8, flex: fullWidth ? 1 : undefined, marginTop: fullWidth ? 0 : 10 }}>
+          {COLOR_ROLES.map(({ key, label }) => {
+            const color = colors[key] || colors.secondary;
+            return (
+              <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0, flex: 1 }}>
+                <div style={{
+                  width: '100%',
+                  height: fullWidth ? 40 : 32,
+                  borderRadius: 6,
+                  backgroundColor: color,
+                  boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.12)' : 'none',
+                }} />
+                <span style={{ fontSize: 8, fontWeight: 600, marginTop: 3, color: '#6B7280', textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </motion.div>
   );

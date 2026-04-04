@@ -17,11 +17,17 @@ import Stage10 from './components/stages/Stage9_FinalReview';
 
 const stages = [Stage1, Stage2, Stage3, Stage4, Stage5, Stage6, Stage7, Stage8, Stage9, Stage10];
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
 const stageVariants = {
-  initial: { opacity: 0, x: 60 },
+  initial: { opacity: 0, x: isMobile ? 20 : 60 },
   animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -60 },
+  exit: { opacity: 0, x: isMobile ? -20 : -60 },
 };
+
+const transitionConfig = isMobile
+  ? { duration: 0.2, ease: 'easeOut' }
+  : { duration: 0.4, ease: [0.22, 1, 0.36, 1] };
 
 function AppContent() {
   const { state } = useBrand();
@@ -61,7 +67,7 @@ function AppContent() {
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={transitionConfig}
         >
           <StageComponent />
         </motion.div>

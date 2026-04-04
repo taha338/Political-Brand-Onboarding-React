@@ -78,9 +78,10 @@ function ConfettiCanvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
+    if (isMobile) return; // skip canvas entirely on mobile
+    const ctx = canvas.getContext('2d');
+    const count = PARTICLE_COUNT_DESKTOP;
 
     const resize = () => {
       canvas.width = canvas.offsetWidth;

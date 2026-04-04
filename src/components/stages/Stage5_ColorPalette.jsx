@@ -92,7 +92,7 @@ function isLightColor(hex) {
 }
 
 /* ── Palette Card Component ── */
-function PaletteCard({ name, colors, isActive, onClick, badge, description, index }) {
+function PaletteCard({ name, colors, isActive, onClick, badge, description, index, fullWidth }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -103,69 +103,66 @@ function PaletteCard({ name, colors, isActive, onClick, badge, description, inde
       style={{
         position: 'relative',
         cursor: 'pointer',
-        padding: '14px 16px',
+        padding: fullWidth ? '18px 20px' : '14px 16px',
         background: isActive ? '#FDF2F2' : '#FFFFFF',
         border: isActive ? '2px solid #8B1A2B' : '1px solid #E5E7EB',
-        borderRadius: 8,
-        boxShadow: isActive ? '0 0 0 3px rgba(139,26,43,0.12)' : '0 1px 3px rgba(0,0,0,0.06)',
+        borderRadius: fullWidth ? 12 : 8,
+        boxShadow: isActive
+          ? '0 0 0 3px rgba(139,26,43,0.12)'
+          : fullWidth ? '0 2px 8px rgba(0,0,0,0.07)' : '0 1px 3px rgba(0,0,0,0.06)',
         transition: 'background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease',
+        display: fullWidth ? 'flex' : 'block',
+        alignItems: fullWidth ? 'center' : undefined,
+        gap: fullWidth ? 20 : undefined,
       }}
     >
-      {/* Header row: name + badges */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-        {isActive && (
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 16, height: 16, borderRadius: '50%', backgroundColor: '#8B1A2B',
-            fontSize: 10, color: '#FFFFFF', fontWeight: 700, flexShrink: 0, lineHeight: 1,
-          }}>{'\u2713'}</span>
-        )}
-        {badge && (
-          <span
-            style={{
-              fontSize: 8,
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              padding: '1px 5px',
-              borderRadius: 3,
+      {/* Left: name + badge + description */}
+      <div style={{ flex: fullWidth ? '0 0 auto' : undefined, minWidth: fullWidth ? 200 : undefined }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+          {isActive && (
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 16, height: 16, borderRadius: '50%', backgroundColor: '#8B1A2B',
+              fontSize: 10, color: '#FFFFFF', fontWeight: 700, flexShrink: 0, lineHeight: 1,
+            }}>{'\u2713'}</span>
+          )}
+          {badge && (
+            <span style={{
+              fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em',
+              padding: '2px 7px', borderRadius: 4,
               backgroundColor: colors.primary,
               color: isLightColor(colors.primary) ? colors.text : '#FFFFFF',
-            }}
-          >
-            {badge}
-          </span>
+            }}>
+              {badge}
+            </span>
+          )}
+          <h3 style={{ fontSize: fullWidth ? 17 : 15, fontWeight: 700, color: '#1C2E5B', margin: 0, flex: 1 }}>
+            {name}
+          </h3>
+        </div>
+        {description && (
+          <p style={{ fontSize: 10, color: '#6B7280', margin: 0, lineHeight: 1.4, maxWidth: fullWidth ? 260 : undefined }}>{description}</p>
         )}
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1C2E5B', margin: 0, flex: 1 }}>
-          {name}
-        </h3>
       </div>
 
-      {description && (
-        <p style={{ fontSize: 10, color: '#6B7280', margin: 0, marginBottom: 6, lineHeight: 1.3 }}>{description}</p>
-      )}
-
-      {/* 6 color swatches in a horizontal row */}
-      <div style={{ display: 'flex', gap: 6 }}>
+      {/* Color swatches */}
+      <div style={{ display: 'flex', gap: fullWidth ? 8 : 6, flex: fullWidth ? 1 : undefined, marginTop: fullWidth ? 0 : 8 }}>
         {COLOR_ROLES.map(({ key, label }) => {
           const color = colors[key] || colors.secondary;
           return (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0, flex: 1 }}>
-              <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 6,
-                  backgroundColor: color,
-                  boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none',
-                }}
-              />
+              <div style={{
+                width: fullWidth ? 44 : 36,
+                height: fullWidth ? 44 : 36,
+                borderRadius: 6,
+                backgroundColor: color,
+                boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none',
+              }} />
               <span style={{ fontSize: 9, fontWeight: 600, marginTop: 3, color: '#374151', textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
             </div>
           );
         })}
       </div>
-
     </motion.div>
   );
 }
@@ -430,6 +427,195 @@ function CampaignWebsiteMockup({ colors, candidateName, candidateOffice, candida
   );
 }
 
+/* ── Phone Mockup for Mobile Preview ── */
+function CampaignPhoneMockup({ colors, candidateName, candidateOffice, candidateState }) {
+  const bgColor = colors.background;
+  const secColor = colors.secondary;
+  const priColor = colors.primary;
+  const accColor = colors.highlight || colors.accent;
+  const textColor = colors.text;
+
+  const name = candidateName || 'Jane Smith';
+  const office = candidateOffice || 'State Senate';
+  const usState = candidateState || 'Virginia';
+
+  const nameParts = name.split(' ');
+  const initials = nameParts.map(n => n[0]).join('').toUpperCase();
+  const firstName = nameParts[0] || 'Jane';
+  const lastName = nameParts[nameParts.length - 1] || 'Smith';
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {/* Phone frame */}
+      <div style={{
+        width: 220,
+        borderRadius: 32,
+        border: '8px solid #1A1A1A',
+        backgroundColor: '#1A1A1A',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.06)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}>
+        {/* Status bar / notch */}
+        <div style={{
+          backgroundColor: '#1A1A1A',
+          padding: '8px 16px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <span style={{ fontSize: 9, color: '#FFFFFF', fontWeight: 600 }}>9:41</span>
+          {/* Dynamic island pill */}
+          <div style={{ width: 60, height: 12, borderRadius: 8, backgroundColor: '#000000' }} />
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            <div style={{ width: 10, height: 7, borderRadius: 1, border: '1.5px solid #FFFFFF', position: 'relative' }}>
+              <div style={{ position: 'absolute', right: -3, top: '50%', transform: 'translateY(-50%)', width: 2, height: 4, backgroundColor: '#FFFFFF', borderRadius: 1 }} />
+              <div style={{ width: '70%', height: '100%', backgroundColor: '#FFFFFF', borderRadius: 0.5 }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Screen content */}
+        <div style={{ backgroundColor: bgColor, overflow: 'hidden' }}>
+
+          {/* Mobile nav bar */}
+          <div style={{ backgroundColor: secColor, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{
+                width: 22, height: 22, borderRadius: 4,
+                backgroundColor: priColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 9, fontWeight: 800,
+                color: isLightColor(priColor) ? textColor : '#FFFFFF',
+              }}>
+                {initials}
+              </div>
+              <span style={{ fontSize: 9, fontWeight: 700, color: '#FFFFFF', letterSpacing: '0.02em' }}>
+                {lastName.toUpperCase()}
+              </span>
+            </div>
+            {/* Hamburger icon */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, padding: 2 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{ width: 14, height: 1.5, backgroundColor: '#FFFFFF', borderRadius: 2, opacity: i === 1 ? 0.7 : 1 }} />
+              ))}
+            </div>
+          </div>
+
+          {/* Hero section */}
+          <div style={{ backgroundColor: bgColor, padding: '14px 12px 10px' }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: textColor, lineHeight: 1.2, marginBottom: 4 }}>
+              Fighting for<br />{usState}&apos;s Future
+            </div>
+            <div style={{ fontSize: 8, color: textColor, opacity: 0.6, marginBottom: 10, lineHeight: 1.4 }}>
+              Experienced leadership.<br />Proven results. Ready to serve.
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{
+                fontSize: 8, fontWeight: 700,
+                padding: '5px 10px', borderRadius: 4,
+                backgroundColor: accColor,
+                color: isLightColor(accColor) ? textColor : '#FFFFFF',
+              }}>
+                Join Us
+              </div>
+              <div style={{
+                fontSize: 8, fontWeight: 600,
+                padding: '5px 10px', borderRadius: 4,
+                backgroundColor: 'transparent',
+                color: textColor,
+                border: `1px solid ${textColor}`,
+                opacity: 0.6,
+              }}>
+                Learn More
+              </div>
+            </div>
+          </div>
+
+          {/* Issues section */}
+          <div style={{ backgroundColor: bgColor, padding: '8px 12px 10px' }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: textColor, marginBottom: 6, textAlign: 'center' }}>
+              Key Issues
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {[
+                { title: 'Economy', desc: 'Creating jobs and growing our economy.' },
+                { title: 'Education', desc: 'Investing in schools for our children.' },
+                { title: 'Healthcare', desc: 'Affordable care for every family.' },
+              ].map(issue => (
+                <div key={issue.title} style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 5,
+                  padding: '6px 8px',
+                  borderLeft: `3px solid ${secColor}`,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 7,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: textColor, marginBottom: 1 }}>{issue.title}</div>
+                    <div style={{ fontSize: 7, color: textColor, opacity: 0.55, lineHeight: 1.3 }}>{issue.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA strip */}
+          <div style={{ backgroundColor: secColor, padding: '10px 12px' }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#FFFFFF', marginBottom: 4 }}>
+              Support the Campaign
+            </div>
+            <div style={{ display: 'flex', gap: 0, borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{
+                flex: 1, backgroundColor: '#FFFFFF',
+                padding: '5px 8px', fontSize: 7, color: '#9CA3AF',
+              }}>
+                Your email
+              </div>
+              <div style={{
+                fontSize: 8, fontWeight: 700,
+                padding: '5px 9px',
+                backgroundColor: accColor,
+                color: isLightColor(accColor) ? textColor : '#FFFFFF',
+              }}>
+                Sign Up
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ backgroundColor: priColor, padding: '8px 12px' }}>
+            <div style={{ fontSize: 8, fontWeight: 700, color: '#FFFFFF', marginBottom: 2, opacity: 0.9 }}>
+              {firstName} for {office}
+            </div>
+            <div style={{ fontSize: 7, color: '#FFFFFF', opacity: 0.5, lineHeight: 1.4 }}>
+              Paid for by {name} for {office}<br />{usState} Campaign Committee
+            </div>
+          </div>
+
+        </div>
+
+        {/* Home indicator bar */}
+        <div style={{
+          backgroundColor: bgColor,
+          padding: '6px 0 4px',
+          display: 'flex',
+          justifyContent: 'center',
+        }}>
+          <div style={{ width: 60, height: 4, borderRadius: 2, backgroundColor: '#1A1A1A', opacity: 0.2 }} />
+        </div>
+      </div>
+
+      {/* URL hint below phone */}
+      <div style={{ marginTop: 8, fontSize: 9, color: '#9CA3AF', fontFamily: 'monospace' }}>
+        {lastName.toLowerCase()}for{office.toLowerCase().replace(/\s+/g, '')}.com
+      </div>
+    </div>
+  );
+}
+
 export default function Stage5_ColorPalette() {
   const { state, dispatch } = useBrand();
   const [activeTab, setActiveTab] = useState(state.colorMode || 'theme');
@@ -506,118 +692,99 @@ export default function Stage5_ColorPalette() {
         stageNumber={5}
       >
         {/* Live palette strip across the top */}
-        {showPreview && (
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.5 }}
-            style={{
-              height: 6, borderRadius: 999, overflow: 'hidden', display: 'flex',
-              marginBottom: 16, transformOrigin: 'left',
-            }}
-          >
-            {COLOR_ROLES.map(({ key }) => (
-              <div
-                key={key}
-                style={{ flex: 1, backgroundColor: activeColors[key], transition: 'background-color 0.4s ease' }}
-              />
-            ))}
-          </motion.div>
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            height: 12, borderRadius: 999, overflow: 'hidden', display: 'flex',
+            marginBottom: 24, transformOrigin: 'left',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
+          }}
+        >
+          {COLOR_ROLES.map(({ key }) => (
+            <div
+              key={key}
+              style={{ flex: 1, backgroundColor: showPreview ? activeColors[key] : (key === 'primary' ? '#1C2E5B' : key === 'secondary' ? '#C93545' : '#E5E7EB'), transition: 'background-color 0.4s ease' }}
+            />
+          ))}
+        </motion.div>
+
+        {/* 1. Recommended palette — full width banner */}
+        {themeColors && (
+          <div style={{ marginBottom: 16 }}>
+            <PaletteCard
+              name={`${coreData?.name} Palette`}
+              colors={themeColors}
+              isActive={activeTab === 'theme'}
+              onClick={handleRecommendedSelect}
+              badge="Recommended"
+              description={`Curated for the ${coreData?.emotionalFeel?.toLowerCase()} quality of your ${coreData?.name} brand core.`}
+              index={0}
+              fullWidth
+            />
+          </div>
         )}
 
-        {/* Layout: stacked on mobile, side-by-side on desktop */}
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 20, alignItems: 'flex-start' }}>
+        {/* 2. Other palettes — 2-col grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+          gap: 10,
+          marginBottom: 28,
+        }}>
+          {PRESET_PALETTES.map((preset, index) => {
+            const isActive = activeTab === 'custom' && selectedPreset === preset.id;
+            return (
+              <PaletteCard
+                key={preset.id}
+                name={preset.name}
+                colors={preset.colors}
+                isActive={isActive}
+                onClick={() => handlePresetSelect(preset.id)}
+                index={index + 1}
+              />
+            );
+          })}
+        </div>
 
-          {/* Palette selection cards */}
-          <div style={{ flex: (!isMobile && showPreview) ? '0 0 60%' : '1', minWidth: 0 }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-              gap: 10,
-              maxHeight: (!isMobile && showPreview) ? '70vh' : 'none',
-              overflowY: (!isMobile && showPreview) ? 'auto' : 'visible',
-              paddingRight: (!isMobile && showPreview) ? 6 : 0,
-            }}>
-              {/* Recommended palette card */}
-              {themeColors && (
-                <PaletteCard
-                  name={`${coreData?.name} Palette`}
-                  colors={themeColors}
-                  isActive={activeTab === 'theme'}
-                  onClick={handleRecommendedSelect}
-                  badge="Recommended"
-                  description={`Curated for the ${coreData?.emotionalFeel?.toLowerCase()} quality of your ${coreData?.name} brand core.`}
-                  index={0}
-                />
-              )}
-
-              {/* Preset palette cards */}
-              {PRESET_PALETTES.map((preset, index) => {
-                const isActive = activeTab === 'custom' && selectedPreset === preset.id;
-                return (
-                  <PaletteCard
-                    key={preset.id}
-                    name={preset.name}
-                    colors={preset.colors}
-                    isActive={isActive}
-                    onClick={() => handlePresetSelect(preset.id)}
-                    index={index + 1}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* RIGHT: Live website mockup preview */}
-          <AnimatePresence mode="wait">
-            {showPreview && (
-              <motion.div
-                key={activeTab + selectedPreset}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.4 }}
-                style={{
-                  flex: isMobile ? '1 1 100%' : '0 0 38%',
-                  minWidth: 0,
-                  position: isMobile ? 'static' : 'sticky',
-                  top: isMobile ? 'auto' : 120,
-                }}
-              >
-                <div style={{
-                  padding: 14,
-                  background: '#FFFFFF',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: 8,
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                }}>
-                  <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 0, marginBottom: 2 }}>
-                    60 / 30 / 10 Preview
-                  </p>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1C2E5B', margin: 0, marginBottom: 4 }}>
-                    {activePaletteName}
-                  </h3>
-
-                  <CampaignWebsiteMockup
-                    colors={activeColors}
-                    candidateName={candidateName}
-                    candidateOffice={candidateOffice}
-                    candidateState={candidateState}
-                  />
-
-                  {/* Color spec row */}
-                  <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {/* 3. Website preview — full width below */}
+        <AnimatePresence mode="wait">
+          {showPreview && (
+            <motion.div
+              key={activeTab + selectedPreset}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.35 }}
+            >
+              <div style={{
+                padding: 20,
+                background: '#FFFFFF',
+                border: '1px solid #E5E7EB',
+                borderRadius: 12,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div>
+                    <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', margin: 0, marginBottom: 2 }}>
+                      60 / 30 / 10 Preview
+                    </p>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1C2E5B', margin: 0 }}>
+                      {activePaletteName}
+                    </h3>
+                  </div>
+                  {/* Color spec chips */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end' }}>
                     {COLOR_ROLES.map(({ key, label }) => {
                       const color = activeColors[key];
                       return (
                         <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <div
-                            style={{
-                              width: 16, height: 16, borderRadius: 3,
-                              backgroundColor: color,
-                              boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.08)' : 'none',
-                            }}
-                          />
+                          <div style={{
+                            width: 14, height: 14, borderRadius: 3,
+                            backgroundColor: color,
+                            boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.08)' : 'none',
+                          }} />
                           <span style={{ fontSize: 9, fontWeight: 600, color: '#374151' }}>{label}</span>
                           <span style={{ fontSize: 8, fontFamily: 'monospace', color: '#9CA3AF' }}>{color}</span>
                         </div>
@@ -625,10 +792,28 @@ export default function Stage5_ColorPalette() {
                     })}
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+
+                {isMobile ? (
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <CampaignPhoneMockup
+                      colors={activeColors}
+                      candidateName={candidateName}
+                      candidateOffice={candidateOffice}
+                      candidateState={candidateState}
+                    />
+                  </div>
+                ) : (
+                  <CampaignWebsiteMockup
+                    colors={activeColors}
+                    candidateName={candidateName}
+                    candidateOffice={candidateOffice}
+                    candidateState={candidateState}
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </StageContainer>
     </>
   );

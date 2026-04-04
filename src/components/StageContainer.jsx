@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../context/BrandContext';
 
@@ -54,7 +56,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
   const [showConfetti, setShowConfetti] = useState(false);
 
   const handleContinue = useCallback(() => {
-    setShowConfetti(true);
+    if (!isMobile) setShowConfetti(true);
     nextStage();
   }, [nextStage]);
 
@@ -106,14 +108,14 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
       {/* Rounded container */}
       <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 md:py-12 relative z-10">
         <div
-          className="bg-white/70 backdrop-blur-sm px-4 sm:px-8 md:px-12 py-8 md:py-14"
+          className={`px-4 sm:px-8 md:px-12 py-8 md:py-14 ${isMobile ? 'bg-white' : 'bg-white/70 backdrop-blur-sm'}`}
           style={{ borderRadius: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
         >
           <div className="mb-8 md:mb-14">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: isMobile ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: isMobile ? 0 : 0.1 }}
               className="flex items-center gap-3 mb-4"
             >
               <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-navy-800 text-white text-sm font-bold">
@@ -122,9 +124,9 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
               <div className="h-px flex-1 bg-navy-200" />
             </motion.div>
             <motion.h1
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: isMobile ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: isMobile ? 0 : 0.2 }}
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
               style={{ fontFamily: "'Poppins', 'Inter', sans-serif", color: '#1C2E5B' }}
             >
@@ -132,9 +134,9 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
             </motion.h1>
             {subtitle && (
               <motion.p
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: isMobile ? 0 : 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: isMobile ? 0 : 0.3 }}
                 className="mt-2 text-sm sm:text-base md:text-lg max-w-2xl text-gray-900"
                 style={{ opacity: 0.6 }}
               >
@@ -146,7 +148,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: isMobile ? 0 : 0.2 }}
           >
             {children}
           </motion.div>

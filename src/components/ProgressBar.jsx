@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { STAGES } from '../data/brandData';
 import { useBrand } from '../context/BrandContext';
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
 const STAGE_NAMES = [
   'Candidate Basics',
   'Candidate Profile',
@@ -34,19 +36,21 @@ export default function ProgressBar() {
           className="h-full"
           initial={false}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: isMobile ? 0.2 : 0.8, ease: [0.4, 0, 0.2, 1] }}
           style={{ backgroundColor: barColor }}
         />
-        {/* Animated shimmer effect on the bar */}
-        <motion.div
-          className="absolute top-0 h-full"
-          style={{
-            width: '80px',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-          }}
-          animate={{ left: ['-80px', '100%'] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
-        />
+        {/* Animated shimmer effect on the bar — desktop only */}
+        {!isMobile && (
+          <motion.div
+            className="absolute top-0 h-full"
+            style={{
+              width: '80px',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+            }}
+            animate={{ left: ['-80px', '100%'] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+          />
+        )}
       </div>
 
       {/* Step info bar */}

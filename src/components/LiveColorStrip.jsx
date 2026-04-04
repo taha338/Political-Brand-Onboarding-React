@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../context/BrandContext';
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
 export default function LiveColorStrip() {
   const { state, getActiveColors } = useBrand();
   const hasColors = state.brandCore || (state.colorMode === 'custom' && state.customColors.primary);
@@ -24,35 +26,36 @@ export default function LiveColorStrip() {
         overflow: 'hidden',
       }}
     >
-      <AnimatePresence mode="popLayout">
-        {colorEntries.length > 0 ? (
-          colorEntries.map(([key, color]) => (
+      {isMobile ? (
+        colorEntries.length > 0
+          ? colorEntries.map(([key, color]) => (
+              <div key={key} style={{ flex: 1, backgroundColor: color }} />
+            ))
+          : <div style={{ flex: 1, background: 'linear-gradient(to right, #1C2E5B, #B22234)' }} />
+      ) : (
+        <AnimatePresence mode="popLayout">
+          {colorEntries.length > 0 ? (
+            colorEntries.map(([key, color]) => (
+              <motion.div
+                key={key}
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                exit={{ scaleX: 0, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                style={{ flex: 1, backgroundColor: color, transformOrigin: 'left' }}
+              />
+            ))
+          ) : (
             <motion.div
-              key={key}
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
-              exit={{ scaleX: 0, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              style={{
-                flex: 1,
-                backgroundColor: color,
-                transformOrigin: 'left',
-              }}
+              key="placeholder"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ flex: 1, background: 'linear-gradient(to right, #1C2E5B, #B22234)' }}
             />
-          ))
-        ) : (
-          <motion.div
-            key="placeholder"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              flex: 1,
-              background: 'linear-gradient(to right, #1C2E5B, #B22234)',
-            }}
-          />
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

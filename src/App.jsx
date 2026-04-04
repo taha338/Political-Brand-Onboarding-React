@@ -19,21 +19,12 @@ const stages = [Stage1, Stage2, Stage3, Stage4, Stage5, Stage6, Stage7, Stage8, 
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-const stageVariants = isMobile
-  ? {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      exit: { opacity: 0 },
-    }
-  : {
-      initial: { opacity: 0, x: 60 },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0, x: -60 },
-    };
-
-const transitionConfig = isMobile
-  ? { duration: 0.15, ease: 'easeOut' }
-  : { duration: 0.4, ease: [0.22, 1, 0.36, 1] };
+const desktopVariants = {
+  initial: { opacity: 0, x: 60 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -60 },
+};
+const desktopTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] };
 
 function AppContent() {
   const { state } = useBrand();
@@ -57,6 +48,15 @@ function AppContent() {
     return null;
   }, [state.currentStage, state.colorMode, state.customColors.background, state.brandCore]);
 
+  if (isMobile) {
+    return (
+      <div className="min-h-screen" style={{ backgroundColor: colorPaletteBg || '#F9FAFB' }}>
+        <ProgressBar />
+        <StageComponent key={state.currentStage} />
+      </div>
+    );
+  }
+
   return (
     <div
       className="min-h-screen"
@@ -69,11 +69,12 @@ function AppContent() {
       <AnimatePresence mode="wait">
         <motion.div
           key={state.currentStage}
-          variants={stageVariants}
+          variants={desktopVariants}
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={transitionConfig}
+          transition={desktopTransition}
+          style={{ willChange: 'opacity, transform' }}
         >
           <StageComponent />
         </motion.div>

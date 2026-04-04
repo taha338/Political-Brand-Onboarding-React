@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { BrandProvider, useBrand } from './context/BrandContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BRAND_CORES } from './data/brandData';
 import ProgressBar from './components/ProgressBar';
 import LiveColorStrip from './components/LiveColorStrip';
 import Stage1 from './components/stages/Stage1_CandidateBasics';
@@ -25,8 +27,32 @@ function AppContent() {
   const { state } = useBrand();
   const StageComponent = stages[state.currentStage];
 
+  // Determine if we're on the color palette stage (index 4) with a palette selected
+  const colorPaletteBg = useMemo(() => {
+    if (state.currentStage !== 4) return null;
+    // If custom palette selected
+    if (state.colorMode === 'custom' && state.customColors.background) {
+      return state.customColors.background;
+    }
+    // If theme palette (recommended) is active
+    if (state.colorMode === 'theme' && state.brandCore && BRAND_CORES[state.brandCore]) {
+      return BRAND_CORES[state.brandCore].colors.background;
+    }
+    // Default: if brandCore exists and no explicit mode yet, show theme colors
+    if (state.brandCore && BRAND_CORES[state.brandCore]) {
+      return BRAND_CORES[state.brandCore].colors.background;
+    }
+    return null;
+  }, [state.currentStage, state.colorMode, state.customColors.background, state.brandCore]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: colorPaletteBg || '#F9FAFB',
+        transition: 'background-color 0.5s ease',
+      }}
+    >
       <ProgressBar />
       <AnimatePresence mode="wait">
         <motion.div

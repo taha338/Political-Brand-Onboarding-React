@@ -1,39 +1,99 @@
-import { useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 
-/* ── Font Options ── */
+/* ── Expanded Font Options ── */
 const HEADING_FONT_OPTIONS = [
   { name: 'Playfair Display', category: 'Serif Display' },
   { name: 'Merriweather', category: 'Serif' },
+  { name: 'Lora', category: 'Serif' },
+  { name: 'Libre Baskerville', category: 'Serif' },
+  { name: 'EB Garamond', category: 'Serif' },
+  { name: 'Cormorant Garamond', category: 'Serif' },
+  { name: 'Crimson Text', category: 'Serif' },
+  { name: 'Bitter', category: 'Serif' },
+  { name: 'Vollkorn', category: 'Serif' },
+  { name: 'Spectral', category: 'Serif' },
+  { name: 'DM Serif Display', category: 'Serif Display' },
+  { name: 'Bodoni Moda', category: 'Serif Display' },
+  { name: 'Noto Serif', category: 'Serif' },
+  { name: 'PT Serif', category: 'Serif' },
+  { name: 'Josefin Slab', category: 'Slab Serif' },
+  { name: 'Cinzel', category: 'Serif Display' },
+  { name: 'Abril Fatface', category: 'Display' },
+  { name: 'Old Standard TT', category: 'Serif' },
+  { name: 'Cardo', category: 'Serif' },
+  { name: 'Alegreya', category: 'Serif' },
+  { name: 'Frank Ruhl Libre', category: 'Serif' },
   { name: 'Oswald', category: 'Sans-Serif Condensed' },
   { name: 'Montserrat', category: 'Sans-Serif' },
-  { name: 'Libre Baskerville', category: 'Serif' },
-  { name: 'Lora', category: 'Serif' },
-  { name: 'Raleway', category: 'Sans-Serif' },
   { name: 'Poppins', category: 'Sans-Serif' },
+  { name: 'Raleway', category: 'Sans-Serif' },
+  { name: 'Bebas Neue', category: 'Display' },
+  { name: 'Anton', category: 'Display' },
+  { name: 'Barlow Condensed', category: 'Sans-Serif Condensed' },
+  { name: 'Archivo Black', category: 'Display' },
 ];
 
 const BODY_FONT_OPTIONS = [
   { name: 'Open Sans', category: 'Sans-Serif' },
   { name: 'Lato', category: 'Sans-Serif' },
-  { name: 'Source Sans Pro', category: 'Sans-Serif' },
   { name: 'Roboto', category: 'Sans-Serif' },
+  { name: 'Source Sans Pro', category: 'Sans-Serif' },
   { name: 'Nunito', category: 'Sans-Serif' },
   { name: 'Inter', category: 'Sans-Serif' },
   { name: 'Work Sans', category: 'Sans-Serif' },
   { name: 'PT Sans', category: 'Sans-Serif' },
+  { name: 'Raleway', category: 'Sans-Serif' },
+  { name: 'Mukta', category: 'Sans-Serif' },
+  { name: 'Rubik', category: 'Sans-Serif' },
+  { name: 'Karla', category: 'Sans-Serif' },
+  { name: 'Cabin', category: 'Sans-Serif' },
+  { name: 'Nunito Sans', category: 'Sans-Serif' },
+  { name: 'Fira Sans', category: 'Sans-Serif' },
+  { name: 'DM Sans', category: 'Sans-Serif' },
+  { name: 'Manrope', category: 'Sans-Serif' },
+  { name: 'Plus Jakarta Sans', category: 'Sans-Serif' },
+  { name: 'Outfit', category: 'Sans-Serif' },
+  { name: 'Red Hat Display', category: 'Sans-Serif' },
+  { name: 'IBM Plex Sans', category: 'Sans-Serif' },
+  { name: 'Libre Franklin', category: 'Sans-Serif' },
+  { name: 'Barlow', category: 'Sans-Serif' },
+  { name: 'Noto Sans', category: 'Sans-Serif' },
+  { name: 'Ubuntu', category: 'Sans-Serif' },
+  { name: 'Quicksand', category: 'Sans-Serif' },
+  { name: 'Mulish', category: 'Sans-Serif' },
+  { name: 'Assistant', category: 'Sans-Serif' },
+  { name: 'Lexend', category: 'Sans-Serif' },
+  { name: 'Urbanist', category: 'Sans-Serif' },
 ];
 
-const ALL_SELECTION_FONTS = [
-  ...new Set([
-    ...HEADING_FONT_OPTIONS.map((f) => f.name),
-    ...BODY_FONT_OPTIONS.map((f) => f.name),
-  ]),
-];
+/* ── Dynamic Google Font Loader ── */
+const loadedFonts = new Set();
 
+function loadGoogleFont(fontName) {
+  if (!fontName || loadedFonts.has(fontName)) return;
+  loadedFonts.add(fontName);
+
+  const meta = FONT_LIBRARY[fontName];
+  const weights = meta?.weights?.join(';') || '400;700';
+  const family = `${fontName.replace(/\s/g, '+')}:wght@${weights}`;
+  const href = `https://fonts.googleapis.com/css2?family=${family}&display=swap`;
+
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  link.dataset.dynamicFont = fontName;
+  document.head.appendChild(link);
+}
+
+function loadMultipleFonts(fontNames) {
+  fontNames.filter(Boolean).forEach(loadGoogleFont);
+}
+
+/* ── Helpers ── */
 function luminance(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -45,6 +105,167 @@ function textOnColor(bgHex) {
   return luminance(bgHex) > 0.55 ? '#1a1a1a' : '#ffffff';
 }
 
+/* ── Custom Font Dropdown ── */
+function FontDropdown({ options, value, onChange, placeholder, fallbackStack }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = useRef(null);
+
+  // Load fonts for visible options when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      // Load all option fonts when dropdown opens (they're small individual requests)
+      const fontsToLoad = options.map(f => f.name);
+      loadMultipleFonts(fontsToLoad);
+    }
+  }, [isOpen, options]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+        setSearch('');
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
+
+  const filtered = useMemo(() => {
+    if (!search) return options;
+    const q = search.toLowerCase();
+    return options.filter(f => f.name.toLowerCase().includes(q) || f.category.toLowerCase().includes(q));
+  }, [search, options]);
+
+  const handleSelect = (fontName) => {
+    loadGoogleFont(fontName);
+    onChange(fontName);
+    setIsOpen(false);
+    setSearch('');
+  };
+
+  const selectedFont = options.find(f => f.name === value);
+
+  return (
+    <div ref={dropdownRef} style={{ position: 'relative' }}>
+      {/* Trigger button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-left focus:outline-none focus:ring-2 focus:ring-offset-1"
+        style={{
+          fontFamily: value ? `'${value}', ${fallbackStack}` : 'inherit',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <span style={{ color: value ? '#1C2E5B' : '#9CA3AF' }}>
+          {value || placeholder}
+        </span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+          <path d="M4 6L8 10L12 6" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      {/* Dropdown panel */}
+      {isOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            marginTop: 4,
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E5E7EB',
+            borderRadius: 8,
+            boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+            maxHeight: 320,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* Search input */}
+          <div style={{ padding: '8px 8px 4px' }}>
+            <input
+              type="text"
+              placeholder="Search fonts..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoFocus
+              className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            />
+          </div>
+          {/* Options list */}
+          <div style={{ overflowY: 'auto', flex: 1, padding: '4px 4px 8px' }}>
+            {filtered.length === 0 && (
+              <div style={{ padding: '12px 8px', fontSize: 13, color: '#9CA3AF', textAlign: 'center' }}>
+                No fonts found
+              </div>
+            )}
+            {filtered.map((font) => {
+              const isSelected = font.name === value;
+              return (
+                <button
+                  key={font.name}
+                  type="button"
+                  onClick={() => handleSelect(font.name)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    backgroundColor: isSelected ? '#EFF6FF' : 'transparent',
+                    transition: 'background-color 0.15s',
+                  }}
+                  onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
+                  onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div
+                      style={{
+                        fontFamily: `'${font.name}', ${fallbackStack}`,
+                        fontSize: 15,
+                        fontWeight: 600,
+                        color: '#1C2E5B',
+                        lineHeight: 1.3,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {font.name}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>
+                      {font.category}
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <span style={{ fontSize: 14, color: '#2563EB', flexShrink: 0, marginLeft: 8 }}>
+                      {'\u2713'}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Main Component ── */
 export default function Stage6_FontSelection() {
   const { state, dispatch } = useBrand();
   const coreData = state.brandCore ? BRAND_CORES[state.brandCore] : null;
@@ -73,43 +294,25 @@ export default function Stage6_FontSelection() {
   const office = state.candidate?.office || 'Senate';
   const officeLabel = office.charAt(0).toUpperCase() + office.slice(1).replace(/-/g, ' ');
 
-  /* Load Google Fonts via style tag with @import */
+  /* Load recommended fonts and any already-selected fonts on mount */
   useEffect(() => {
-    const id = 'font-selection-google-fonts';
-    const existing = document.getElementById(id);
-    if (existing) existing.remove();
+    loadMultipleFonts([recommendedHeading, recommendedBody, selectedHeading, selectedBody]);
+  }, [recommendedHeading, recommendedBody, selectedHeading, selectedBody]);
 
-    // Also include recommended fonts from brandCore if not already in the list
-    const allFonts = [...new Set([...ALL_SELECTION_FONTS, recommendedHeading, recommendedBody].filter(Boolean))];
-
-    const families = allFonts.map((f) => {
-      const meta = FONT_LIBRARY[f];
-      const weights = meta?.weights?.join(';') || '400;700';
-      return `family=${f.replace(/\s/g, '+')}:wght@${weights}`;
-    }).join('&');
-
-    const style = document.createElement('style');
-    style.id = id;
-    style.textContent = `@import url('https://fonts.googleapis.com/css2?${families}&display=swap');`;
-    document.head.appendChild(style);
-
-    return () => {
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    };
-  }, [recommendedHeading, recommendedBody]);
-
-  const handleSelectHeading = (fontName) => {
+  const handleSelectHeading = useCallback((fontName) => {
+    loadGoogleFont(fontName);
     dispatch({ type: 'SET_CUSTOM_FONTS', payload: { heading: fontName } });
-  };
+  }, [dispatch]);
 
-  const handleSelectBody = (fontName) => {
+  const handleSelectBody = useCallback((fontName) => {
+    loadGoogleFont(fontName);
     dispatch({ type: 'SET_CUSTOM_FONTS', payload: { body: fontName } });
-  };
+  }, [dispatch]);
 
-  const handleUseRecommended = () => {
+  const handleUseRecommended = useCallback(() => {
+    loadMultipleFonts([recommendedHeading, recommendedBody]);
     dispatch({ type: 'SET_CUSTOM_FONTS', payload: { heading: recommendedHeading, body: recommendedBody } });
-  };
+  }, [dispatch, recommendedHeading, recommendedBody]);
 
   const isRecommendedActive = selectedHeading === recommendedHeading && selectedBody === recommendedBody;
 
@@ -135,7 +338,7 @@ export default function Stage6_FontSelection() {
     >
       <div className="space-y-8">
 
-        {/* ── Recommended Font Pair ── */}
+        {/* ── Recommended Font Pair - Clickable Card ── */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -144,59 +347,150 @@ export default function Stage6_FontSelection() {
           <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#6B7280' }}>
             Recommended for {coreData.name}
           </p>
-          <div
-            className="rounded-xl border px-6 py-5"
+          <motion.div
+            onClick={handleUseRecommended}
+            whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+            whileTap={{ scale: 0.995 }}
             style={{
-              borderColor: isRecommendedActive ? activeColors.primary : '#E5E7EB',
-              backgroundColor: isRecommendedActive ? `${activeColors.primary}08` : '#FAFAFA',
+              cursor: 'pointer',
+              borderRadius: 12,
+              border: isRecommendedActive
+                ? `2px solid ${activeColors.primary}`
+                : '2px solid #E5E7EB',
+              backgroundColor: isRecommendedActive ? `${activeColors.primary}0A` : '#FFFFFF',
+              boxShadow: isRecommendedActive
+                ? `0 0 0 3px ${activeColors.primary}18, 0 4px 12px rgba(0,0,0,0.06)`
+                : '0 1px 4px rgba(0,0,0,0.04)',
+              padding: '20px 24px',
+              transition: 'border-color 0.25s, background-color 0.25s, box-shadow 0.25s',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-4 mb-3">
-                  <div>
-                    <span className="text-xs text-gray-400 block">Heading</span>
-                    <span
-                      className="text-lg font-bold"
-                      style={{ fontFamily: `'${recommendedHeading}', serif`, color: '#1C2E5B' }}
-                    >
-                      {recommendedHeading}
-                    </span>
-                  </div>
-                  <span className="text-gray-300">+</span>
-                  <div>
-                    <span className="text-xs text-gray-400 block">Body</span>
-                    <span
-                      className="text-base"
-                      style={{ fontFamily: `'${recommendedBody}', sans-serif`, color: '#1C2E5B' }}
-                    >
-                      {recommendedBody}
-                    </span>
-                  </div>
-                </div>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ fontFamily: `'${recommendedBody}', sans-serif`, color: '#6B7280' }}
-                >
-                  <span style={{ fontFamily: `'${recommendedHeading}', serif`, fontWeight: 700, fontSize: '1rem' }}>
-                    Bold leadership starts here.
-                  </span>{' '}
-                  This pairing was chosen to match the tone and personality of your brand direction.
-                </p>
+            {/* Quick pick badge */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  backgroundColor: activeColors.primary,
+                  color: textOnColor(activeColors.primary),
+                }}>
+                  Quick Pick
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>
+                  Curated font pair
+                </span>
               </div>
-              <button
-                onClick={handleUseRecommended}
-                className="shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-                style={{
-                  backgroundColor: isRecommendedActive ? activeColors.primary : '#F3F4F6',
-                  color: isRecommendedActive ? textOnColor(activeColors.primary) : '#374151',
-                  border: isRecommendedActive ? 'none' : '1px solid #D1D5DB',
-                }}
-              >
-                {isRecommendedActive ? 'Selected' : 'Use Recommended'}
-              </button>
+              {/* Checkmark or "Click to select" */}
+              {isRecommendedActive ? (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 28,
+                  height: 28,
+                  borderRadius: '50%',
+                  backgroundColor: activeColors.primary,
+                  color: textOnColor(activeColors.primary),
+                  fontSize: 16,
+                  fontWeight: 700,
+                }}>
+                  {'\u2713'}
+                </span>
+              ) : (
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: '#9CA3AF',
+                  padding: '4px 12px',
+                  borderRadius: 6,
+                  border: '1px solid #E5E7EB',
+                  backgroundColor: '#F9FAFB',
+                }}>
+                  Click to select
+                </span>
+              )}
             </div>
-          </div>
+
+            {/* Font samples */}
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              {/* Heading font sample */}
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 4 }}>
+                  Heading
+                </span>
+                <div
+                  style={{
+                    fontFamily: `'${recommendedHeading}', serif`,
+                    fontSize: 26,
+                    fontWeight: 700,
+                    color: '#1C2E5B',
+                    lineHeight: 1.2,
+                    marginBottom: 4,
+                  }}
+                >
+                  {recommendedHeading}
+                </div>
+                <div
+                  style={{
+                    fontFamily: `'${recommendedHeading}', serif`,
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: activeColors.primary,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  Bold Leadership Starts Here
+                </div>
+              </div>
+
+              {/* Body font sample */}
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 4 }}>
+                  Body
+                </span>
+                <div
+                  style={{
+                    fontFamily: `'${recommendedBody}', sans-serif`,
+                    fontSize: 20,
+                    fontWeight: 600,
+                    color: '#1C2E5B',
+                    lineHeight: 1.2,
+                    marginBottom: 4,
+                  }}
+                >
+                  {recommendedBody}
+                </div>
+                <div
+                  style={{
+                    fontFamily: `'${recommendedBody}', sans-serif`,
+                    fontSize: 14,
+                    color: '#6B7280',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  This pairing was chosen to match the tone and personality of your brand direction. Clean, readable, and campaign-ready.
+                </div>
+              </div>
+            </div>
+
+            {/* Selected state highlight bar */}
+            {isRecommendedActive && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 3,
+                backgroundColor: activeColors.primary,
+              }} />
+            )}
+          </motion.div>
         </motion.div>
 
         {/* ── Or Choose Your Own ── */}
@@ -214,22 +508,13 @@ export default function Stage6_FontSelection() {
               <label className="block text-sm font-medium mb-1.5" style={{ color: '#374151' }}>
                 Heading Font
               </label>
-              <select
+              <FontDropdown
+                options={HEADING_FONT_OPTIONS}
                 value={selectedHeading}
-                onChange={(e) => handleSelectHeading(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{
-                  fontFamily: selectedHeading ? `'${selectedHeading}', serif` : 'inherit',
-                  focusRingColor: activeColors.primary,
-                }}
-              >
-                <option value="">Select a heading font...</option>
-                {HEADING_FONT_OPTIONS.map((font) => (
-                  <option key={font.name} value={font.name} style={{ fontFamily: `'${font.name}', serif` }}>
-                    {font.name} ({font.category})
-                  </option>
-                ))}
-              </select>
+                onChange={handleSelectHeading}
+                placeholder="Select a heading font..."
+                fallbackStack="serif"
+              />
             </div>
 
             {/* Body Font Dropdown */}
@@ -237,21 +522,13 @@ export default function Stage6_FontSelection() {
               <label className="block text-sm font-medium mb-1.5" style={{ color: '#374151' }}>
                 Body Font
               </label>
-              <select
+              <FontDropdown
+                options={BODY_FONT_OPTIONS}
                 value={selectedBody}
-                onChange={(e) => handleSelectBody(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{
-                  fontFamily: selectedBody ? `'${selectedBody}', sans-serif` : 'inherit',
-                }}
-              >
-                <option value="">Select a body font...</option>
-                {BODY_FONT_OPTIONS.map((font) => (
-                  <option key={font.name} value={font.name} style={{ fontFamily: `'${font.name}', sans-serif` }}>
-                    {font.name} ({font.category})
-                  </option>
-                ))}
-              </select>
+                onChange={handleSelectBody}
+                placeholder="Select a body font..."
+                fallbackStack="sans-serif"
+              />
             </div>
           </div>
         </motion.div>

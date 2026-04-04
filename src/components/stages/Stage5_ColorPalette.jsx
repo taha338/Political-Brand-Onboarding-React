@@ -557,29 +557,8 @@ export default function Stage5_ColorPalette() {
   const candidateOffice = state.candidate?.office || '';
   const candidateState = state.candidate?.state || '';
 
-  // Dynamic background color based on selection
-  const pageBg = showPreview ? activeColors.background : undefined;
-  const pageTextColor = showPreview ? activeColors.text : undefined;
-
   return (
     <>
-      {/* Dynamic full-page background overlay */}
-      {showPreview && (
-        <motion.div
-          key={activeColors.background}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: pageBg,
-            zIndex: -1,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-
       <StageContainer
         title="Color Palette"
         subtitle="Choose the colors that will define your campaign's visual identity."

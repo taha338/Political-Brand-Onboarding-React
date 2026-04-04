@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
@@ -434,7 +434,14 @@ export default function Stage5_ColorPalette() {
   const { state, dispatch } = useBrand();
   const [activeTab, setActiveTab] = useState(state.colorMode || 'theme');
   const [selectedPreset, setSelectedPreset] = useState(null);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const coreData = state.brandCore ? BRAND_CORES[state.brandCore] : null;
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Restore preset selection from state
   useState(() => {
@@ -518,18 +525,18 @@ export default function Stage5_ColorPalette() {
           </motion.div>
         )}
 
-        {/* Two-column layout: palette cards on left, preview on right */}
-        <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+        {/* Layout: stacked on mobile, side-by-side on desktop */}
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 20, alignItems: 'flex-start' }}>
 
-          {/* LEFT: Palette selection cards — takes 60% */}
-          <div style={{ flex: showPreview ? '0 0 60%' : '1', minWidth: 0 }}>
+          {/* Palette selection cards */}
+          <div style={{ flex: (!isMobile && showPreview) ? '0 0 60%' : '1', minWidth: 0 }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
               gap: 10,
-              maxHeight: showPreview ? '70vh' : 'none',
-              overflowY: showPreview ? 'auto' : 'visible',
-              paddingRight: showPreview ? 6 : 0,
+              maxHeight: (!isMobile && showPreview) ? '70vh' : 'none',
+              overflowY: (!isMobile && showPreview) ? 'auto' : 'visible',
+              paddingRight: (!isMobile && showPreview) ? 6 : 0,
             }}>
               {/* Recommended palette card */}
               {themeColors && (
@@ -561,9 +568,9 @@ export default function Stage5_ColorPalette() {
             </div>
           </div>
 
-          {/* RIGHT: Live website mockup preview */}
+          {/* RIGHT: Live website mockup preview — hidden on mobile */}
           <AnimatePresence mode="wait">
-            {showPreview && (
+            {showPreview && !isMobile && (
               <motion.div
                 key={activeTab + selectedPreset}
                 initial={{ opacity: 0, x: 20 }}

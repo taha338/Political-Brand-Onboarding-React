@@ -126,7 +126,7 @@ export default function Stage4_SubDirection() {
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
         className="relative overflow-hidden mb-10 p-6 md:p-8"
-        style={{ background: styles.gradient, borderRadius: 40 }}
+        style={{ background: styles.gradient, borderRadius: 20 }}
       >
         <div className="absolute inset-0 opacity-[0.04]"
           style={{
@@ -174,7 +174,7 @@ export default function Stage4_SubDirection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        style={{ borderRadius: 40, background: 'white', padding: 40, marginBottom: 32, position: 'relative', overflow: 'hidden' }}
+        style={{ borderRadius: 24, background: 'white', padding: 'clamp(16px, 4vw, 40px)', marginBottom: 32, position: 'relative', overflow: 'hidden' }}
       >
         {/* Decorative background patterns */}
         <DecorativeDots style={{ top: -20, left: -20 }} />

@@ -49,7 +49,8 @@ const styles = {
 
 /* ── Interactive Falling Confetti ── */
 const CONFETTI_COLORS = ['#8B1A2B', '#1C2E5B', '#B22234', '#ffffff', '#C8A951', '#3B5998'];
-const PARTICLE_COUNT = 20;
+const PARTICLE_COUNT_DESKTOP = 20;
+const PARTICLE_COUNT_MOBILE = 8;
 
 function ConfettiCanvas() {
   const canvasRef = useRef(null);
@@ -78,6 +79,8 @@ function ConfettiCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
 
     const resize = () => {
       canvas.width = canvas.offsetWidth;
@@ -87,7 +90,7 @@ function ConfettiCanvas() {
     window.addEventListener('resize', resize);
 
     // Init particles
-    particlesRef.current = Array.from({ length: PARTICLE_COUNT }, () =>
+    particlesRef.current = Array.from({ length: count }, () =>
       makeParticle(canvas.width, canvas.height)
     );
 
@@ -96,8 +99,8 @@ function ConfettiCanvas() {
       mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     };
     const onMouseLeave = () => { mouseRef.current = { x: -999, y: -999 }; };
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseleave', onMouseLeave);
+    canvas.addEventListener('mousemove', onMouseMove, { passive: true });
+    canvas.addEventListener('mouseleave', onMouseLeave, { passive: true });
 
     const draw = () => {
       const { width, height } = canvas;
@@ -433,13 +436,7 @@ export default function Stage1_CandidateBasics() {
           Office You're Seeking
         </label>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '0.75rem',
-          }}
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {OFFICES.map((office, i) => {
             const selected = candidate.office === office.id;
             const icon = OFFICE_ICONS[office.id] || <Building2 size={26} />;
@@ -754,7 +751,7 @@ export default function Stage1_CandidateBasics() {
           Election Cycle
         </label>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {ELECTION_YEARS.map((year) => {
             const selected = candidate.electionYear === year;
             return (

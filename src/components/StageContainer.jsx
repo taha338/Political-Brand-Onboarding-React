@@ -59,28 +59,28 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
   }, [nextStage]);
 
   return (
-    <div className="relative" style={{ paddingTop: '100px' }}>
+    <div className="relative" style={{ paddingTop: '72px' }}>
       {/* Sticky back button - fixed to left side */}
       {!isFirst && (
         <div
           className="no-print"
           style={{
             position: 'fixed',
-            top: 100,
-            left: 20,
+            top: 72,
+            left: 8,
             zIndex: 40,
           }}
         >
           <button
             onClick={prevStage}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all hover:opacity-90"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all hover:opacity-90"
             style={{
               color: '#FFFFFF',
               backgroundColor: '#1C2E5B',
               boxShadow: '0 2px 8px rgba(28,46,91,0.3)',
             }}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Back
           </button>
         </div>
@@ -103,13 +103,13 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
         <line x1="0" y1="250" x2="400" y2="200" stroke="#1C2E5B" strokeWidth="0.3" />
       </svg>
 
-      {/* Rounded 40px container */}
-      <div className="max-w-6xl mx-auto px-4 py-12 md:py-16 relative z-10">
+      {/* Rounded container */}
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 md:py-12 relative z-10">
         <div
-          className="bg-white/70 backdrop-blur-sm px-8 md:px-12 py-10 md:py-14"
-          style={{ borderRadius: '40px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+          className="bg-white/70 backdrop-blur-sm px-4 sm:px-8 md:px-12 py-8 md:py-14"
+          style={{ borderRadius: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
         >
-          <div className="mb-10 md:mb-14">
+          <div className="mb-8 md:mb-14">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -125,7 +125,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
               style={{ fontFamily: "'Poppins', 'Inter', sans-serif", color: '#1C2E5B' }}
             >
               {title}
@@ -135,7 +135,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="mt-3 text-lg max-w-2xl text-gray-900"
+                className="mt-2 text-sm sm:text-base md:text-lg max-w-2xl text-gray-900"
                 style={{ opacity: 0.6 }}
               >
                 {subtitle}
@@ -154,7 +154,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
           {!isLast && !hideNavigation && (
             <>
               {/* Wave SVG divider */}
-              <div className="mt-16 -mx-8 md:-mx-12 overflow-hidden">
+              <div className="mt-10 -mx-4 sm:-mx-8 md:-mx-12 overflow-hidden">
                 <svg
                   viewBox="0 0 1440 48"
                   xmlns="http://www.w3.org/2000/svg"

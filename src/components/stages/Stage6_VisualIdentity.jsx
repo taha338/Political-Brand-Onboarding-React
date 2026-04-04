@@ -158,7 +158,7 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
 
       {/* large ghosted initial behind everything */}
       <div
-        className="absolute -right-10 -top-16 text-[20rem] md:text-[28rem] font-black leading-none select-none pointer-events-none"
+        className="absolute -right-4 -top-8 text-[6rem] sm:text-[12rem] md:text-[20rem] font-black leading-none select-none pointer-events-none"
         style={{
           fontFamily: `'${headingFont}', sans-serif`,
           color: hexToRgba(activeColors.secondary, 0.07),
@@ -168,7 +168,7 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
         {(candidateName?.split(' ').pop()?.[0] || 'S').toUpperCase()}
       </div>
 
-      <div className="relative z-10 px-8 md:px-16 py-16 md:py-24 lg:py-32 max-w-5xl">
+      <div className="relative z-10 px-4 sm:px-8 md:px-16 py-8 sm:py-12 md:py-24 lg:py-32 max-w-5xl">
         <motion.p
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -186,7 +186,7 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
-          className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] tracking-tight mb-6"
+          className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] tracking-tight mb-6"
           style={{
             fontFamily: `'${headingFont}', sans-serif`,
             fontWeight: headingMeta?.weights?.[headingMeta.weights.length - 1] || 900,

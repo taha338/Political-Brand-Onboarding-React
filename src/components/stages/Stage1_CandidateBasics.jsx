@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { OFFICES, US_STATES, ELECTION_YEARS, CANDIDATE_TYPES } from '../../data/brandData';
@@ -46,6 +46,130 @@ const styles = {
     }
   `,
 };
+
+/* ── Interactive Falling Confetti ── */
+const CONFETTI_COLORS = ['#8B1A2B', '#1C2E5B', '#B22234', '#ffffff', '#C8A951', '#3B5998'];
+const PARTICLE_COUNT = 80;
+
+function ConfettiCanvas() {
+  const canvasRef = useRef(null);
+  const particlesRef = useRef([]);
+  const mouseRef = useRef({ x: -999, y: -999 });
+  const rafRef = useRef(null);
+
+  const makeParticle = useCallback((w, h, fromTop = false) => {
+    const size = 6 + Math.random() * 8;
+    return {
+      x: Math.random() * w,
+      y: fromTop ? -size - Math.random() * h : Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: 0.3 + Math.random() * 0.5,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.08,
+      w: size,
+      h: size * (0.4 + Math.random() * 0.4),
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      opacity: 0.7 + Math.random() * 0.3,
+      shape: Math.random() > 0.5 ? 'rect' : 'circle',
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Init particles
+    particlesRef.current = Array.from({ length: PARTICLE_COUNT }, () =>
+      makeParticle(canvas.width, canvas.height)
+    );
+
+    const onMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+    const onMouseLeave = () => { mouseRef.current = { x: -999, y: -999 }; };
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
+
+    const draw = () => {
+      const { width, height } = canvas;
+      ctx.clearRect(0, 0, width, height);
+
+      particlesRef.current.forEach((p) => {
+        // Cursor repulsion
+        const dx = p.x - mouseRef.current.x;
+        const dy = p.y - mouseRef.current.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 80 && dist > 0) {
+          const force = (80 - dist) / 80;
+          p.vx += (dx / dist) * force * 3.5;
+          p.vy += (dy / dist) * force * 3.5;
+        }
+
+        // Physics
+        p.vy += 0.012; // gravity
+        p.vx *= 0.97; // drag
+        p.vy = Math.min(p.vy, 2); // terminal velocity
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotSpeed;
+
+        // Wrap horizontally, reset when off bottom
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
+        if (p.y > height + 20) Object.assign(p, makeParticle(width, height, true));
+
+        // Draw
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        if (p.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      });
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [makeParticle]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'all',
+        zIndex: 2,
+        cursor: 'crosshair',
+      }}
+    />
+  );
+}
 
 /* ── White House SVG ── */
 function WhiteHouseIllustration() {
@@ -187,25 +311,30 @@ export default function Stage1_CandidateBasics() {
       <style>{styles.keyframes}</style>
 
       {/* ──────────────────────────────────────────
-          TOP ILLUSTRATION: Capitol Building
+          HERO: White House + Confetti + Heading
           ────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease }}
-      >
-        <WhiteHouseIllustration />
-      </motion.div>
+      <div style={{ position: 'relative', marginBottom: '3rem' }}>
+        {/* Interactive confetti canvas */}
+        <ConfettiCanvas />
 
-      {/* ──────────────────────────────────────────
-          HERO HEADING
-          ────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.15, ease }}
-        style={{ textAlign: 'center', marginBottom: '3rem' }}
-      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease }}
+          style={{ position: 'relative', zIndex: 1 }}
+        >
+          <WhiteHouseIllustration />
+        </motion.div>
+
+        {/* ──────────────────────────────────────────
+            HERO HEADING
+            ────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15, ease }}
+          style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}
+        >
         <h1
           style={{
             fontFamily: "'Georgia', 'Times New Roman', serif",
@@ -245,7 +374,8 @@ export default function Stage1_CandidateBasics() {
           Complete this 8-step discovery process to build a powerful, cohesive political brand
           that resonates with your voters and sets you apart from the competition.
         </p>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* ──────────────────────────────────────────
           1. FULL NAME INPUT

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { STAGES } from '../data/brandData';
 import { useBrand } from '../context/BrandContext';
 
@@ -22,59 +23,107 @@ export default function ProgressBar() {
   const displayNames = STAGE_NAMES.slice(0, totalStages);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 no-print bg-white" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-      {/* Solid progress bar */}
-      <div className="h-1.5 bg-[#E5E7EB] w-full">
-        <div
-          className="h-full transition-all duration-700 ease-out"
+    <div className="fixed top-0 left-0 right-0 z-50 no-print bg-white" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+      {/* Main progress bar - taller and more prominent */}
+      <div className="h-2 bg-[#E5E7EB] w-full relative overflow-hidden">
+        <motion.div
+          className="h-full"
+          initial={false}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          style={{ backgroundColor: '#8B1A2B' }}
+        />
+        {/* Animated shimmer effect on the bar */}
+        <motion.div
+          className="absolute top-0 h-full"
           style={{
-            width: `${progress}%`,
-            backgroundColor: '#8B1A2B',
+            width: '80px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
           }}
+          animate={{ left: ['-80px', '100%'] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
         />
       </div>
 
-      {/* Step info and dots */}
-      <div className="max-w-6xl mx-auto px-4 py-2">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-gray-700 tracking-wide">
-            Step {currentStage + 1} of {totalStages} — {displayNames[currentStage] || STAGES[currentStage]}
+      {/* Step info bar */}
+      <div className="max-w-6xl mx-auto px-4 py-3">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-3">
+            {/* Step counter badge */}
+            <span
+              className="inline-flex items-center justify-center text-xs font-bold text-white rounded-full"
+              style={{
+                width: 28,
+                height: 28,
+                backgroundColor: '#8B1A2B',
+              }}
+            >
+              {currentStage + 1}
+            </span>
+            <div>
+              <span className="text-sm font-bold text-gray-800 tracking-wide">
+                {displayNames[currentStage] || STAGES[currentStage]}
+              </span>
+              <span className="text-xs text-gray-400 ml-2">
+                of {totalStages} steps
+              </span>
+            </div>
+          </div>
+
+          {/* Percentage indicator */}
+          <span className="text-sm font-semibold" style={{ color: '#8B1A2B' }}>
+            {Math.round(progress)}%
           </span>
         </div>
 
-        {/* Step dots */}
-        <div className="flex items-center gap-2">
+        {/* Step dots - bigger and more interactive */}
+        <div className="flex items-center gap-1">
           {STAGES.map((stage, i) => {
             const isCompleted = completedStages.includes(i);
             const isCurrent = i === currentStage;
             const isAccessible = isCompleted || i <= Math.max(...completedStages, 0);
+
             return (
               <button
                 key={i}
                 onClick={() => isAccessible && goToStage(i)}
-                className={`flex items-center justify-center transition-all duration-300 ${
-                  isAccessible ? 'cursor-pointer' : 'cursor-default'
-                }`}
+                className={`relative group flex-1 ${isAccessible ? 'cursor-pointer' : 'cursor-default'}`}
                 title={displayNames[i] || stage}
                 style={{ outline: 'none' }}
               >
-                <span
-                  className="block rounded-full transition-all duration-300"
+                {/* Bar segment */}
+                <div
+                  className="h-1.5 rounded-full transition-all duration-500"
                   style={{
-                    width: isCurrent ? 12 : 8,
-                    height: isCurrent ? 12 : 8,
                     backgroundColor: isCompleted
                       ? '#8B1A2B'
                       : isCurrent
                       ? '#8B1A2B'
-                      : 'transparent',
-                    border: isCurrent
-                      ? '2px solid #8B1A2B'
-                      : isCompleted
-                      ? '2px solid #8B1A2B'
-                      : '2px solid #D1D5DB',
+                      : '#E5E7EB',
+                    opacity: isCurrent ? 1 : isCompleted ? 0.7 : 1,
                   }}
                 />
+
+                {/* Tooltip on hover */}
+                <div
+                  className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                >
+                  {displayNames[i]}
+                </div>
+
+                {/* Active pulse dot */}
+                {isCurrent && (
+                  <motion.div
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 rounded-full"
+                    style={{
+                      width: 8,
+                      height: 8,
+                      backgroundColor: '#8B1A2B',
+                    }}
+                    animate={{ scale: [1, 1.4, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                )}
               </button>
             );
           })}

@@ -59,32 +59,31 @@ export default function StageContainer({ children, title, subtitle, stageNumber 
   }, [nextStage]);
 
   return (
-    <div className="relative" style={{ paddingTop: '80px' }}>
-      {/* Sticky back button below progress bar */}
+    <div className="relative" style={{ paddingTop: '100px' }}>
+      {/* Sticky back button - fixed to left side */}
       {!isFirst && (
         <div
           className="no-print"
           style={{
-            position: 'sticky',
-            top: 80,
+            position: 'fixed',
+            top: 100,
+            left: 20,
             zIndex: 40,
-            padding: '8px 16px',
           }}
         >
-          <div className="max-w-6xl mx-auto">
-            <button
-              onClick={prevStage}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors"
-              style={{
-                color: '#1C2E5B',
-                border: '1px solid #1C2E5B',
-                backgroundColor: 'white',
-              }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-              Back
-            </button>
-          </div>
+          <button
+            onClick={prevStage}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md"
+            style={{
+              color: '#1C2E5B',
+              border: '1px solid #D1D5DB',
+              backgroundColor: 'white',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+            }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Back
+          </button>
         </div>
       )}
 

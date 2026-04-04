@@ -557,126 +557,159 @@ export default function Stage5_ColorPalette() {
   const candidateOffice = state.candidate?.office || '';
   const candidateState = state.candidate?.state || '';
 
+  // Dynamic background color based on selection
+  const pageBg = showPreview ? activeColors.background : undefined;
+  const pageTextColor = showPreview ? activeColors.text : undefined;
+
   return (
-    <StageContainer
-      title="Color Palette"
-      subtitle="Choose the colors that will define your campaign's visual identity."
-      stageNumber={5}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <>
+      {/* Dynamic full-page background overlay */}
+      {showPreview && (
+        <motion.div
+          key={activeColors.background}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: pageBg,
+            zIndex: -1,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
-        {/* CARD GRID: Recommended + Presets */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 8,
-        }}>
-          {/* Recommended palette card */}
-          {themeColors && (
-            <PaletteCard
-              name={`${coreData?.name} Palette`}
-              colors={themeColors}
-              isActive={activeTab === 'theme'}
-              onClick={handleRecommendedSelect}
-              badge="Recommended"
-              description={`Curated for the ${coreData?.emotionalFeel?.toLowerCase()} quality of your ${coreData?.name} brand core.`}
-              index={0}
-            />
-          )}
-
-          {/* Preset palette cards */}
-          {PRESET_PALETTES.map((preset, index) => {
-            const isActive = activeTab === 'custom' && selectedPreset === preset.id;
-            return (
-              <PaletteCard
-                key={preset.id}
-                name={preset.name}
-                colors={preset.colors}
-                isActive={isActive}
-                onClick={() => handlePresetSelect(preset.id)}
-                index={index + 1}
+      <StageContainer
+        title="Color Palette"
+        subtitle="Choose the colors that will define your campaign's visual identity."
+        stageNumber={5}
+      >
+        {/* Live palette strip across the top */}
+        {showPreview && (
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              height: 6, borderRadius: 999, overflow: 'hidden', display: 'flex',
+              marginBottom: 16, transformOrigin: 'left',
+            }}
+          >
+            {COLOR_ROLES.map(({ key }) => (
+              <div
+                key={key}
+                style={{ flex: 1, backgroundColor: activeColors[key], transition: 'background-color 0.4s ease' }}
               />
-            );
-          })}
-        </div>
+            ))}
+          </motion.div>
+        )}
 
-        {/* CAMPAIGN WEBSITE MOCKUP PREVIEW */}
-        <AnimatePresence mode="wait">
-          {showPreview && (
-            <motion.div
-              key={activeTab + selectedPreset}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.4 }}
-              style={{
-                marginTop: 4,
-                padding: 14,
-                background: '#FFFFFF',
-                border: '1px solid #E5E7EB',
-                borderRadius: 8,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-              }}
-            >
-              <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 0, marginBottom: 2 }}>
-                60 / 30 / 10 Preview
-              </p>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1C2E5B', margin: 0, marginBottom: 4 }}>
-                {activePaletteName}
-              </h3>
-              <p style={{ fontSize: 11, color: '#6B7280', margin: 0, marginBottom: 10 }}>
-                See how your palette maps to a campaign website using the 60/30/10 color rule.
-              </p>
+        {/* Two-column layout: palette cards on left, preview on right */}
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
-              <CampaignWebsiteMockup
-                colors={activeColors}
-                candidateName={candidateName}
-                candidateOffice={candidateOffice}
-                candidateState={candidateState}
-              />
+          {/* LEFT: Palette selection cards */}
+          <div style={{ flex: showPreview ? '0 0 340px' : '1', minWidth: 0 }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: showPreview ? '1fr' : 'repeat(2, 1fr)',
+              gap: 8,
+              maxHeight: showPreview ? '60vh' : 'none',
+              overflowY: showPreview ? 'auto' : 'visible',
+              paddingRight: showPreview ? 4 : 0,
+            }}>
+              {/* Recommended palette card */}
+              {themeColors && (
+                <PaletteCard
+                  name={`${coreData?.name} Palette`}
+                  colors={themeColors}
+                  isActive={activeTab === 'theme'}
+                  onClick={handleRecommendedSelect}
+                  badge="Recommended"
+                  description={`Curated for the ${coreData?.emotionalFeel?.toLowerCase()} quality of your ${coreData?.name} brand core.`}
+                  index={0}
+                />
+              )}
 
-              {/* Detailed color spec - compact grid */}
-              <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                {COLOR_ROLES.map(({ key, label, desc }) => {
-                  const color = activeColors[key];
-                  return (
-                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: 4,
-                          backgroundColor: color,
-                          flexShrink: 0,
-                          boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.08)' : '0 1px 4px rgba(0,0,0,0.12)',
-                        }}
-                      />
-                      <div style={{ minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#374151' }}>{label}</span>
-                          <span style={{ fontSize: 9, fontFamily: 'monospace', color: '#9CA3AF' }}>{color}</span>
+              {/* Preset palette cards */}
+              {PRESET_PALETTES.map((preset, index) => {
+                const isActive = activeTab === 'custom' && selectedPreset === preset.id;
+                return (
+                  <PaletteCard
+                    key={preset.id}
+                    name={preset.name}
+                    colors={preset.colors}
+                    isActive={isActive}
+                    onClick={() => handlePresetSelect(preset.id)}
+                    index={index + 1}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          {/* RIGHT: Live website mockup preview */}
+          <AnimatePresence mode="wait">
+            {showPreview && (
+              <motion.div
+                key={activeTab + selectedPreset}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  position: 'sticky',
+                  top: 120,
+                }}
+              >
+                <div style={{
+                  padding: 14,
+                  background: '#FFFFFF',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: 8,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 0, marginBottom: 2 }}>
+                    60 / 30 / 10 Preview
+                  </p>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1C2E5B', margin: 0, marginBottom: 4 }}>
+                    {activePaletteName}
+                  </h3>
+
+                  <CampaignWebsiteMockup
+                    colors={activeColors}
+                    candidateName={candidateName}
+                    candidateOffice={candidateOffice}
+                    candidateState={candidateState}
+                  />
+
+                  {/* Color spec row */}
+                  <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {COLOR_ROLES.map(({ key, label }) => {
+                      const color = activeColors[key];
+                      return (
+                        <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <div
+                            style={{
+                              width: 16, height: 16, borderRadius: 3,
+                              backgroundColor: color,
+                              boxShadow: isLightColor(color) ? 'inset 0 0 0 1px rgba(0,0,0,0.08)' : 'none',
+                            }}
+                          />
+                          <span style={{ fontSize: 9, fontWeight: 600, color: '#374151' }}>{label}</span>
+                          <span style={{ fontSize: 8, fontFamily: 'monospace', color: '#9CA3AF' }}>{color}</span>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Full palette bar */}
-              <div style={{ marginTop: 10 }}>
-                <div style={{ height: 6, borderRadius: 999, overflow: 'hidden', display: 'flex' }}>
-                  {COLOR_ROLES.map(({ key }) => (
-                    <div
-                      key={key}
-                      style={{ flex: 1, backgroundColor: activeColors[key], transition: 'background-color 0.3s ease' }}
-                    />
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </StageContainer>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </StageContainer>
+    </>
   );
 }

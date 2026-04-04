@@ -346,16 +346,6 @@ export default function Stage9_FinalReview() {
           )}
         </div>
 
-        {/* Confirmation callout */}
-        <div className="mt-8 rounded-lg bg-[#FDF6F0] border border-[#F0DDD0] p-5">
-          <p className="text-sm text-gray-700 font-medium mb-2">
-            Your logo will be delivered to you within 2 working days.
-          </p>
-          <p className="text-sm text-gray-700 font-medium">
-            Website content will be started based on your choices.
-          </p>
-        </div>
-
         {/* Approval checkbox */}
         <label className="flex items-start gap-3 mt-8 cursor-pointer select-none">
           <input

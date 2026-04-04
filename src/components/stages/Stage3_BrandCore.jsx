@@ -4,8 +4,17 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 import AnimatedCheckmark from '../AnimatedCheckmark';
+import { ShieldAlert, Flag, Flame, Users, Crown } from 'lucide-react';
 
 const BRAND_KEYS = ['commander', 'patriot', 'reformer', 'community', 'executive'];
+
+const BRAND_ICONS = {
+  commander: <ShieldAlert size={28} />,
+  patriot:   <Flag size={28} />,
+  reformer:  <Flame size={28} />,
+  community: <Users size={28} />,
+  executive: <Crown size={28} />,
+};
 
 export default function Stage3_BrandCore() {
   const { state, dispatch } = useBrand();
@@ -70,16 +79,20 @@ export default function Stage3_BrandCore() {
                 )}
               </AnimatePresence>
 
-              {/* Title */}
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: '#1C2E5B',
-                margin: 0,
-                marginBottom: 4,
-              }}>
-                {brand.name}
-              </h3>
+              {/* Icon + Title row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                <span style={{ color: isSelected ? '#8B1A2B' : '#1C2E5B', flexShrink: 0 }}>
+                  {BRAND_ICONS[key]}
+                </span>
+                <h3 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#1C2E5B',
+                  margin: 0,
+                }}>
+                  {brand.name}
+                </h3>
+              </div>
 
               {/* Descriptor */}
               <p style={{

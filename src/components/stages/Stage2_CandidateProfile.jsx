@@ -5,46 +5,54 @@ import { PROFESSIONAL_BACKGROUNDS, POLICY_PRIORITIES } from '../../data/brandDat
 import StageContainer from '../StageContainer';
 import TiltCard from '../TiltCard';
 import AnimatedCheckmark from '../AnimatedCheckmark';
+import {
+  Shield, Briefcase, Scale, HeartPulse, Wheat, BookOpen,
+  Church, Landmark, Wrench, Monitor, Medal,
+  TrendingUp, Target, Heart, CheckSquare, GraduationCap,
+  Zap, DollarSign, Eye, Building2, Leaf, ShieldCheck,
+} from 'lucide-react';
 
 const PRIMARY = '#8B1A2B';
 const NAVY = '#1C2E5B';
 
-const BACKGROUND_EMOJIS = {
-  military: '🎖️',
-  'law-enforcement': '👮',
-  business: '💼',
-  attorney: '⚖️',
-  medical: '🏥',
-  agriculture: '🌾',
-  education: '📚',
-  faith: '✝️',
-  'public-service': '🏛️',
-  'blue-collar': '🔧',
-  tech: '💻',
+const ICON_SIZE = 22;
+
+const BACKGROUND_ICONS = {
+  military: <Medal size={ICON_SIZE} />,
+  'law-enforcement': <ShieldCheck size={ICON_SIZE} />,
+  business: <Briefcase size={ICON_SIZE} />,
+  attorney: <Scale size={ICON_SIZE} />,
+  medical: <HeartPulse size={ICON_SIZE} />,
+  agriculture: <Wheat size={ICON_SIZE} />,
+  education: <BookOpen size={ICON_SIZE} />,
+  faith: <Church size={ICON_SIZE} />,
+  'public-service': <Landmark size={ICON_SIZE} />,
+  'blue-collar': <Wrench size={ICON_SIZE} />,
+  tech: <Monitor size={ICON_SIZE} />,
 };
 
-const POLICY_EMOJIS = {
-  border: '🛡️',
-  economy: '📈',
-  '2a': '🎯',
-  'pro-life': '❤️',
-  election: '✅',
-  education: '📖',
-  veterans: '🎖️',
-  'law-order': '⚖️',
-  energy: '⚡',
-  healthcare: '🏥',
-  tax: '💰',
-  'religious-liberty': '🙏',
-  accountability: '👁️',
-  infrastructure: '🏗️',
-  agriculture: '🌿',
+const POLICY_ICONS = {
+  border: <Shield size={ICON_SIZE} />,
+  economy: <TrendingUp size={ICON_SIZE} />,
+  '2a': <Target size={ICON_SIZE} />,
+  'pro-life': <Heart size={ICON_SIZE} />,
+  election: <CheckSquare size={ICON_SIZE} />,
+  education: <GraduationCap size={ICON_SIZE} />,
+  veterans: <Medal size={ICON_SIZE} />,
+  'law-order': <Scale size={ICON_SIZE} />,
+  energy: <Zap size={ICON_SIZE} />,
+  healthcare: <HeartPulse size={ICON_SIZE} />,
+  tax: <DollarSign size={ICON_SIZE} />,
+  'religious-liberty': <Church size={ICON_SIZE} />,
+  accountability: <Eye size={ICON_SIZE} />,
+  infrastructure: <Building2 size={ICON_SIZE} />,
+  agriculture: <Leaf size={ICON_SIZE} />,
 };
 
 const bounceKeyframes = `
-@keyframes emojiBounce {
+@keyframes iconBounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-5px); }
 }
 `;
 
@@ -119,7 +127,7 @@ export default function Stage2_CandidateProfile() {
             const selected = backgrounds.includes(bg.id);
             const atMax = backgrounds.length >= 2;
             const disabled = !selected && atMax;
-            const emoji = BACKGROUND_EMOJIS[bg.id] || bg.icon;
+            const icon = BACKGROUND_ICONS[bg.id];
 
             return (
               <TiltCard
@@ -144,21 +152,14 @@ export default function Stage2_CandidateProfile() {
                   </div>
                 )}
                 <span
-                  className="text-2xl block"
-                  style={{
-                    animation: undefined,
-                  }}
+                  className="block"
+                  style={{ color: selected ? '#fff' : PRIMARY, transition: 'transform 0.2s ease' }}
                   onMouseEnter={(e) => {
-                    if (!disabled) {
-                      e.currentTarget.style.animation =
-                        'emojiBounce 0.5s ease-in-out';
-                    }
+                    if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out';
                   }}
-                  onAnimationEnd={(e) => {
-                    e.currentTarget.style.animation = '';
-                  }}
+                  onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
                 >
-                  {emoji}
+                  {icon}
                 </span>
                 <span
                   className={`text-xs font-semibold text-center leading-tight ${
@@ -194,7 +195,7 @@ export default function Stage2_CandidateProfile() {
             const selected = priorities.includes(policy.id);
             const atMax = priorities.length >= 3;
             const disabled = !selected && atMax;
-            const emoji = POLICY_EMOJIS[policy.id] || policy.icon;
+            const icon = POLICY_ICONS[policy.id];
 
             return (
               <TiltCard
@@ -219,18 +220,14 @@ export default function Stage2_CandidateProfile() {
                   </div>
                 )}
                 <span
-                  className="text-xl flex-shrink-0"
+                  className="flex-shrink-0"
+                  style={{ color: selected ? '#fff' : PRIMARY, transition: 'transform 0.2s ease' }}
                   onMouseEnter={(e) => {
-                    if (!disabled) {
-                      e.currentTarget.style.animation =
-                        'emojiBounce 0.5s ease-in-out';
-                    }
+                    if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out';
                   }}
-                  onAnimationEnd={(e) => {
-                    e.currentTarget.style.animation = '';
-                  }}
+                  onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
                 >
-                  {emoji}
+                  {icon}
                 </span>
                 <span
                   className={`text-sm font-semibold ${

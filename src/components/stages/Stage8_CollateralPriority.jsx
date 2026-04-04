@@ -2,6 +2,10 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import StageContainer from '../StageContainer';
+import {
+  MapPin, CreditCard, FileText, Key, Tag,
+  Flag, Mail, Shirt, LayoutGrid, ScrollText,
+} from 'lucide-react';
 
 const PRICE_PER_MATERIAL = 350;
 
@@ -10,101 +14,61 @@ const MATERIAL_TYPES = [
     id: 'yard-signs',
     name: 'Yard Signs',
     description: 'Double-sided corrugated yard signs with H-stakes included.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M9 21V9m6 12V9M4 9h16l-2-4H6L4 9z" />
-      </svg>
-    ),
+    icon: <MapPin size={24} />,
   },
   {
     id: 'business-cards',
     name: 'Business Cards',
     description: 'Premium matte or glossy cards with your brand identity.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
-      </svg>
-    ),
+    icon: <CreditCard size={24} />,
   },
   {
     id: 'flyers',
     name: 'Flyers',
     description: 'Full-color 8.5x11 flyers, single or double-sided layouts.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h10" />
-      </svg>
-    ),
+    icon: <FileText size={24} />,
   },
   {
     id: 'door-hangers',
     name: 'Door Hangers',
     description: 'Die-cut door hangers for canvassing and outreach.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-      </svg>
-    ),
+    icon: <Key size={24} />,
   },
   {
     id: 'bumper-stickers',
     name: 'Bumper Stickers',
     description: 'Weather-resistant vinyl stickers for vehicles and surfaces.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h10M7 11h6m-9 8h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
+    icon: <Tag size={24} />,
   },
   {
     id: 'banners',
     name: 'Banners',
     description: 'Large format banners for events, rallies, and offices.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2z" />
-      </svg>
-    ),
+    icon: <Flag size={24} />,
   },
   {
     id: 'postcards',
     name: 'Postcards',
     description: 'USPS-ready postcards for direct mail campaigns.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
+    icon: <Mail size={24} />,
   },
   {
     id: 't-shirts',
     name: 'T-Shirts',
     description: 'Custom branded apparel designs, print-ready files included.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-      </svg>
-    ),
+    icon: <Shirt size={24} />,
   },
   {
     id: 'social-media-kit',
     name: 'Social Media Kit',
     description: 'Templates for Facebook, Instagram, Twitter, and more.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-      </svg>
-    ),
+    icon: <LayoutGrid size={24} />,
   },
   {
     id: 'letterhead-envelopes',
     name: 'Letterhead & Envelopes',
     description: 'Professional stationery suite with matching designs.',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
+    icon: <ScrollText size={24} />,
   },
 ];
 

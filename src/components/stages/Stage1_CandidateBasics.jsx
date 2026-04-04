@@ -46,8 +46,8 @@ const styles = {
   `,
 };
 
-/* ── Capitol Building SVG ── */
-function CapitolIllustration() {
+/* ── White House SVG ── */
+function WhiteHouseIllustration() {
   return (
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', padding: '2rem 0 1rem' }}>
       {/* Decorative floating dots */}
@@ -75,42 +75,74 @@ function CapitolIllustration() {
       ))}
 
       <svg
-        width="160"
-        height="110"
-        viewBox="0 0 160 110"
+        width="200"
+        height="130"
+        viewBox="0 0 200 130"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ animation: 'pulseGlow 4s ease-in-out infinite' }}
       >
-        {/* Base platform */}
-        <rect x="10" y="90" width="140" height="10" rx="2" fill={accent} />
-        <rect x="20" y="82" width="120" height="10" rx="1" fill={accent} opacity="0.85" />
+        {/* Ground / base strip */}
+        <rect x="0" y="118" width="200" height="12" rx="2" fill={accent} opacity="0.15" />
 
+        {/* Left wing */}
+        <rect x="8" y="72" width="44" height="46" rx="2" fill="white" stroke={accent} strokeWidth="1.5" />
+        <rect x="8" y="68" width="44" height="6" rx="1" fill={accent} opacity="0.8" />
+        {/* Left wing windows */}
+        <rect x="16" y="82" width="10" height="14" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
+        <rect x="34" y="82" width="10" height="14" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
+        <rect x="16" y="102" width="10" height="12" rx="1" fill={accent} opacity="0.1" stroke={accent} strokeWidth="1" />
+        <rect x="34" y="102" width="10" height="12" rx="1" fill={accent} opacity="0.1" stroke={accent} strokeWidth="1" />
+
+        {/* Right wing */}
+        <rect x="148" y="72" width="44" height="46" rx="2" fill="white" stroke={accent} strokeWidth="1.5" />
+        <rect x="148" y="68" width="44" height="6" rx="1" fill={accent} opacity="0.8" />
+        {/* Right wing windows */}
+        <rect x="156" y="82" width="10" height="14" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
+        <rect x="174" y="82" width="10" height="14" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
+        <rect x="156" y="102" width="10" height="12" rx="1" fill={accent} opacity="0.1" stroke={accent} strokeWidth="1" />
+        <rect x="174" y="102" width="10" height="12" rx="1" fill={accent} opacity="0.1" stroke={accent} strokeWidth="1" />
+
+        {/* Main central building */}
+        <rect x="52" y="58" width="96" height="60" rx="2" fill="white" stroke={accent} strokeWidth="1.5" />
+
+        {/* Portico / columned porch */}
+        <rect x="62" y="80" width="76" height="38" rx="1" fill="white" stroke={accent} strokeWidth="1" />
         {/* Columns */}
-        {[32, 52, 72, 92, 112, 128].map((x, i) => (
-          <rect key={i} x={x} y="42" width="6" height="40" rx="1" fill={accent} opacity="0.9" />
+        {[70, 82, 94, 106, 118, 128].map((x, i) => (
+          <rect key={i} x={x} y="82" width="5" height="36" rx="1" fill={accent} opacity="0.7" />
         ))}
+        {/* Portico entablature */}
+        <rect x="62" y="78" width="76" height="6" rx="1" fill={accent} opacity="0.85" />
+        {/* Portico pediment */}
+        <polygon points="62,78 100,62 138,78" fill={accent} opacity="0.75" />
 
-        {/* Pediment / triangular roof */}
-        <polygon points="25,44 80,18 135,44" fill={accent} opacity="0.95" />
+        {/* Central door */}
+        <rect x="93" y="100" width="14" height="18" rx="2" fill={accent} opacity="0.2" stroke={accent} strokeWidth="1" />
+        <ellipse cx="100" cy="100" rx="7" ry="4" fill={accent} opacity="0.3" />
 
-        {/* Dome */}
-        <ellipse cx="80" cy="20" rx="22" ry="14" fill={accent} opacity="0.9" />
-        <ellipse cx="80" cy="18" rx="14" ry="9" fill={accent} />
+        {/* Upper windows on main building */}
+        <rect x="58" y="65" width="12" height="10" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
+        <rect x="130" y="65" width="12" height="10" rx="2" fill={accent} opacity="0.15" stroke={accent} strokeWidth="1" />
 
-        {/* Dome top / cupola */}
-        <rect x="77" y="6" width="6" height="8" rx="1" fill={accent} />
-        <circle cx="80" cy="5" r="3" fill={accent} />
+        {/* Roof cornice */}
+        <rect x="52" y="54" width="96" height="6" rx="1" fill={accent} opacity="0.9" />
 
-        {/* Small flag */}
-        <line x1="80" y1="0" x2="80" y2="5" stroke={accent} strokeWidth="1" />
-        <rect x="80" y="0" width="10" height="6" rx="1" fill="#B22234" opacity="0.9" />
-        <rect x="80" y="2" width="10" height="2" fill="#fff" opacity="0.6" />
+        {/* Flagpole */}
+        <line x1="100" y1="10" x2="100" y2="55" stroke={accent} strokeWidth="1.5" />
+        {/* Flag */}
+        <rect x="100" y="10" width="20" height="13" rx="1" fill="#B22234" opacity="0.9" />
+        <rect x="100" y="10" width="20" height="4" fill="#B22234" />
+        <rect x="100" y="14" width="20" height="3" fill="white" opacity="0.8" />
+        <rect x="100" y="17" width="20" height="3" fill="#B22234" opacity="0.9" />
+        <rect x="100" y="20" width="20" height="3" fill="white" opacity="0.8" />
 
-        {/* Window details */}
-        <rect x="60" y="52" width="8" height="12" rx="1" fill="#fff" opacity="0.2" />
-        <rect x="76" y="52" width="8" height="12" rx="1" fill="#fff" opacity="0.2" />
-        <rect x="92" y="52" width="8" height="12" rx="1" fill="#fff" opacity="0.2" />
+        {/* Connecting colonnades (low wings between main and side) */}
+        <rect x="52" y="88" width="10" height="30" rx="1" fill="white" stroke={accent} strokeWidth="1" opacity="0.9" />
+        <rect x="138" y="88" width="10" height="30" rx="1" fill="white" stroke={accent} strokeWidth="1" opacity="0.9" />
+
+        {/* Driveway / lawn hint */}
+        <ellipse cx="100" cy="124" rx="60" ry="5" fill={accent} opacity="0.08" />
       </svg>
     </div>
   );
@@ -161,7 +193,7 @@ export default function Stage1_CandidateBasics() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease }}
       >
-        <CapitolIllustration />
+        <WhiteHouseIllustration />
       </motion.div>
 
       {/* ──────────────────────────────────────────

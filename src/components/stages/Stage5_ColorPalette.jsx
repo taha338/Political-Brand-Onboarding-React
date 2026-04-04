@@ -149,12 +149,9 @@ function PaletteCard({ name, colors, isActive, onClick, badge, description, inde
           )}
         </div>
 
-        {/* Color swatches — sit on a dark tray so white/light colors are always visible */}
+        {/* Color swatches */}
         <div style={{
           flex: fullWidth ? 1 : undefined,
-          backgroundColor: '#1E1E2E',
-          borderRadius: 8,
-          padding: '8px 10px',
           display: 'flex',
           gap: 6,
         }}>
@@ -167,8 +164,9 @@ function PaletteCard({ name, colors, isActive, onClick, badge, description, inde
                   height: fullWidth ? 38 : 28,
                   borderRadius: 5,
                   backgroundColor: color,
+                  border: '1.5px solid rgba(0,0,0,0.12)',
                 }} />
-                <span style={{ fontSize: 7.5, fontWeight: 600, marginTop: 4, color: 'rgba(255,255,255,0.55)', textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
+                <span style={{ fontSize: 7.5, fontWeight: 600, marginTop: 4, color: '#6B7280', textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
               </div>
             );
           })}

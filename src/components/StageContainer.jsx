@@ -73,12 +73,11 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
         >
           <button
             onClick={prevStage}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all hover:opacity-90"
             style={{
-              color: '#1C2E5B',
-              border: '1px solid #D1D5DB',
-              backgroundColor: 'white',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+              color: '#FFFFFF',
+              backgroundColor: '#1C2E5B',
+              boxShadow: '0 2px 8px rgba(28,46,91,0.3)',
             }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>

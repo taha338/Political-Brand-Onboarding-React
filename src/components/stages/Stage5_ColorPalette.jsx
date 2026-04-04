@@ -105,7 +105,7 @@ function PaletteCard({ name, colors, isActive, onClick, badge, description, inde
         cursor: 'pointer',
         overflow: 'hidden',
         background: isActive ? '#FDF2F2' : '#FFFFFF',
-        border: isActive ? '5px solid #8B1A2B' : '5px solid #64748B',
+        border: isActive ? '2px solid #8B1A2B' : '2px solid #64748B',
         borderRadius: fullWidth ? 12 : 10,
         boxShadow: isActive
           ? '0 0 0 3px rgba(139,26,43,0.12)'

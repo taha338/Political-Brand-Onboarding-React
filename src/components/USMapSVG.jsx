@@ -220,7 +220,7 @@ export default function USMapSVG({ onSelect, selectedState }) {
                   fill={isSelected ? selectedFill : navy}
                   fontSize="10"
                   fontWeight="bold"
-                  fontFamily="'Poppins', system-ui, sans-serif"
+                  fontFamily="'Plus Jakarta Sans', 'Onest', sans-serif"
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
                   {st.id}
@@ -238,7 +238,7 @@ export default function USMapSVG({ onSelect, selectedState }) {
               fill={isSelected ? '#fff' : navy}
               fontSize={fontSize}
               fontWeight="bold"
-              fontFamily="'Poppins', system-ui, sans-serif"
+              fontFamily="'Plus Jakarta Sans', 'Onest', sans-serif"
               style={{ pointerEvents: 'none', userSelect: 'none' }}
             >
               {st.id}
@@ -266,7 +266,7 @@ export default function USMapSVG({ onSelect, selectedState }) {
               borderRadius: '8px',
               fontSize: '0.82rem',
               fontWeight: 600,
-              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
               whiteSpace: 'nowrap',
               pointerEvents: 'none',
               zIndex: 50,

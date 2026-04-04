@@ -128,7 +128,7 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: isMobile ? 0 : 0.2 }}
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
-              style={{ fontFamily: "'Poppins', 'Inter', sans-serif", color: '#1C2E5B' }}
+              style={{ fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif", color: '#1C2E5B' }}
             >
               {title}
             </motion.h1>

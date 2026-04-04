@@ -18,8 +18,8 @@
   --color-exec-red: #9B1B30;
   --color-exec-gold: #B8860B;
 
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Poppins', 'Inter', sans-serif;
+  --font-sans: 'Onest', system-ui, -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Onest', sans-serif;
 }
 
 @layer base {

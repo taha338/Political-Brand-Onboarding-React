@@ -410,7 +410,7 @@ export default function Stage1_CandidateBasics() {
             width: '100%',
             padding: '0.85rem 1rem',
             fontSize: '1rem',
-            fontFamily: "'Poppins', system-ui, sans-serif",
+            fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
             border: `1px solid ${cardBorder}`,
             borderRadius: '12px',
             outline: 'none',
@@ -483,7 +483,7 @@ export default function Stage1_CandidateBasics() {
                     color: selected ? '#fff' : '#374151',
                     textAlign: 'center',
                     lineHeight: 1.3,
-                    fontFamily: "'Poppins', system-ui, sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
                     transition: 'color 0.3s ease',
                   }}
                 >
@@ -532,7 +532,7 @@ export default function Stage1_CandidateBasics() {
                 borderRadius: '9999px',
                 fontSize: '0.9rem',
                 fontWeight: 600,
-                fontFamily: "'Poppins', system-ui, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
                 marginBottom: '0.75rem',
                 boxShadow: '0 4px 15px rgba(139,26,43,0.3)',
               }}
@@ -765,7 +765,7 @@ export default function Stage1_CandidateBasics() {
                   padding: '0.85rem 0',
                   fontSize: '1.05rem',
                   fontWeight: selected ? 700 : 500,
-                  fontFamily: "'Poppins', system-ui, sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
                   color: selected ? '#fff' : '#374151',
                   background: selected ? accent : '#fff',
                   border: `1px solid ${selected ? accent : cardBorder}`,
@@ -814,7 +814,7 @@ export default function Stage1_CandidateBasics() {
                   padding: '0.85rem 1rem',
                   fontSize: '1rem',
                   fontWeight: selected ? 700 : 500,
-                  fontFamily: "'Poppins', system-ui, sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
                   color: selected ? '#fff' : '#374151',
                   background: selected ? accent : '#fff',
                   border: `1px solid ${selected ? accent : cardBorder}`,
@@ -879,7 +879,7 @@ export default function Stage1_CandidateBasics() {
                     fontSize: '0.95rem',
                     fontWeight: 700,
                     color: selected ? '#fff' : '#111827',
-                    fontFamily: "'Poppins', system-ui, sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
                     marginBottom: '0.35rem',
                     lineHeight: 1.3,
                     transition: 'color 0.3s ease',
@@ -951,7 +951,7 @@ export default function Stage1_CandidateBasics() {
               fontSize: '0.9rem',
               fontWeight: 600,
               color: '#111827',
-              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontFamily: "'Plus Jakarta Sans', 'Onest', sans-serif",
               letterSpacing: '0.02em',
             }}
           >

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { OFFICES, US_STATES, ELECTION_YEARS, CANDIDATE_TYPES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import { sanitizeName, sanitizeDistrict } from '../../utils/sanitize';
 import USMapSVG from '../USMapSVG';
 import { Building2, Home, Landmark, Star, Crown, ClipboardList, Users, Gavel } from 'lucide-react';
 
@@ -402,7 +403,7 @@ export default function Stage1_CandidateBasics() {
           ref={inputRef}
           type="text"
           value={candidate.fullName}
-          onChange={(e) => update({ fullName: e.target.value })}
+          onChange={(e) => update({ fullName: sanitizeName(e.target.value) })}
           placeholder="Enter your full legal name"
           spellCheck={false}
           whileFocus={{ boxShadow: `0 0 0 3px ${accent}30` }}
@@ -711,7 +712,7 @@ export default function Stage1_CandidateBasics() {
           <input
             type="text"
             value={candidate.district}
-            onChange={(e) => update({ district: e.target.value })}
+            onChange={(e) => update({ district: sanitizeDistrict(e.target.value) })}
             placeholder="e.g. 4"
             style={{
               width: '100%',

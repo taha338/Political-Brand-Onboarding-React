@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
+import { sanitizeFreeText, sanitizeShortText } from '../../utils/sanitize';
 import { PROFESSIONAL_BACKGROUNDS, POLICY_PRIORITIES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 import TiltCard from '../TiltCard';
@@ -82,7 +83,7 @@ export default function Stage2_CandidateProfile() {
   };
 
   const addEndorsement = (value) => {
-    const trimmed = value.trim();
+    const trimmed = sanitizeShortText(value).trim();
     if (trimmed && !(profile.endorsements || []).includes(trimmed)) {
       update({ endorsements: [...(profile.endorsements || []), trimmed] });
     }
@@ -259,9 +260,7 @@ export default function Stage2_CandidateProfile() {
         <textarea
           value={profile.definingStory || ''}
           onChange={(e) => {
-            if (e.target.value.length <= 500) {
-              update({ definingStory: e.target.value });
-            }
+            update({ definingStory: sanitizeFreeText(e.target.value) });
           }}
           placeholder="Share the moment, experience, or conviction that led to your candidacy..."
           rows={5}

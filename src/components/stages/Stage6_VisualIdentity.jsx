@@ -129,6 +129,24 @@ function luminance(hex) {
   return 0.299 * r + 0.587 * g + 0.114 * b;
 }
 
+/** Lighten fg toward white until WCAG AA (4.5:1) is met against bg */
+function ensureAA(fg, bg) {
+  const wcagLuminance = (hex) => {
+    const toLinear = v => { const c = v/255; return c <= 0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return 0.2126*toLinear(r) + 0.7152*toLinear(g) + 0.0722*toLinear(b);
+  };
+  const ratio = (a, b) => { const l1=wcagLuminance(a), l2=wcagLuminance(b); return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
+  if (ratio(fg, bg) >= 4.5) return fg;
+  let r=parseInt(fg.slice(1,3),16), g=parseInt(fg.slice(3,5),16), b=parseInt(fg.slice(5,7),16);
+  for (let i=0; i<40; i++) {
+    r=r+(255-r)*0.12; g=g+(255-g)*0.12; b=b+(255-b)*0.12;
+    const hex = '#'+[r,g,b].map(v=>Math.round(Math.min(255,v)).toString(16).padStart(2,'0')).join('');
+    if (ratio(hex, bg) >= 4.5) return hex;
+  }
+  return '#ffffff';
+}
+
 function textOnColor(bgHex) {
   return luminance(bgHex) > 0.55 ? '#1a1a1a' : '#ffffff';
 }
@@ -176,7 +194,7 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
           className="text-sm md:text-base font-bold uppercase tracking-[0.25em] mb-6"
           style={{
             fontFamily: `'${bodyFont}', sans-serif`,
-            color: 'rgba(255,255,255,0.75)',
+            color: ensureAA(activeColors.secondary, activeColors.primary),
           }}
         >
           {coreData.descriptor}

@@ -375,12 +375,12 @@ function FontShowcase({ fonts, coreColors, candidateName, voiceTone }) {
 /* ------------------------------------------------------------------ */
 function ColorPaletteImmersive({ colors }) {
   const colorEntries = [
-    { key: 'primary', label: 'Primary', hex: colors.primary },
-    { key: 'secondary', label: 'Secondary', hex: colors.secondary },
-    { key: 'accent', label: 'Accent', hex: colors.accent },
-    { key: 'background', label: 'Background', hex: colors.background || '#F5F5F5' },
-    { key: 'text', label: 'Text', hex: colors.text || '#333333' },
-    ...(colors.highlight && colors.highlight !== colors.secondary ? [{ key: 'highlight', label: 'Highlight', hex: colors.highlight }] : []),
+    { key: 'primary',    label: 'Primary',             hex: colors.primary },
+    { key: 'secondary',  label: 'Secondary',           hex: colors.secondary },
+    { key: 'accent',     label: 'Tertiary',            hex: colors.accent },
+    { key: 'background', label: 'Additional Colour 1', hex: colors.background || '#F5F5F5' },
+    { key: 'text',       label: 'Additional Colour 2', hex: colors.text || '#333333' },
+    ...(colors.additional ? [{ key: 'additional', label: 'Additional Colour 3', hex: colors.additional }] : []),
   ];
 
   return (

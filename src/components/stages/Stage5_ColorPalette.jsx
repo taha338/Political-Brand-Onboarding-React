@@ -5,11 +5,12 @@ import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 
 const COLOR_ROLES = [
-  { key: 'primary',    label: 'Primary',    desc: 'Main brand color for headers and key elements' },
-  { key: 'secondary',  label: 'Secondary',  desc: 'Supporting color for buttons and accents' },
-  { key: 'accent',     label: 'Accent',     desc: 'Contrast color for highlights and details' },
-  { key: 'background', label: 'Background', desc: 'Page and section backgrounds' },
-  { key: 'text',       label: 'Text',       desc: 'Body text and headings' },
+  { key: 'primary',    label: 'Primary',             desc: 'Main brand color for headers and key elements' },
+  { key: 'secondary',  label: 'Secondary',           desc: 'Supporting color for buttons and accents' },
+  { key: 'accent',     label: 'Tertiary',            desc: 'Third supporting brand color' },
+  { key: 'background', label: 'Additional Colour 1', desc: 'Page and section backgrounds' },
+  { key: 'text',       label: 'Additional Colour 2', desc: 'Body text and headings' },
+  { key: 'additional', label: 'Additional Colour 3', desc: 'Extra brand accent or tint' },
 ];
 
 /* ── WCAG 2.1 AA Contrast Helpers ── */
@@ -136,7 +137,7 @@ function CampaignWebsiteMockup({ colors, candidateName, candidateOffice, candida
   const bgColor = colors.background;
   const secColor = colors.secondary;
   const priColor = colors.primary;
-  const accColor = colors.highlight || colors.accent;
+  const accColor = colors.additional || colors.accent;
   const textColor = colors.text;
   const accentColor = colors.accent;
 
@@ -396,7 +397,7 @@ function CampaignPhoneMockup({ colors, candidateName, candidateOffice, candidate
   const bgColor = colors.background;
   const secColor = colors.secondary;
   const priColor = colors.primary;
-  const accColor = colors.highlight || colors.accent;
+  const accColor = colors.additional || colors.accent;
   const textColor = colors.text;
 
   const name = candidateName || 'Jane Smith';
@@ -605,12 +606,12 @@ export default function Stage5_ColorPalette() {
   const activeColors = useMemo(() => {
     if (activeTab === 'custom' && selectedPreset) {
       const preset = PRESET_PALETTES.find(p => p.id === selectedPreset);
-      return preset?.colors || { primary: '#1C2E5B', secondary: '#B22234', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', highlight: '#4A90D9' };
+      return preset?.colors || { primary: '#1C2E5B', secondary: '#B22234', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', additional: '#4A5568' };
     }
     if (coreData) {
-      return { ...coreData.colors, highlight: coreData.colors.secondary };
+      return { ...coreData.colors, additional: coreData.colors.additional || coreData.colors.accent };
     }
-    return { primary: '#1C2E5B', secondary: '#C93545', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', highlight: '#2E6FBA' };
+    return { primary: '#1C2E5B', secondary: '#C93545', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', additional: '#4A5568' };
   }, [activeTab, selectedPreset, coreData]);
 
   const activePaletteName = useMemo(() => {
@@ -642,7 +643,7 @@ export default function Stage5_ColorPalette() {
   };
 
   const themeColors = coreData
-    ? { ...coreData.colors, highlight: coreData.colors.secondary }
+    ? { ...coreData.colors, additional: coreData.colors.additional || coreData.colors.accent }
     : null;
 
   const showPreview = activeTab === 'theme' || (activeTab === 'custom' && selectedPreset);

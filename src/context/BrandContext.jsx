@@ -27,7 +27,7 @@ const initialState = {
   brandCore: null,
   subDirection: null,
   colorMode: null,
-  customColors: { primary: null, secondary: null, accent: null, background: null, text: null, highlight: null },
+  customColors: { primary: null, secondary: null, accent: null, background: null, text: null, additional: null },
   websiteCopy: {
     hero: '',
     about: '',
@@ -115,14 +115,14 @@ export function BrandProvider({ children }) {
         accent: state.customColors.accent,
         background: state.customColors.background || '#F5F5F5',
         text: state.customColors.text || '#333333',
-        highlight: state.customColors.highlight || state.customColors.secondary,
+        additional: state.customColors.additional || state.customColors.accent,
       };
     }
     if (state.brandCore && BRAND_CORES[state.brandCore]) {
       const c = BRAND_CORES[state.brandCore].colors;
-      return { ...c, highlight: c.highlight || c.secondary };
+      return { ...c, additional: c.additional || c.accent };
     }
-    return { primary: '#1C2E5B', secondary: '#B22234', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', highlight: '#B22234' };
+    return { primary: '#1C2E5B', secondary: '#B22234', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', additional: '#FFFFFF' };
   }, [state.colorMode, state.customColors, state.brandCore]);
 
   return (

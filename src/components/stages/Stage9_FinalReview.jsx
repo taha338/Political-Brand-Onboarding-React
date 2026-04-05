@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
+import { saveSubmission } from '../../supabase/submissions';
 
 /* ------------------------------------------------------------------ */
 /*  Confetti - simple CSS-only falling pieces for Thank You page       */
@@ -165,6 +166,8 @@ export default function Stage9_FinalReview() {
   const colors = getActiveColors();
   const [approved, setApproved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const headingFont = state.customFonts?.heading || brandCore?.fonts?.heading || 'Georgia';
   const bodyFont = state.customFonts?.body || brandCore?.fonts?.body || 'system-ui';
@@ -180,12 +183,12 @@ export default function Stage9_FinalReview() {
 
   /* Color swatches */
   const swatches = [
-    { label: 'Primary', hex: colors.primary || '#1C2E5B' },
-    { label: 'Secondary', hex: colors.secondary || '#B22234' },
-    { label: 'Accent', hex: colors.accent || '#FFFFFF' },
-    { label: 'Background', hex: colors.background || '#F5F5F5' },
-    { label: 'Text', hex: colors.text || '#333333' },
-    { label: 'Highlight', hex: colors.highlight || colors.secondary || '#B22234' },
+    { label: 'Primary',             hex: colors.primary    || '#1C2E5B' },
+    { label: 'Secondary',           hex: colors.secondary  || '#B22234' },
+    { label: 'Tertiary',            hex: colors.accent     || '#FFFFFF' },
+    { label: 'Additional Colour 1', hex: colors.background || '#F5F5F5' },
+    { label: 'Additional Colour 2', hex: colors.text       || '#333333' },
+    { label: 'Additional Colour 3', hex: colors.additional || colors.accent || '#FFFFFF' },
   ];
 
   /* If submitted, show thank you page */
@@ -361,18 +364,34 @@ export default function Stage9_FinalReview() {
           </span>
         </label>
 
+        {/* Submit error */}
+        {submitError && (
+          <p className="mt-4 text-sm text-red-600 font-medium">{submitError}</p>
+        )}
+
         {/* Complete button */}
         <div className="mt-8 mb-4">
           <button
-            onClick={() => setSubmitted(true)}
-            disabled={!approved}
+            onClick={async () => {
+              setSubmitting(true);
+              setSubmitError(null);
+              const { error } = await saveSubmission(state);
+              setSubmitting(false);
+              if (error) {
+                setSubmitError('Submission failed. Please try again.');
+                console.error('Supabase error:', error);
+              } else {
+                setSubmitted(true);
+              }
+            }}
+            disabled={!approved || submitting}
             className="w-full sm:w-auto px-10 py-4 rounded-lg text-base font-semibold text-white transition-colors"
             style={{
-              backgroundColor: approved ? '#8B1A2B' : '#C4C4C4',
-              cursor: approved ? 'pointer' : 'not-allowed',
+              backgroundColor: approved && !submitting ? '#8B1A2B' : '#C4C4C4',
+              cursor: approved && !submitting ? 'pointer' : 'not-allowed',
             }}
           >
-            Complete
+            {submitting ? 'Submitting…' : 'Complete'}
           </button>
         </div>
       </div>

@@ -194,7 +194,7 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
           className="text-sm md:text-base font-bold uppercase tracking-[0.25em] mb-6"
           style={{
             fontFamily: `'${bodyFont}', sans-serif`,
-            color: ensureAA(activeColors.secondary, activeColors.primary),
+            color: activeColors.secondary,
           }}
         >
           {coreData.descriptor}

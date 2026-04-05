@@ -4,56 +4,12 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 
-const PRESET_PALETTES = [
-  {
-    id: 'classic-patriot',
-    name: 'Classic Patriot',
-    colors: { primary: '#1B2A4A', secondary: '#BF0A30', accent: '#E8E4DD', background: '#F7F5F0', text: '#1B2A4A', highlight: '#996B00' },
-  },
-  {
-    id: 'modern-navy',
-    name: 'Modern Navy',
-    colors: { primary: '#0F1D33', secondary: '#D42B3C', accent: '#C8C3B8', background: '#F0F1F3', text: '#1A1E2A', highlight: '#2563EB' },
-  },
-  {
-    id: 'bold-crimson',
-    name: 'Bold Crimson',
-    colors: { primary: '#8B1A2B', secondary: '#2C2C2C', accent: '#C8A951', background: '#FAF8F5', text: '#3A3A3A', highlight: '#BF0A30' },
-  },
-  {
-    id: 'liberty-blue',
-    name: 'Liberty Blue',
-    colors: { primary: '#1A4B8C', secondary: '#CC2936', accent: '#D8D4CC', background: '#F5F4F1', text: '#1A2744', highlight: '#1A4B8C' },
-  },
-  {
-    id: 'heritage-gold',
-    name: 'Heritage Gold',
-    colors: { primary: '#0C2340', secondary: '#A67C00', accent: '#F0E4C2', background: '#FAF6EC', text: '#0C2340', highlight: '#8C6D0F' },
-  },
-  {
-    id: 'stars-stripes',
-    name: 'Stars & Stripes',
-    colors: { primary: '#002868', secondary: '#BF0A30', accent: '#F5E6B8', background: '#FFFFFF', text: '#14213D', highlight: '#9A7B0A' },
-  },
-  {
-    id: 'federal-blue',
-    name: 'Federal Blue',
-    colors: { primary: '#2C3E56', secondary: '#7B2D3B', accent: '#B8C4D0', background: '#EFF1F4', text: '#2C3344', highlight: '#3B6D8C' },
-  },
-  {
-    id: 'sunrise-energy',
-    name: 'Sunrise Energy',
-    colors: { primary: '#1A2744', secondary: '#CC3D2E', accent: '#E8D9A0', background: '#FBF7ED', text: '#1A2744', highlight: '#B07C12' },
-  },
-];
-
 const COLOR_ROLES = [
-  { key: 'primary', label: 'Primary', desc: 'Main brand color for headers and key elements' },
-  { key: 'secondary', label: 'Secondary', desc: 'Supporting color for buttons and accents' },
-  { key: 'accent', label: 'Accent', desc: 'Contrast color for highlights and details' },
+  { key: 'primary',    label: 'Primary',    desc: 'Main brand color for headers and key elements' },
+  { key: 'secondary',  label: 'Secondary',  desc: 'Supporting color for buttons and accents' },
+  { key: 'accent',     label: 'Accent',     desc: 'Contrast color for highlights and details' },
   { key: 'background', label: 'Background', desc: 'Page and section backgrounds' },
-  { key: 'text', label: 'Text', desc: 'Body text and headings' },
-  { key: 'highlight', label: 'Highlight', desc: 'Call-to-action and emphasis elements' },
+  { key: 'text',       label: 'Text',       desc: 'Body text and headings' },
 ];
 
 /* ── WCAG 2.1 AA Contrast Helpers ── */
@@ -671,7 +627,8 @@ export default function Stage5_ColorPalette() {
   const handlePresetSelect = (presetId) => {
     setSelectedPreset(presetId);
     handleTabSwitch('custom');
-    const preset = PRESET_PALETTES.find(p => p.id === presetId);
+    const allPresets = BRAND_CORES[state.brandCore]?.subPalettes || [];
+    const preset = allPresets.find(p => p.id === presetId);
     if (preset) {
       dispatch({ type: 'SET_CUSTOM_COLORS', payload: preset.colors });
     }
@@ -744,7 +701,7 @@ export default function Stage5_ColorPalette() {
           gap: 10,
           marginBottom: 28,
         }}>
-          {PRESET_PALETTES.map((preset, index) => {
+          {(BRAND_CORES[state.brandCore]?.subPalettes || []).map((preset, index) => {
             const isActive = activeTab === 'custom' && selectedPreset === preset.id;
             return (
               <PaletteCard

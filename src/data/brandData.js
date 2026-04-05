@@ -72,6 +72,13 @@ export const BRAND_CORES = {
     emotionalFeel: 'Powerful, Commanding, Unshakable',
     philosophy: 'The Commander pathway is built for candidates who lead from the front. This is not a brand about charm — it\'s about conviction, decisiveness, and the kind of authority people instinctively trust in uncertain times.',
     colors: { primary: '#1C2E5B', secondary: '#C93545', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333' },
+    subPalettes: [
+      { id: 'commander-steel',   name: 'Commander · Steel',   colors: { primary: '#141C28', secondary: '#A83040', accent: '#B8C0C8', background: '#F4F5F8', text: '#252830' } },
+      { id: 'commander-valor',   name: 'Commander · Valor',   colors: { primary: '#1E3A78', secondary: '#B82030', accent: '#C8A020', background: '#F8F8FA', text: '#2A2A30' } },
+      { id: 'commander-shield',  name: 'Commander · Shield',  colors: { primary: '#283848', secondary: '#E03038', accent: '#E0D8C8', background: '#F6F7F8', text: '#282C30' } },
+      { id: 'commander-anthem',  name: 'Commander · Anthem',  colors: { primary: '#182858', secondary: '#D04040', accent: '#F5ECD8', background: '#FAF8F5', text: '#2E2E30' } },
+      { id: 'commander-resolve', name: 'Commander · Resolve', colors: { primary: '#101828', secondary: '#781828', accent: '#D0C8B8', background: '#F5F5F4', text: '#282828' } },
+    ],
     fonts: { heading: 'Oswald', body: 'Source Sans 3' },
     subDirections: [
       { id: 'iron-commander', name: 'Iron Commander', desc: 'Maximum authority. Heavy typography, dark palettes, dominant presence.', visual: 'Oswald Black headlines, deep navy backgrounds, minimal white space, bold red accents.', bestFor: 'Military veterans, law enforcement backgrounds, high-crime districts' },
@@ -113,6 +120,13 @@ export const BRAND_CORES = {
     emotionalFeel: 'Timeless, Principled, Dignified',
     philosophy: 'The Patriot pathway is for candidates who carry something sacred: faith, family, constitutional conviction, heritage. This isn\'t nostalgia. It\'s stewardship.',
     colors: { primary: '#1A2744', secondary: '#8B1A2B', accent: '#D4C5A9', background: '#FAF8F5', text: '#4A3728' },
+    subPalettes: [
+      { id: 'patriot-founding',     name: 'Patriot · Founding',     colors: { primary: '#2A3050', secondary: '#903028', accent: '#D8CCA0', background: '#FAF7F0', text: '#3A3028' } },
+      { id: 'patriot-old-glory',    name: 'Patriot · Old Glory',    colors: { primary: '#344060', secondary: '#A84040', accent: '#E8E0D0', background: '#F8F6F2', text: '#3E3838' } },
+      { id: 'patriot-forge',        name: 'Patriot · Forge',        colors: { primary: '#181820', secondary: '#882028', accent: '#C09828', background: '#F8F6F0', text: '#302820' } },
+      { id: 'patriot-republic',     name: 'Patriot · Republic',     colors: { primary: '#4A5068', secondary: '#884050', accent: '#E0D8C8', background: '#F9F8F5', text: '#383438' } },
+      { id: 'patriot-cornerstone',  name: 'Patriot · Cornerstone',  colors: { primary: '#2C3858', secondary: '#681828', accent: '#D8B868', background: '#FAF8F2', text: '#383028' } },
+    ],
     fonts: { heading: 'Libre Baskerville', body: 'Merriweather' },
     subDirections: [
       { id: 'heritage-classic', name: 'Heritage Classic', desc: 'Old-school American gravitas. Timeless, institutional.', visual: 'Libre Baskerville headlines, navy + parchment palette, engraved design elements, serif wordmarks.', bestFor: 'Legacy families, established community leaders' },
@@ -154,6 +168,13 @@ export const BRAND_CORES = {
     emotionalFeel: 'Bold, Disruptive, Authentic',
     philosophy: 'The Reformer pathway is for the candidate who\'s done being polite about a broken system. This isn\'t rebellion for its own sake — it\'s disciplined rage channeled into action.',
     colors: { primary: '#0D0D0D', secondary: '#CC2029', accent: '#FFFFFF', background: '#FFFFFF', text: '#1A1A1A' },
+    subPalettes: [
+      { id: 'reformer-signal',   name: 'Reformer · Signal',   colors: { primary: '#0A0A0A', secondary: '#D81020', accent: '#F0F0F0', background: '#FFFFFF', text: '#0E0E0E' } },
+      { id: 'reformer-charge',   name: 'Reformer · Charge',   colors: { primary: '#181820', secondary: '#C82028', accent: '#D0B050', background: '#FAFAFA', text: '#141418' } },
+      { id: 'reformer-fracture', name: 'Reformer · Fracture', colors: { primary: '#0C1420', secondary: '#B01820', accent: '#C8D0E0', background: '#F8F9FC', text: '#141820' } },
+      { id: 'reformer-rally',    name: 'Reformer · Rally',    colors: { primary: '#1A1A1A', secondary: '#D83838', accent: '#F8F0E0', background: '#FFFCF8', text: '#1A1818' } },
+      { id: 'reformer-edge',     name: 'Reformer · Edge',     colors: { primary: '#101010', secondary: '#901020', accent: '#B0B8C8', background: '#F6F7F8', text: '#151515' } },
+    ],
     fonts: { heading: 'Bebas Neue', body: 'Barlow Condensed' },
     subDirections: [
       { id: 'firebrand', name: 'Anti-Establishment Firebrand', desc: 'Maximum disruption energy. Rally-poster aesthetic.', visual: 'Bebas Neue headlines, near-black backgrounds, bright red accents, stencil typography.', bestFor: 'True outsiders, primary challengers, populist candidates' },
@@ -194,7 +215,14 @@ export const BRAND_CORES = {
     positioning: 'For the candidate who leads by listening. The neighbor who stepped forward because they know the names.',
     emotionalFeel: 'Warm, Genuine, Approachable',
     philosophy: 'The Community First pathway is for the candidate who leads by listening. This isn\'t about strength or disruption — it\'s about proximity. The person who shows up.',
-    colors: { primary: '#2C4A7C', secondary: '#BE4348', accent: '#E8DCC8', background: '#FFF9F0', text: '#5A5A5A' },
+    colors: { primary: '#2C4A7C', secondary: '#BE4348', accent: '#E8DCC8', background: '#FFF9F0', text: '#4A4540' },
+    subPalettes: [
+      { id: 'community-neighbor',   name: 'Community · Neighbor',   colors: { primary: '#3A6090', secondary: '#C85050', accent: '#F0E4D0', background: '#FFFAF2', text: '#383838' } },
+      { id: 'community-belonging',  name: 'Community · Belonging',  colors: { primary: '#506888', secondary: '#B84848', accent: '#E8D8B8', background: '#FBF8F4', text: '#3E3830' } },
+      { id: 'community-unity',      name: 'Community · Unity',      colors: { primary: '#1E3860', secondary: '#D04040', accent: '#D4A830', background: '#FFF9F0', text: '#383838' } },
+      { id: 'community-welcome',    name: 'Community · Welcome',    colors: { primary: '#3C6898', secondary: '#A84040', accent: '#F5ECD0', background: '#FFFBF5', text: '#3A3430' } },
+      { id: 'community-bridge',     name: 'Community · Bridge',     colors: { primary: '#384858', secondary: '#C44848', accent: '#C8A850', background: '#F8F7F4', text: '#343438' } },
+    ],
     fonts: { heading: 'Poppins', body: 'Lato' },
     subDirections: [
       { id: 'family-first', name: 'Family First', desc: 'Warm, protective, family values centered.', visual: 'Poppins headlines, soft navy + warm cream, house/heart motifs.', bestFor: 'Parents, school board, family-values candidates' },
@@ -236,6 +264,13 @@ export const BRAND_CORES = {
     emotionalFeel: 'Premium, Competent, Data-Driven',
     philosophy: 'The Executive pathway is for the candidate who governs by spreadsheet. Not because they\'re cold — because they respect the job enough to prepare.',
     colors: { primary: '#1C2E5B', secondary: '#9B1B30', accent: '#B8860B', background: '#F7F7F7', text: '#4A4A4A' },
+    subPalettes: [
+      { id: 'executive-oval-office', name: 'Executive · Oval Office', colors: { primary: '#0D1528', secondary: '#781830', accent: '#D4A418', background: '#F6F5F4', text: '#303030' } },
+      { id: 'executive-seal',        name: 'Executive · Seal',        colors: { primary: '#1A2850', secondary: '#A82028', accent: '#C4A428', background: '#F8F8F6', text: '#383838' } },
+      { id: 'executive-gavel',       name: 'Executive · Gavel',       colors: { primary: '#202028', secondary: '#801828', accent: '#B89838', background: '#F7F6F4', text: '#2E2E30' } },
+      { id: 'executive-inaugural',   name: 'Executive · Inaugural',   colors: { primary: '#1E3888', secondary: '#A82030', accent: '#D4B870', background: '#F8F8FA', text: '#343438' } },
+      { id: 'executive-pinnacle',    name: 'Executive · Pinnacle',    colors: { primary: '#101018', secondary: '#601028', accent: '#B88828', background: '#F5F5F4', text: '#2E2E2E' } },
+    ],
     fonts: { heading: 'Inter', body: 'Roboto' },
     subDirections: [
       { id: 'corporate-leader', name: 'Corporate Leader', desc: 'CEO-to-office pipeline. Boardroom authority. Premium design.', visual: 'Inter headlines, navy + gold accent, column/building motifs, annual-report aesthetic.', bestFor: 'CEOs, founders, high-income districts' },

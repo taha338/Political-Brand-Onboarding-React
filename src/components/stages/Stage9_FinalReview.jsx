@@ -46,10 +46,10 @@ function ThankYouPage({ collateralSelected }) {
   }, []);
 
   const deliverables = [
-    { num: '01', title: 'Logo delivery', desc: 'Final files in all required formats', badge: '2 working days', badgeStyle: { background: '#2a2a2a', color: '#e5e7eb' } },
-    { num: '02', title: 'Brand kit', desc: 'Complete guidelines based on your selections', badge: '3 working days', badgeStyle: { background: '#2a2a2a', color: '#e5e7eb' } },
-    { num: '03', title: 'Website content', desc: 'Drafting begins from your chosen direction', badge: 'In progress', badgeStyle: { background: '#166534', color: '#bbf7d0' } },
-    ...(collateralSelected ? [{ num: '04', title: 'Collateral materials', desc: 'Print-ready assets across all touchpoints', badge: '2 weeks', badgeStyle: { background: '#2a2a2a', color: '#e5e7eb' } }] : []),
+    { num: '01', title: 'Logo delivery', desc: 'Final files in all required formats', badge: '2 working days', badgeStyle: { background: '#f3f4f6', color: '#374151' } },
+    { num: '02', title: 'Brand kit', desc: 'Complete guidelines based on your selections', badge: '3 working days', badgeStyle: { background: '#f3f4f6', color: '#374151' } },
+    { num: '03', title: 'Website content', desc: 'Drafting begins from your chosen direction', badge: 'In progress', badgeStyle: { background: '#dcfce7', color: '#166534' } },
+    ...(collateralSelected ? [{ num: '04', title: 'Collateral materials', desc: 'Print-ready assets across all touchpoints', badge: '2 weeks', badgeStyle: { background: '#f3f4f6', color: '#374151' } }] : []),
   ];
 
   return (
@@ -57,7 +57,7 @@ function ThankYouPage({ collateralSelected }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', background: '#181818', position: 'relative', overflow: 'hidden' }}
+      style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', background: '#ffffff', position: 'relative', overflow: 'hidden' }}
     >
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
@@ -102,7 +102,7 @@ function ThankYouPage({ collateralSelected }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          style={{ fontSize: 'clamp(2rem, 6vw, 2.75rem)', fontWeight: 700, color: '#ffffff', marginBottom: 16, lineHeight: 1.15 }}
+          style={{ fontSize: 'clamp(2rem, 6vw, 2.75rem)', fontWeight: 700, color: '#111827', marginBottom: 16, lineHeight: 1.15 }}
         >
           Your submission is confirmed
         </motion.h1>
@@ -111,7 +111,7 @@ function ThankYouPage({ collateralSelected }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          style={{ fontSize: '1.05rem', color: '#9ca3af', marginBottom: 40, lineHeight: 1.7, maxWidth: 480, margin: '0 auto 40px' }}
+          style={{ fontSize: '1.05rem', color: '#6b7280', marginBottom: 40, lineHeight: 1.7, maxWidth: 480, margin: '0 auto 40px' }}
         >
           Thank you. We've received your selections and our team is already getting started. You'll receive deliverables according to the schedule below.
         </motion.p>
@@ -121,9 +121,9 @@ function ThankYouPage({ collateralSelected }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          style={{ borderRadius: 12, border: '1px solid #2a2a2a', background: '#1f1f1f', textAlign: 'left', overflow: 'hidden' }}
+          style={{ borderRadius: 12, border: '1px solid #e5e7eb', background: '#f9fafb', textAlign: 'left', overflow: 'hidden' }}
         >
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2a2a' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b7280', margin: 0 }}>
               Delivery Schedule
             </p>
@@ -138,11 +138,11 @@ function ThankYouPage({ collateralSelected }) {
                 borderBottom: i < deliverables.length - 1 ? '1px solid #2a2a2a' : 'none',
               }}
             >
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: '#2c3a5c', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#93c5fd' }}>{item.num}</span>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#3730a3' }}>{item.num}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ margin: 0, fontWeight: 600, color: '#f3f4f6', fontSize: '0.95rem' }}>{item.title}</p>
+                <p style={{ margin: 0, fontWeight: 600, color: '#111827', fontSize: '0.95rem' }}>{item.title}</p>
                 <p style={{ margin: '2px 0 0', color: '#6b7280', fontSize: '0.85rem' }}>{item.desc}</p>
               </div>
               <span style={{ ...item.badgeStyle, padding: '4px 12px', borderRadius: 20, fontSize: '0.8rem', fontWeight: 500, whiteSpace: 'nowrap' }}>

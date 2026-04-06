@@ -638,7 +638,7 @@ export default function Stage7_LogoType() {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: 'center center',
+                      objectPosition: logoType.id === 'symbol-text' ? 'center 85%' : 'center center',
                       transition: 'opacity 0.3s ease',
                     }}
                   />

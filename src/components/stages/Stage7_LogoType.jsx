@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import StageContainer from '../StageContainer';
@@ -351,7 +352,7 @@ export default function Stage7_LogoType() {
   };
 
   // Preload all logo images as soon as component mounts
-  useState(() => {
+  useEffect(() => {
     LOGO_TYPES.forEach(({ image }) => {
       const img = new Image();
       img.src = image;

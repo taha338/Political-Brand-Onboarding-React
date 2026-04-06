@@ -8,7 +8,7 @@ export const STAGES = [
   'Visual Identity',
   'Logo',
   'Logo Style',
-  'Collateral Priority',
+  // 'Collateral Priority', // hidden for now — re-enable when ready
   'Final Review'
 ];
 

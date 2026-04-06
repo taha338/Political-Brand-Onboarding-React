@@ -252,7 +252,6 @@ export default function Stage7_LogoCheck() {
       title="Your Logo"
       subtitle="Let us know whether you're bringing an existing logo or need us to create one."
       stageNumber={8}
-      hideNavigation={true}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -345,32 +344,6 @@ export default function Stage7_LogoCheck() {
           )}
         </AnimatePresence>
 
-        {/* ── Continue button ── */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40, position: 'relative', zIndex: 1 }}>
-          <motion.button
-            onClick={handleContinue}
-            disabled={!canContinue}
-            whileHover={canContinue ? { scale: 1.03 } : {}}
-            whileTap={canContinue ? { scale: 0.97 } : {}}
-            style={{
-              padding: '14px 48px',
-              borderRadius: 12,
-              border: 'none',
-              background: canContinue
-                ? `linear-gradient(135deg, ${navy}, ${accent})`
-                : '#E5E7EB',
-              color: canContinue ? '#FFFFFF' : '#9CA3AF',
-              fontSize: 15, fontWeight: 700,
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-              cursor: canContinue ? 'pointer' : 'not-allowed',
-              boxShadow: canContinue ? '0 4px 16px rgba(28,46,91,0.25)' : 'none',
-              transition: 'background 0.2s, box-shadow 0.2s, color 0.2s',
-              letterSpacing: 0.3,
-            }}
-          >
-            {hasLogo === false ? 'Choose Logo Style →' : 'Continue →'}
-          </motion.button>
-        </div>
       </motion.div>
     </StageContainer>
   );

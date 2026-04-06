@@ -62,10 +62,12 @@ export async function saveSubmission(state) {
     endorsements:     toCSV(profile.endorsements),
 
     // Brand selections — whitelisted enums
-    brand_core:    safeEnum(state.brandCore,   VALID_BRAND_CORES),
-    sub_direction: sanitizeShortText(state.subDirection),
-    color_mode:    safeEnum(state.colorMode,   VALID_COLOR_MODES),
-    logo_type:     safeEnum(state.logoType,    VALID_LOGO_TYPES),
+    brand_core:        safeEnum(state.brandCore,  VALID_BRAND_CORES),
+    sub_direction:     sanitizeShortText(state.subDirection),
+    color_mode:        safeEnum(state.colorMode,  VALID_COLOR_MODES),
+    has_existing_logo: state.hasExistingLogo ?? null,
+    existing_logo_url: state.existingLogoUrl  || null,
+    logo_type:         state.hasExistingLogo ? null : safeEnum(state.logoType, VALID_LOGO_TYPES),
 
     // Colors — must be valid hex or null
     color_primary:    safeHex(customColors.primary),
@@ -125,6 +127,7 @@ function buildSafeSnapshot(state) {
     customColors:         state.customColors || {},
     customFonts:          state.customFonts  || {},
     hasExistingLogo:      state.hasExistingLogo ?? null,
+    existingLogoUrl:      state.existingLogoUrl  || null,
     logoType:             state.logoType     || null,
     collateralPriorities: Array.isArray(state.collateralPriorities)
       ? state.collateralPriorities

@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import StageContainer from '../StageContainer';
+import { getSupabaseClient } from '../../supabase/client';
 
 /* ── Design tokens ── */
 const accent = '#8B1A2B';
@@ -347,9 +348,56 @@ function SocialAvatarMockup({ name }) {
 export default function Stage7_LogoType() {
   const { state, dispatch } = useBrand();
   const selected = state.logoType;
+  const hasExisting = state.hasExistingLogo;
+  const existingUrl = state.existingLogoUrl;
+
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   const handleSelect = (id) => {
     dispatch({ type: 'SET_LOGO_TYPE', payload: id });
+  };
+
+  const handleLogoChoice = (hasLogo) => {
+    dispatch({ type: 'SET_LOGO_STATUS', payload: { hasExistingLogo: hasLogo, existingLogoUrl: hasLogo ? existingUrl : null } });
+    if (!hasLogo) setUploadError(null);
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const maxMB = 5;
+    if (file.size > maxMB * 1024 * 1024) {
+      setUploadError(`File too large. Max ${maxMB}MB.`);
+      return;
+    }
+
+    setUploading(true);
+    setUploadError(null);
+
+    const ext = file.name.split('.').pop();
+    const fileName = `logo-${Date.now()}.${ext}`;
+
+    const { data, error } = await getSupabaseClient()
+      .storage
+      .from('logos')
+      .upload(fileName, file, { upsert: true });
+
+    if (error) {
+      setUploadError('Upload failed. Please try again.');
+      setUploading(false);
+      return;
+    }
+
+    const { data: urlData } = getSupabaseClient()
+      .storage
+      .from('logos')
+      .getPublicUrl(data.path);
+
+    dispatch({ type: 'SET_LOGO_STATUS', payload: { existingLogoUrl: urlData.publicUrl } });
+    setUploading(false);
   };
 
   // Preload all logo images as soon as component mounts
@@ -386,7 +434,84 @@ export default function Stage7_LogoType() {
         <DecorativeDots style={{ top: -20, right: -20 }} />
         <DecorativeDots style={{ bottom: -20, left: -20 }} />
 
+        {/* ── Existing logo choice ── */}
+        <div style={{ marginBottom: 36, position: 'relative', zIndex: 1 }}>
+          <p style={{ fontFamily: 'Georgia, serif', fontSize: 15, fontWeight: 600, color: navy, marginBottom: 14, textAlign: 'center' }}>
+            Do you already have a logo?
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+            {[{ label: 'Yes, upload mine', value: true }, { label: 'No, design one for me', value: false }].map(({ label, value }) => {
+              const isActive = hasExisting === value;
+              return (
+                <button
+                  key={String(value)}
+                  onClick={() => handleLogoChoice(value)}
+                  style={{
+                    padding: '10px 24px',
+                    borderRadius: 10,
+                    border: `2px solid ${isActive ? accent : '#E5E7EB'}`,
+                    background: isActive ? '#FFF9FA' : '#FFFFFF',
+                    color: isActive ? accent : navy,
+                    fontWeight: 600,
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Upload area — shown when "Yes" is chosen */}
+          <AnimatePresence>
+            {hasExisting === true && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ marginTop: 20, overflow: 'hidden' }}
+              >
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{
+                    border: `2px dashed ${existingUrl ? accent : '#D1D5DB'}`,
+                    borderRadius: 12,
+                    padding: '28px 20px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    background: existingUrl ? '#FFF9FA' : '#FAFAFA',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {existingUrl ? (
+                    <>
+                      <img src={existingUrl} alt="Uploaded logo" style={{ maxHeight: 80, maxWidth: '100%', objectFit: 'contain', marginBottom: 10 }} />
+                      <p style={{ fontSize: 13, color: accent, fontWeight: 600, margin: 0 }}>Logo uploaded ✓ — click to replace</p>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={uploading ? accent : '#9CA3AF'} strokeWidth="1.5" style={{ marginBottom: 8 }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>
+                        {uploading ? 'Uploading…' : 'Click to upload your logo (PNG, SVG, JPG — max 5MB)'}
+                      </p>
+                    </>
+                  )}
+                </div>
+                <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" style={{ display: 'none' }} onChange={handleFileUpload} />
+                {uploadError && <p style={{ color: '#DC2626', fontSize: 13, marginTop: 8, textAlign: 'center' }}>{uploadError}</p>}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* ── Heading section ── */}
+        <AnimatePresence>
+        {hasExisting !== true && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
         <div style={{ textAlign: 'center', marginBottom: 40, position: 'relative', zIndex: 1 }}>
           <h2
             style={{
@@ -499,6 +624,7 @@ export default function Stage7_LogoType() {
                     alignItems: 'center',
                     height: 180,
                     overflow: 'hidden',
+                    padding: '0 7%',
                     borderBottom: `1px solid ${isSelected ? 'rgba(139,26,43,0.12)' : '#F0F0F0'}`,
                   }}
                 >
@@ -510,9 +636,9 @@ export default function Stage7_LogoType() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     style={{
                       width: '100%',
-                      height: logoType.cropTop ? '130%' : '100%',
-                      objectFit: logoType.cropTop ? 'cover' : 'contain',
-                      objectPosition: logoType.cropTop ? 'center bottom' : 'center center',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center center',
                       transition: 'opacity 0.3s ease',
                     }}
                   />
@@ -569,6 +695,10 @@ export default function Stage7_LogoType() {
             );
           })}
         </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
+
       </motion.div>
 
       {/* Hover style for image zoom */}

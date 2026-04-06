@@ -583,7 +583,7 @@ function CampaignPhoneMockup({ colors, candidateName, candidateOffice, candidate
 }
 
 export default function Stage5_ColorPalette() {
-  const { state, dispatch } = useBrand();
+  const { state, dispatch, getActiveColors } = useBrand();
   const [activeTab, setActiveTab] = useState(state.colorMode || 'theme');
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -606,16 +606,7 @@ export default function Stage5_ColorPalette() {
     }
   });
 
-  const activeColors = useMemo(() => {
-    if (activeTab === 'custom' && selectedPreset) {
-      const preset = subPalettes.find(p => p.id === selectedPreset);
-      return preset?.colors || { primary: '#1C2E5B', secondary: '#B22234', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', additional: '#4A5568' };
-    }
-    if (coreData) {
-      return { ...coreData.colors, additional: coreData.colors.additional || coreData.colors.accent };
-    }
-    return { primary: '#1C2E5B', secondary: '#C93545', accent: '#FFFFFF', background: '#F5F5F5', text: '#333333', additional: '#4A5568' };
-  }, [activeTab, selectedPreset, coreData, subPalettes]);
+  const activeColors = getActiveColors();
 
   const activePaletteName = useMemo(() => {
     if (activeTab === 'theme') return `${coreData?.name || 'Theme'} Palette`;

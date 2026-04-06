@@ -19,7 +19,9 @@ const initialState = {
   },
   profile: {
     backgrounds: [],
+    backgroundOther: '',
     policyPriorities: [],
+    policyOther: '',
     definingStory: '',
     familyStatus: '',
     endorsements: [],

@@ -10,7 +10,7 @@ import {
   Shield, Briefcase, Scale, HeartPulse, Wheat, BookOpen,
   Church, Landmark, Wrench, Monitor, Medal,
   TrendingUp, Target, Heart, CheckSquare, GraduationCap,
-  Zap, DollarSign, Eye, Building2, Leaf, ShieldCheck,
+  Zap, DollarSign, Eye, Building2, Leaf, ShieldCheck, PlusCircle,
 } from 'lucide-react';
 
 const PRIMARY = '#8B1A2B';
@@ -67,7 +67,8 @@ export default function Stage2_CandidateProfile() {
   const toggleBackground = (id) => {
     const current = profile.backgrounds || [];
     if (current.includes(id)) {
-      update({ backgrounds: current.filter((b) => b !== id) });
+      const updated = current.filter((b) => b !== id);
+      update({ backgrounds: updated, ...(id === 'other' ? { backgroundOther: '' } : {}) });
     } else if (current.length < 2) {
       update({ backgrounds: [...current, id] });
     }
@@ -76,7 +77,8 @@ export default function Stage2_CandidateProfile() {
   const togglePriority = (id) => {
     const current = profile.policyPriorities || [];
     if (current.includes(id)) {
-      update({ policyPriorities: current.filter((p) => p !== id) });
+      const updated = current.filter((p) => p !== id);
+      update({ policyPriorities: updated, ...(id === 'other-policy' ? { policyOther: '' } : {}) });
     } else if (current.length < 3) {
       update({ policyPriorities: [...current, id] });
     }
@@ -98,6 +100,8 @@ export default function Stage2_CandidateProfile() {
   const priorities = profile.policyPriorities || [];
   const endorsements = profile.endorsements || [];
   const storyLen = (profile.definingStory || '').length;
+  const backgroundOtherSelected = backgrounds.includes('other');
+  const policyOtherSelected = priorities.includes('other-policy');
 
   return (
     <StageContainer
@@ -124,7 +128,7 @@ export default function Stage2_CandidateProfile() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {PROFESSIONAL_BACKGROUNDS.map((bg, i) => {
+          {PROFESSIONAL_BACKGROUNDS.map((bg) => {
             const selected = backgrounds.includes(bg.id);
             const atMax = backgrounds.length >= 2;
             const disabled = !selected && atMax;
@@ -141,11 +145,7 @@ export default function Stage2_CandidateProfile() {
                     ? 'bg-white text-gray-300 border-gray-200 opacity-50 cursor-not-allowed'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 cursor-pointer'
                 }`}
-                style={
-                  selected
-                    ? { backgroundColor: PRIMARY, borderColor: PRIMARY }
-                    : {}
-                }
+                style={selected ? { backgroundColor: PRIMARY, borderColor: PRIMARY } : {}}
               >
                 {selected && (
                   <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
@@ -155,24 +155,81 @@ export default function Stage2_CandidateProfile() {
                 <span
                   className="block"
                   style={{ color: selected ? '#fff' : PRIMARY, transition: 'transform 0.2s ease' }}
-                  onMouseEnter={(e) => {
-                    if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out';
-                  }}
+                  onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out'; }}
                   onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
                 >
                   {icon}
                 </span>
-                <span
-                  className={`text-xs font-semibold text-center leading-tight ${
-                    selected ? 'text-white' : ''
-                  }`}
-                >
+                <span className={`text-xs font-semibold text-center leading-tight ${selected ? 'text-white' : ''}`}>
                   {bg.label}
                 </span>
               </TiltCard>
             );
           })}
+
+          {/* Other — background */}
+          {(() => {
+            const selected = backgroundOtherSelected;
+            const atMax = backgrounds.length >= 2;
+            const disabled = !selected && atMax;
+            return (
+              <TiltCard
+                onClick={() => !disabled && toggleBackground('other')}
+                className={`group flex flex-col items-center justify-center gap-2 px-3 py-5 rounded-xl border transition-all duration-200 ${
+                  selected
+                    ? 'text-white shadow-lg border-transparent'
+                    : disabled
+                    ? 'bg-white text-gray-300 border-gray-200 opacity-50 cursor-not-allowed'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 cursor-pointer'
+                }`}
+                style={selected ? { backgroundColor: PRIMARY, borderColor: PRIMARY } : {}}
+              >
+                {selected && (
+                  <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                    <AnimatedCheckmark size={20} color="#FFFFFF" />
+                  </div>
+                )}
+                <span
+                  className="block"
+                  style={{ color: selected ? '#fff' : PRIMARY }}
+                  onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out'; }}
+                  onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
+                >
+                  <PlusCircle size={ICON_SIZE} />
+                </span>
+                <span className={`text-xs font-semibold text-center leading-tight ${selected ? 'text-white' : ''}`}>
+                  Other
+                </span>
+              </TiltCard>
+            );
+          })()}
         </div>
+
+        {/* Other background — text input */}
+        <AnimatePresence>
+          {backgroundOtherSelected && (
+            <motion.div
+              key="bg-other-input"
+              initial={{ opacity: 0, height: 0, marginTop: 0 }}
+              animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <input
+                type="text"
+                value={profile.backgroundOther || ''}
+                onChange={(e) => update({ backgroundOther: e.target.value })}
+                placeholder="Describe your professional background…"
+                autoFocus
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none"
+                style={{ fontSize: '0.95rem' }}
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${PRIMARY}33`; e.currentTarget.style.borderColor = PRIMARY; }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#E5E7EB'; }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.section>
 
       {/* ── SECTION 2: Policy Priorities ── */}
@@ -192,7 +249,7 @@ export default function Stage2_CandidateProfile() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {POLICY_PRIORITIES.map((policy, i) => {
+          {POLICY_PRIORITIES.map((policy) => {
             const selected = priorities.includes(policy.id);
             const atMax = priorities.length >= 3;
             const disabled = !selected && atMax;
@@ -209,11 +266,7 @@ export default function Stage2_CandidateProfile() {
                     ? 'bg-white text-gray-300 border-gray-200 opacity-50 cursor-not-allowed'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 cursor-pointer'
                 }`}
-                style={
-                  selected
-                    ? { backgroundColor: PRIMARY, borderColor: PRIMARY }
-                    : {}
-                }
+                style={selected ? { backgroundColor: PRIMARY, borderColor: PRIMARY } : {}}
               >
                 {selected && (
                   <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
@@ -223,24 +276,81 @@ export default function Stage2_CandidateProfile() {
                 <span
                   className="flex-shrink-0"
                   style={{ color: selected ? '#fff' : PRIMARY, transition: 'transform 0.2s ease' }}
-                  onMouseEnter={(e) => {
-                    if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out';
-                  }}
+                  onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out'; }}
                   onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
                 >
                   {icon}
                 </span>
-                <span
-                  className={`text-sm font-semibold ${
-                    selected ? 'text-white' : ''
-                  }`}
-                >
+                <span className={`text-sm font-semibold ${selected ? 'text-white' : ''}`}>
                   {policy.label}
                 </span>
               </TiltCard>
             );
           })}
+
+          {/* Other — policy */}
+          {(() => {
+            const selected = policyOtherSelected;
+            const atMax = priorities.length >= 3;
+            const disabled = !selected && atMax;
+            return (
+              <TiltCard
+                onClick={() => !disabled && togglePriority('other-policy')}
+                className={`group flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-all duration-200 ${
+                  selected
+                    ? 'text-white shadow-lg border-transparent'
+                    : disabled
+                    ? 'bg-white text-gray-300 border-gray-200 opacity-50 cursor-not-allowed'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 cursor-pointer'
+                }`}
+                style={selected ? { backgroundColor: PRIMARY, borderColor: PRIMARY } : {}}
+              >
+                {selected && (
+                  <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                    <AnimatedCheckmark size={20} color="#FFFFFF" />
+                  </div>
+                )}
+                <span
+                  className="flex-shrink-0"
+                  style={{ color: selected ? '#fff' : PRIMARY }}
+                  onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.animation = 'iconBounce 0.45s ease-in-out'; }}
+                  onAnimationEnd={(e) => { e.currentTarget.style.animation = ''; }}
+                >
+                  <PlusCircle size={ICON_SIZE} />
+                </span>
+                <span className={`text-sm font-semibold ${selected ? 'text-white' : ''}`}>
+                  Other
+                </span>
+              </TiltCard>
+            );
+          })()}
         </div>
+
+        {/* Other policy — text input */}
+        <AnimatePresence>
+          {policyOtherSelected && (
+            <motion.div
+              key="policy-other-input"
+              initial={{ opacity: 0, height: 0, marginTop: 0 }}
+              animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <input
+                type="text"
+                value={profile.policyOther || ''}
+                onChange={(e) => update({ policyOther: e.target.value })}
+                placeholder="Describe your policy priority…"
+                autoFocus
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none"
+                style={{ fontSize: '0.95rem' }}
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${PRIMARY}33`; e.currentTarget.style.borderColor = PRIMARY; }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#E5E7EB'; }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.section>
 
       {/* ── SECTION 3: Your Defining Moment ── */}

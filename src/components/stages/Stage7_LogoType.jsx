@@ -350,6 +350,14 @@ export default function Stage7_LogoType() {
     dispatch({ type: 'SET_LOGO_TYPE', payload: id });
   };
 
+  // Preload all logo images as soon as component mounts
+  useState(() => {
+    LOGO_TYPES.forEach(({ image }) => {
+      const img = new Image();
+      img.src = image;
+    });
+  }, []);
+
   return (
     <StageContainer
       title="Logo Style"
@@ -430,7 +438,7 @@ export default function Stage7_LogoType() {
                 key={logoType.id}
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.12, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.5, delay: 0.1 + index * 0.12, ease: [0.4, 0, 0.2, 1] }}
                 onClick={() => handleSelect(logoType.id)}
                 whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
                 whileTap={{ scale: 0.99 }}
@@ -495,11 +503,14 @@ export default function Stage7_LogoType() {
                   <img
                     src={logoType.image}
                     alt={`${logoType.name} logo examples`}
+                    loading="eager"
+                    decoding="async"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'contain',
+                      transition: 'opacity 0.3s ease',
                     }}
                   />
                 </div>

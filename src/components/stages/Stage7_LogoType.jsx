@@ -361,8 +361,7 @@ export default function Stage7_LogoType() {
       {/* ── Rounded section container with decorative background ── */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         style={{
           borderRadius: 40,
@@ -430,8 +429,7 @@ export default function Stage7_LogoType() {
               <motion.div
                 key={logoType.id}
                 initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.12, ease: [0.4, 0, 0.2, 1] }}
                 onClick={() => handleSelect(logoType.id)}
                 whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}

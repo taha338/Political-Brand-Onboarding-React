@@ -510,7 +510,7 @@ export default function Stage7_LogoType() {
                           cover + objectPosition 65% crops that header out and shows logos. */}
                       <div style={{
                         background: '#FAFAFA',
-                        height: 180,
+                        height: 220,
                         overflow: 'hidden',
                         borderBottom: `1px solid ${isSelected ? 'rgba(139,26,43,0.12)' : '#F0F0F0'}`,
                       }}>
@@ -527,7 +527,7 @@ export default function Stage7_LogoType() {
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
-                            objectPosition: 'center 30%',
+                            objectPosition: logoType.id === 'symbol-text' ? 'center 65%' : 'center 42%',
                             transition: 'opacity 0.3s ease',
                           }}
                         />

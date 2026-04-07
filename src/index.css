@@ -48,9 +48,13 @@
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  /* Prevent 300ms tap delay on all interactive elements */
-  button, a, [role="button"], input, select, textarea {
-    touch-action: manipulation;
+  /* Prevent 300ms tap delay — touch devices only.
+     Must NOT apply globally: macOS trackpad events go through the touch
+     pipeline, so touch-action on desktop kills smooth trackpad scrolling. */
+  @media (hover: none) and (pointer: coarse) {
+    button, a, [role="button"], input, select, textarea {
+      touch-action: manipulation;
+    }
   }
 }
 

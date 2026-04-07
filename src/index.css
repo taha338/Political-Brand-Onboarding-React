@@ -34,12 +34,14 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior: none;
   }
-  /* Disable smooth scroll on mobile — prevents jank on low-end devices */
+  /* Mobile-only: disable smooth scroll and elastic overscroll */
   @media (max-width: 767px) {
     html {
       scroll-behavior: auto;
+    }
+    body {
+      overscroll-behavior: none;
     }
   }
   /* Remove tap highlight flash on iOS/Android */

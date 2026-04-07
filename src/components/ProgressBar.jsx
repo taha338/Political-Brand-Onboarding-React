@@ -98,7 +98,7 @@ export default function ProgressBar() {
                 title={displayNames[i] || stage}
                 style={{
                   flex: 1, outline: 'none', background: 'none', border: 'none',
-                  padding: '4px 0', cursor: isAccessible ? 'pointer' : 'default',
+                  padding: isMobile ? '4px 0' : 0, cursor: isAccessible ? 'pointer' : 'default',
                   position: 'relative', touchAction: 'manipulation',
                   WebkitTapHighlightColor: 'transparent',
                 }}

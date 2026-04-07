@@ -43,7 +43,6 @@ function AppContent() {
       className="min-h-screen"
       style={{
         backgroundColor: '#F9FAFB',
-        paddingBottom: 8,
       }}
     >
       <ProgressBar />

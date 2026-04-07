@@ -99,8 +99,7 @@ export default function ProgressBar() {
                 style={{
                   flex: 1, outline: 'none', background: 'none', border: 'none',
                   padding: isMobile ? '4px 0' : 0, cursor: isAccessible ? 'pointer' : 'default',
-                  position: 'relative', touchAction: 'manipulation',
-                  WebkitTapHighlightColor: 'transparent',
+                  position: 'relative',
                 }}
                 className="group"
               >

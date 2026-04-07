@@ -117,8 +117,6 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
                   boxShadow: '0 2px 8px rgba(55,65,81,0.25)',
                   border: 'none',
                   cursor: 'pointer',
-                  touchAction: 'manipulation',
-                  WebkitTapHighlightColor: 'transparent',
                 }}
                 onMouseEnter={isMobile ? undefined : (e) => (e.currentTarget.style.backgroundColor = '#1F2937')}
                 onMouseLeave={isMobile ? undefined : (e) => (e.currentTarget.style.backgroundColor = '#374151')}
@@ -148,8 +146,6 @@ export default function StageContainer({ children, title, subtitle, stageNumber,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   opacity: canContinue ? 1 : 0.6,
-                  touchAction: 'manipulation',
-                  WebkitTapHighlightColor: 'transparent',
                 }}
                 onMouseEnter={isMobile ? undefined : (e) => { if (canContinue) e.currentTarget.style.backgroundColor = '#6E1522'; }}
                 onMouseLeave={isMobile ? undefined : (e) => { if (canContinue) e.currentTarget.style.backgroundColor = '#8B1A2B'; }}

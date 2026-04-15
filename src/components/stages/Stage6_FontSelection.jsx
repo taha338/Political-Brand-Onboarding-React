@@ -221,6 +221,49 @@ const FONT_PRESETS = {
       bestFor: 'Elite Campaign, Corporate Leader',
     },
   ],
+  nonpartisan: [
+    {
+      id: 'common-ground-serif',
+      name: 'Common Ground',
+      heading: 'Lora', headingWeight: 700,
+      body: 'Karla', bodyWeight: 400,
+      description: 'Warm humanist serif headlines with a clean, calm sans body. Feels community-built, not campaign-run.',
+      bestFor: 'Common Ground, Bridge Builder',
+      recommended: true,
+    },
+    {
+      id: 'town-hall',
+      name: 'Town Hall',
+      heading: 'Source Serif Pro', headingWeight: 600,
+      body: 'Source Sans 3', bodyWeight: 400,
+      description: 'Institutional but not stuffy. Reads like a civic document — trustworthy, no partisan edge.',
+      bestFor: 'Independent Voice, Principled Pragmatist',
+    },
+    {
+      id: 'stewardship',
+      name: 'Stewardship',
+      heading: 'Merriweather', headingWeight: 700,
+      body: 'Lato', bodyWeight: 400,
+      description: 'Grounded serif headlines with a neutral, widely-readable body. Rooted without feeling heritage-loaded.',
+      bestFor: 'Local Steward, Common Ground',
+    },
+    {
+      id: 'quiet-confidence',
+      name: 'Quiet Confidence',
+      heading: 'Karla', headingWeight: 700,
+      body: 'Karla', bodyWeight: 400,
+      description: 'Single-family humanist sans — same voice in heading and body. Minimalist, unforced, calm.',
+      bestFor: 'Independent Voice, Principled Pragmatist',
+    },
+    {
+      id: 'field-notes',
+      name: 'Field Notes',
+      heading: 'Lora', headingWeight: 600,
+      body: 'Source Sans 3', bodyWeight: 400,
+      description: 'Soft serif heading over a clean neutral body. Reads like a naturalist\'s journal — caring, attentive, local.',
+      bestFor: 'Local Steward, Bridge Builder',
+    },
+  ],
 };
 
 /* ── Google Font Loader ── */

@@ -31,7 +31,7 @@ create table if not exists brand_submissions (
   endorsements            text check (char_length(endorsements) <= 500),
 
   -- Brand selections
-  brand_core              text check (brand_core in ('commander','patriot','reformer','community','executive')),
+  brand_core              text check (brand_core in ('commander','patriot','reformer','community','executive','nonpartisan')),
   sub_direction           text check (char_length(sub_direction) <= 60),
   color_mode              text check (color_mode in ('theme','custom')),
   logo_type               text check (logo_type in ('emblem','symbol-text','monogram','wordmark')),
@@ -65,6 +65,21 @@ create table if not exists brand_submissions (
 alter table brand_submissions
   add column if not exists background_other  text check (char_length(background_other) <= 200),
   add column if not exists policy_other      text check (char_length(policy_other) <= 200);
+
+--  Expand brand_core check constraint to include 'nonpartisan'
+do $$
+begin
+  if exists (
+    select 1 from information_schema.table_constraints
+    where table_name = 'brand_submissions'
+      and constraint_name = 'brand_submissions_brand_core_check'
+  ) then
+    alter table brand_submissions drop constraint brand_submissions_brand_core_check;
+  end if;
+  alter table brand_submissions
+    add constraint brand_submissions_brand_core_check
+    check (brand_core in ('commander','patriot','reformer','community','executive','nonpartisan'));
+end $$;
 
 
 -- ── 3. INDEXES ───────────────────────────────────────────────

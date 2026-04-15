@@ -40,13 +40,19 @@ const keyframes = `
   }
 `;
 
-/* ── Logo Type Data ── */
+/* ── Logo Type Data ── (ordered by ease — simplest first) */
 const LOGO_TYPES = [
   {
-    id: 'emblem',
-    name: 'Emblem',
-    description: 'Classic seal or badge design — circular, authoritative, and timeless. Ideal for official-feeling campaigns.',
-    image: '/logos/emblem.webp',
+    id: 'wordmark',
+    name: 'Wordmark',
+    description: 'Pure typographic treatment of the candidate name. Elegant, direct, and lets the name speak for itself.',
+    image: '/logos/wordmark.webp',
+  },
+  {
+    id: 'monogram',
+    name: 'Monogram',
+    description: 'Stylized initials that create a bold, memorable mark. Clean and contemporary with strong brand recall.',
+    image: '/logos/monogram.webp',
   },
   {
     id: 'symbol-text',
@@ -56,18 +62,14 @@ const LOGO_TYPES = [
     cropTop: true,
   },
   {
-    id: 'monogram',
-    name: 'Monogram',
-    description: 'Stylized initials that create a bold, memorable mark. Clean and contemporary with strong brand recall.',
-    image: '/logos/monogram.webp',
-  },
-  {
-    id: 'wordmark',
-    name: 'Wordmark',
-    description: 'Pure typographic treatment of the candidate name. Elegant, direct, and lets the name speak for itself.',
-    image: '/logos/wordmark.webp',
+    id: 'emblem',
+    name: 'Emblem',
+    description: 'Classic seal or badge design — circular, authoritative, and timeless. Ideal for official-feeling campaigns.',
+    image: '/logos/emblem.webp',
   },
 ];
+
+const LOGO_NOTES_MAX = 100;
 
 /* ── Yes / No choice card ── */
 function ChoiceCard({ icon, title, description, selected, onClick }) {
@@ -167,6 +169,7 @@ export default function Stage7_LogoType() {
   const hasExisting = state.hasExistingLogo;
   const existingUrl = state.existingLogoUrl;
   const uploadLater = state.uploadLogoLater || false;
+  const logoNotes = state.logoNotes || '';
 
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -571,6 +574,74 @@ export default function Stage7_LogoType() {
                     </motion.div>
                   );
                 })}
+              </div>
+
+              {/* ── Client preference notes ── */}
+              <div style={{
+                maxWidth: 900,
+                margin: '32px auto 0',
+                position: 'relative',
+                zIndex: 1,
+              }}>
+                <label
+                  htmlFor="logo-notes"
+                  style={{
+                    display: 'block',
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: navy,
+                    opacity: 0.75,
+                    marginBottom: 8,
+                  }}
+                >
+                  Any notes on what you'd like? <span style={{ fontWeight: 400, opacity: 0.7 }}>(optional)</span>
+                </label>
+                <textarea
+                  id="logo-notes"
+                  value={logoNotes}
+                  maxLength={LOGO_NOTES_MAX}
+                  onChange={(e) => dispatch({
+                    type: 'SET_LOGO_STATUS',
+                    payload: { logoNotes: e.target.value.slice(0, LOGO_NOTES_MAX) },
+                  })}
+                  placeholder="e.g. prefer a shield motif, avoid stars, warm tones…"
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    padding: '12px 14px',
+                    borderRadius: 12,
+                    border: '1.5px solid #E5E7EB',
+                    background: '#FFFFFF',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                    color: navy,
+                    resize: 'vertical',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = accent;
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,26,43,0.08)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                />
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  marginTop: 6,
+                  fontSize: 12,
+                  color: navy,
+                  opacity: 0.5,
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                }}>
+                  {logoNotes.length}/{LOGO_NOTES_MAX}
+                </div>
               </div>
             </motion.div>
           )}

@@ -19,7 +19,7 @@ export async function saveSubmission(state) {
   const customFonts  = state.customFonts  || {};
 
   // ── Allowed value sets (whitelist) ───────────────────────────
-  const VALID_BRAND_CORES = ['commander','patriot','reformer','community','executive'];
+  const VALID_BRAND_CORES = ['commander','patriot','reformer','community','executive','nonpartisan'];
   const VALID_LOGO_TYPES  = ['emblem','symbol-text','monogram','wordmark'];
   const VALID_RACE_FOCUS  = ['primary','general','runoff'];
   const HEX_PATTERN       = /^#[0-9A-Fa-f]{6}$/;
@@ -109,6 +109,7 @@ function buildSafeSnapshot(state) {
     hasExistingLogo:      state.hasExistingLogo ?? null,
     existingLogoUrl:      state.existingLogoUrl  || null,
     logoType:             state.logoType     || null,
+    logoNotes:            sanitizeFreeText(state.logoNotes || '')?.slice(0, 100) || null,
     collateralPriorities: Array.isArray(state.collateralPriorities)
       ? state.collateralPriorities
       : [],

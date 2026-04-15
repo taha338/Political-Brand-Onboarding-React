@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Operation 1776 — Brand Color Palettes</title>
+  <style>
+    :root {
+      --ink: #1C2E5B;
+      --crimson: #8B1A2B;
+      --page: #FAF8F5;
+      --card: #FFFFFF;
+      --line: rgba(0,0,0,0.08);
+      --muted: #6B7280;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--page); color: #1f2937; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 48px 24px 96px; }
+
+    header { margin-bottom: 48px; border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+    .eyebrow { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--crimson); font-weight: 700; margin: 0 0 12px; }
+    h1 { margin: 0 0 8px; font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: var(--ink); letter-spacing: -0.02em; background: linear-gradient(135deg, var(--ink), var(--crimson)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .tag { margin: 0; font-size: 15px; color: var(--muted); }
+
+    .core { margin-top: 64px; }
+    .core-header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+    .core-num { font-size: 14px; font-weight: 700; color: var(--muted); }
+    .core-name { margin: 0; font-size: 28px; font-weight: 900; color: var(--ink); letter-spacing: -0.01em; }
+    .core-desc { margin: 0; font-size: 14px; color: var(--muted); font-style: italic; }
+    .core-line { height: 3px; width: 56px; margin: 16px 0 24px; border-radius: 2px; }
+
+    .palette-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 24px 0 10px; }
+
+    .palette { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+    .palette.base { border: 1px solid rgba(139,26,43,0.25); box-shadow: 0 1px 2px rgba(139,26,43,0.08); }
+
+    .palette-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 10px; }
+    .palette-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .palette-name .kicker { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FFFFFF; background: var(--crimson); padding: 3px 8px; border-radius: 4px; margin-right: 10px; vertical-align: middle; }
+    .palette-id { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 11px; color: var(--muted); }
+
+    .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
+    .swatch { aspect-ratio: 1.4 / 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 12px; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 11px; position: relative; cursor: pointer; transition: transform 0.15s ease; }
+    .swatch:hover { transform: translateY(-2px); z-index: 2; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .swatch .role { font-family: -apple-system, sans-serif; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; opacity: 0.75; margin-bottom: 3px; }
+    .swatch .hex { font-weight: 600; letter-spacing: 0.02em; }
+
+    @media (max-width: 720px) {
+      .swatches { grid-template-columns: repeat(3, 1fr); }
+      .palette-top { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+
+    footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); text-align: center; }
+    footer code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; background: rgba(0,0,0,0.04); padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Operation 1776 · Brand Discovery</p>
+      <h1>Color Palette System</h1>
+      <p class="tag">6 brand cores &middot; 36 palettes total (1 base + 5 sub-palettes each). Click any swatch to copy its hex value.</p>
+    </header>
+
+    <div id="palettes"></div>
+
+    <footer>
+      Source: <code>political-brand-discovery/src/data/brandData.js</code>
+    </footer>
+  </div>
+
+  <script>
+    const ROLES = ['primary','secondary','accent','background','text','additional'];
+
+    const CORES = [
+      {
+        id: 'commander', name: 'COMMANDER', descriptor: 'Strength & Authority',
+        lineColor: '#C93545',
+        base: { primary:'#1C2E5B', secondary:'#C93545', accent:'#FFFFFF', background:'#F5F5F5', text:'#333333', additional:'#4A5568' },
+        sub: [
+          { id:'commander-steel',   name:'Steel',   colors:{ primary:'#141C28', secondary:'#A83040', accent:'#B8C0C8', background:'#F4F5F8', text:'#252830', additional:'#3D4A5C' } },
+          { id:'commander-valor',   name:'Valor',   colors:{ primary:'#1E3A78', secondary:'#B82030', accent:'#C8A020', background:'#F8F8FA', text:'#2A2A30', additional:'#2C5F8A' } },
+          { id:'commander-shield',  name:'Shield',  colors:{ primary:'#283848', secondary:'#E03038', accent:'#E0D8C8', background:'#F6F7F8', text:'#282C30', additional:'#5C7080' } },
+          { id:'commander-anthem',  name:'Anthem',  colors:{ primary:'#182858', secondary:'#D04040', accent:'#F5ECD8', background:'#FAF8F5', text:'#2E2E30', additional:'#4A607A' } },
+          { id:'commander-resolve', name:'Resolve', colors:{ primary:'#101828', secondary:'#781828', accent:'#D0C8B8', background:'#F5F5F4', text:'#282828', additional:'#3A4050' } },
+        ],
+      },
+      {
+        id: 'patriot', name: 'PATRIOT', descriptor: 'Heritage & Values',
+        lineColor: '#8B1A2B',
+        base: { primary:'#1A2744', secondary:'#8B1A2B', accent:'#D4C5A9', background:'#FAF8F5', text:'#4A3728', additional:'#8B7355' },
+        sub: [
+          { id:'patriot-founding',    name:'Founding',    colors:{ primary:'#2A3050', secondary:'#903028', accent:'#D8CCA0', background:'#FAF7F0', text:'#3A3028', additional:'#7A6845' } },
+          { id:'patriot-old-glory',   name:'Old Glory',   colors:{ primary:'#344060', secondary:'#A84040', accent:'#E8E0D0', background:'#F8F6F2', text:'#3E3838', additional:'#8A7A68' } },
+          { id:'patriot-forge',       name:'Forge',       colors:{ primary:'#181820', secondary:'#882028', accent:'#C09828', background:'#F8F6F0', text:'#302820', additional:'#9A7820' } },
+          { id:'patriot-republic',    name:'Republic',    colors:{ primary:'#4A5068', secondary:'#884050', accent:'#E0D8C8', background:'#F9F8F5', text:'#383438', additional:'#786858' } },
+          { id:'patriot-cornerstone', name:'Cornerstone', colors:{ primary:'#2C3858', secondary:'#681828', accent:'#D8B868', background:'#FAF8F2', text:'#383028', additional:'#A08838' } },
+        ],
+      },
+      {
+        id: 'reformer', name: 'REFORMER', descriptor: 'Disruption & Change',
+        lineColor: '#CC2029',
+        base: { primary:'#0D0D0D', secondary:'#CC2029', accent:'#FFFFFF', background:'#FFFFFF', text:'#1A1A1A', additional:'#767676' },
+        sub: [
+          { id:'reformer-signal',   name:'Signal',   colors:{ primary:'#0A0A0A', secondary:'#D81020', accent:'#F0F0F0', background:'#FFFFFF', text:'#0E0E0E', additional:'#6E6E6E' } },
+          { id:'reformer-charge',   name:'Charge',   colors:{ primary:'#181820', secondary:'#C82028', accent:'#D0B050', background:'#FAFAFA', text:'#141418', additional:'#8A8890' } },
+          { id:'reformer-fracture', name:'Fracture', colors:{ primary:'#0C1420', secondary:'#B01820', accent:'#C8D0E0', background:'#F8F9FC', text:'#141820', additional:'#6878A0' } },
+          { id:'reformer-rally',    name:'Rally',    colors:{ primary:'#1A1A1A', secondary:'#D83838', accent:'#F8F0E0', background:'#FFFCF8', text:'#1A1818', additional:'#8A8070' } },
+          { id:'reformer-edge',     name:'Edge',     colors:{ primary:'#101010', secondary:'#901020', accent:'#B0B8C8', background:'#F6F7F8', text:'#151515', additional:'#6878A0' } },
+        ],
+      },
+      {
+        id: 'community', name: 'COMMUNITY FIRST', descriptor: 'Neighbors & Service',
+        lineColor: '#C74B50',
+        base: { primary:'#2C4A7C', secondary:'#BE4348', accent:'#E8DCC8', background:'#FFF9F0', text:'#4A4540', additional:'#689FC8' },
+        sub: [
+          { id:'community-neighbor',  name:'Neighbor',  colors:{ primary:'#3A6090', secondary:'#C85050', accent:'#F0E4D0', background:'#FFFAF2', text:'#383838', additional:'#78B0D8' } },
+          { id:'community-belonging', name:'Belonging', colors:{ primary:'#506888', secondary:'#B84848', accent:'#E8D8B8', background:'#FBF8F4', text:'#3E3830', additional:'#6898C0' } },
+          { id:'community-unity',     name:'Unity',     colors:{ primary:'#1E3860', secondary:'#D04040', accent:'#D4A830', background:'#FFF9F0', text:'#383838', additional:'#5890C8' } },
+          { id:'community-welcome',   name:'Welcome',   colors:{ primary:'#3C6898', secondary:'#A84040', accent:'#F5ECD0', background:'#FFFBF5', text:'#3A3430', additional:'#70A8D0' } },
+          { id:'community-bridge',    name:'Bridge',    colors:{ primary:'#384858', secondary:'#C44848', accent:'#C8A850', background:'#F8F7F4', text:'#343438', additional:'#587898' } },
+        ],
+      },
+      {
+        id: 'executive', name: 'EXECUTIVE', descriptor: 'Results & Precision',
+        lineColor: '#B8860B',
+        base: { primary:'#1C2E5B', secondary:'#9B1B30', accent:'#B8860B', background:'#F7F7F7', text:'#4A4A4A', additional:'#4A6890' },
+        sub: [
+          { id:'executive-oval-office', name:'Oval Office', colors:{ primary:'#0D1528', secondary:'#781830', accent:'#D4A418', background:'#F6F5F4', text:'#303030', additional:'#304860' } },
+          { id:'executive-seal',        name:'Seal',        colors:{ primary:'#1A2850', secondary:'#A82028', accent:'#C4A428', background:'#F8F8F6', text:'#383838', additional:'#4A6888' } },
+          { id:'executive-gavel',       name:'Gavel',       colors:{ primary:'#202028', secondary:'#801828', accent:'#B89838', background:'#F7F6F4', text:'#2E2E30', additional:'#504858' } },
+          { id:'executive-inaugural',   name:'Inaugural',   colors:{ primary:'#1E3888', secondary:'#A82030', accent:'#D4B870', background:'#F8F8FA', text:'#343438', additional:'#5878A8' } },
+          { id:'executive-pinnacle',    name:'Pinnacle',    colors:{ primary:'#101018', secondary:'#601028', accent:'#B88828', background:'#F5F5F4', text:'#2E2E2E', additional:'#403040' } },
+        ],
+      },
+      {
+        id: 'nonpartisan', name: 'NON-PARTISAN', descriptor: 'Balance & Common Ground',
+        lineColor: '#8B6F47',
+        base: { primary:'#3A4A3F', secondary:'#8B6F47', accent:'#D9CDB4', background:'#F5F1E8', text:'#2E2A25', additional:'#7A8B6E' },
+        sub: [
+          { id:'nonpartisan-sage-stone',   name:'Sage & Stone',   colors:{ primary:'#4A5A4A', secondary:'#7A6858', accent:'#D8D0BC', background:'#F5F2E8', text:'#2C2E2A', additional:'#8A9A82' } },
+          { id:'nonpartisan-meadow-oak',   name:'Meadow & Oak',   colors:{ primary:'#4E6B44', secondary:'#8B6845', accent:'#E8DCC0', background:'#F8F4EA', text:'#2E2C24', additional:'#6A8560' } },
+          { id:'nonpartisan-harvest-clay', name:'Harvest & Clay', colors:{ primary:'#5C6B4A', secondary:'#9A6848', accent:'#E8D4A8', background:'#F7F2E6', text:'#302820', additional:'#B88658' } },
+          { id:'nonpartisan-forest-linen', name:'Forest & Linen', colors:{ primary:'#2E4538', secondary:'#6B5A42', accent:'#E0D6BC', background:'#F6F2E8', text:'#2A2A26', additional:'#5A7060' } },
+          { id:'nonpartisan-river-reed',   name:'River & Reed',   colors:{ primary:'#446060', secondary:'#8A7550', accent:'#DCD0B0', background:'#F5F2E6', text:'#2E2E2C', additional:'#6A8A88' } },
+        ],
+      },
+    ];
+
+    // Choose readable text color on a hex background (YIQ method)
+    function textOn(hex) {
+      const h = hex.replace('#','');
+      const r = parseInt(h.slice(0,2),16);
+      const g = parseInt(h.slice(2,4),16);
+      const b = parseInt(h.slice(4,6),16);
+      const yiq = (r*299 + g*587 + b*114) / 1000;
+      return yiq >= 150 ? '#1a1a1a' : '#ffffff';
+    }
+
+    function swatchesHtml(colors) {
+      return ROLES.map(role => {
+        const hex = colors[role];
+        const fg = textOn(hex);
+        return `<div class="swatch" data-hex="${hex}" style="background:${hex}; color:${fg};" title="Click to copy ${hex}">
+          <span class="role">${role}</span>
+          <span class="hex">${hex.toUpperCase()}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function paletteHtml(isBase, name, id, colors) {
+      return `<div class="palette${isBase ? ' base' : ''}">
+        <div class="palette-top">
+          <div class="palette-name">${isBase ? '<span class="kicker">Base</span>' : ''}${name}</div>
+          <div class="palette-id">${id}</div>
+        </div>
+        <div class="swatches">${swatchesHtml(colors)}</div>
+      </div>`;
+    }
+
+    function render() {
+      const root = document.getElementById('palettes');
+      const html = CORES.map((core, i) => {
+        const basePalette = paletteHtml(true, core.name, core.id, core.base);
+        const subs = core.sub.map(s => paletteHtml(false, `${core.name} &middot; ${s.name}`, s.id, s.colors)).join('');
+        return `<section class="core">
+          <div class="core-header">
+            <span class="core-num">${String(i+1).padStart(2,'0')}</span>
+            <h2 class="core-name">${core.name}</h2>
+            <span class="core-desc">${core.descriptor}</span>
+          </div>
+          <div class="core-line" style="background:${core.lineColor};"></div>
+          <div class="palette-label">Base Palette</div>
+          ${basePalette}
+          <div class="palette-label">Sub-Palettes</div>
+          ${subs}
+        </section>`;
+      }).join('');
+      root.innerHTML = html;
+
+      // Click-to-copy
+      root.addEventListener('click', (e) => {
+        const sw = e.target.closest('.swatch');
+        if (!sw) return;
+        const hex = sw.dataset.hex;
+        navigator.clipboard?.writeText(hex);
+        const prev = sw.querySelector('.hex').textContent;
+        sw.querySelector('.hex').textContent = 'Copied!';
+        setTimeout(() => { sw.querySelector('.hex').textContent = prev; }, 900);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>

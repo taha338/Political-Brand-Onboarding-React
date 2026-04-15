@@ -47,6 +47,14 @@ const coreStyleMap = {
     numberBg: '#B8860B',
     hoverBorder: '#B8860B',
   },
+  nonpartisan: {
+    gradient: 'linear-gradient(135deg, #2E4538 0%, #4A5A4A 50%, #2E4538 100%)',
+    cardGradient: 'linear-gradient(160deg, rgba(58,74,63,0.05) 0%, rgba(217,205,180,0.12) 100%)',
+    selectedCardBg: '#3A4A3F',
+    selectedTextColor: '#F5F1E8',
+    numberBg: '#8B6F47',
+    hoverBorder: '#8B6F47',
+  },
 };
 
 /* ── Decorative SVG dot pattern ── */

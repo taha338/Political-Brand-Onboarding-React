@@ -4,24 +4,26 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 import AnimatedCheckmark from '../AnimatedCheckmark';
-import { ShieldAlert, Flag, Flame, Users, Crown } from 'lucide-react';
+import { ShieldAlert, Flag, Flame, Users, Crown, Leaf } from 'lucide-react';
 
-const BRAND_KEYS = ['commander', 'patriot', 'reformer', 'community', 'executive'];
+const BRAND_KEYS = ['commander', 'patriot', 'reformer', 'community', 'executive', 'nonpartisan'];
 
 const CORE_GRADIENTS = {
-  commander: 'linear-gradient(135deg, #1C2E5B 0%, #2a4178 50%, #1C2E5B 100%)',
-  patriot:   'linear-gradient(135deg, #1A2744 0%, #2d3f5e 50%, #1A2744 100%)',
-  reformer:  'linear-gradient(135deg, #0D0D0D 0%, #2a2a2a 50%, #0D0D0D 100%)',
-  community: 'linear-gradient(135deg, #2C4A7C 0%, #4a6fa0 50%, #2C4A7C 100%)',
-  executive: 'linear-gradient(135deg, #1C2E5B 0%, #2a4178 50%, #1C2E5B 100%)',
+  commander:   'linear-gradient(135deg, #1C2E5B 0%, #2a4178 50%, #1C2E5B 100%)',
+  patriot:     'linear-gradient(135deg, #1A2744 0%, #2d3f5e 50%, #1A2744 100%)',
+  reformer:    'linear-gradient(135deg, #0D0D0D 0%, #2a2a2a 50%, #0D0D0D 100%)',
+  community:   'linear-gradient(135deg, #2C4A7C 0%, #4a6fa0 50%, #2C4A7C 100%)',
+  executive:   'linear-gradient(135deg, #1C2E5B 0%, #2a4178 50%, #1C2E5B 100%)',
+  nonpartisan: 'linear-gradient(135deg, #2E4538 0%, #4A5A4A 50%, #2E4538 100%)',
 };
 
 const BRAND_ICONS = {
-  commander: <ShieldAlert size={28} />,
-  patriot:   <Flag size={28} />,
-  reformer:  <Flame size={28} />,
-  community: <Users size={28} />,
-  executive: <Crown size={28} />,
+  commander:   <ShieldAlert size={28} />,
+  patriot:     <Flag size={28} />,
+  reformer:    <Flame size={28} />,
+  community:   <Users size={28} />,
+  executive:   <Crown size={28} />,
+  nonpartisan: <Leaf size={28} />,
 };
 
 /* ── Google Font Loader ── */

@@ -44,6 +44,7 @@ const initialState = {
   hasExistingLogo: null,
   existingLogoUrl: null,
   logoType: null,
+  logoNotes: '',
   collateralPriorities: [],
 };
 

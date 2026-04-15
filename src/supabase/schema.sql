@@ -35,6 +35,7 @@ create table if not exists brand_submissions (
   sub_direction           text check (char_length(sub_direction) <= 60),
   color_mode              text check (color_mode in ('theme','custom')),
   logo_type               text check (logo_type in ('emblem','symbol-text','monogram','wordmark')),
+  existing_logo_url       text check (existing_logo_url is null or char_length(existing_logo_url) <= 2000),
 
   -- Colors (hex values)
   color_primary           text check (color_primary ~ '^#[0-9A-Fa-f]{6}$'),
@@ -64,7 +65,8 @@ create table if not exists brand_submissions (
 --  Adds any missing columns without breaking existing data.
 alter table brand_submissions
   add column if not exists background_other  text check (char_length(background_other) <= 200),
-  add column if not exists policy_other      text check (char_length(policy_other) <= 200);
+  add column if not exists policy_other      text check (char_length(policy_other) <= 200),
+  add column if not exists existing_logo_url text check (existing_logo_url is null or char_length(existing_logo_url) <= 2000);
 
 --  Expand brand_core check constraint to include 'nonpartisan'
 do $$

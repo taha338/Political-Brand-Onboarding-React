@@ -52,17 +52,15 @@ export async function saveSubmission(state) {
     background_other:  sanitizeFreeText(profile.backgroundOther),
     policy_priorities: toCSV(profile.policyPriorities),
     policy_other:      sanitizeFreeText(profile.policyOther),
-    defining_story:    sanitizeFreeText(profile.definingStory),
     family_status:     sanitizeFreeText(profile.familyStatus),
-    endorsements:      Array.isArray(profile.endorsements)
-      ? profile.endorsements.map(e => sanitizeShortText(String(e))).filter(Boolean).join(', ') || null
-      : sanitizeShortText(String(profile.endorsements || '')) || null,
 
     // Brand selections
     brand_core:         safeEnum(state.brandCore, VALID_BRAND_CORES),
     sub_direction:      sanitizeShortText(state.subDirection),
     logo_type:          state.hasExistingLogo ? null : safeEnum(state.logoType, VALID_LOGO_TYPES),
+    has_existing_logo:  state.hasExistingLogo ?? null,
     existing_logo_url:  state.existingLogoUrl || null,
+    logo_notes:         sanitizeFreeText(state.logoNotes || '')?.slice(0, 100) || null,
 
     // Colors — column names must match the schema exactly
     color_mode:       state.colorMode || null,

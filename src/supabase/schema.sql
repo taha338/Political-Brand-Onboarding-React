@@ -26,9 +26,7 @@ create table if not exists brand_submissions (
   background_other        text check (char_length(background_other) <= 200),
   policy_priorities       text check (char_length(policy_priorities) <= 500),
   policy_other            text check (char_length(policy_other) <= 200),
-  defining_story          text check (char_length(defining_story) <= 2000),
   family_status           text check (char_length(family_status) <= 120),
-  endorsements            text check (char_length(endorsements) <= 500),
 
   -- Brand selections
   brand_core              text check (brand_core in ('commander','patriot','reformer','community','executive','nonpartisan')),
@@ -67,6 +65,11 @@ alter table brand_submissions
   add column if not exists background_other  text check (char_length(background_other) <= 200),
   add column if not exists policy_other      text check (char_length(policy_other) <= 200),
   add column if not exists existing_logo_url text check (existing_logo_url is null or char_length(existing_logo_url) <= 2000);
+
+-- Drop removed columns (defining_story, endorsements) from existing tables
+alter table brand_submissions
+  drop column if exists defining_story,
+  drop column if exists endorsements;
 
 --  Expand brand_core check constraint to include 'nonpartisan'
 do $$

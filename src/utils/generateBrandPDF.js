@@ -319,56 +319,20 @@ export function generateBrandPDF(state, colors, brandCoreData) {
     y = drawTagRow(doc, items, ML, y, lightSec, secondary, CW);
   }
 
-  // ── Defining story ─────────────────────────────────────────────
-  if (profile.definingStory) {
-    sectionLabel(doc, 'DEFINING STORY', ML, y, primary);
-    y += 7;
-
-    // Quote block with left border
-    fc(doc, secondary);
-    doc.rect(ML, y - 2, 1.5, 999, 'F'); // will clip naturally at content
-
-    doc.setTextColor(60, 60, 60);
-    doc.setFont('helvetica', 'italic');
-    doc.setFontSize(9);
-    const storyLines = doc.splitTextToSize(`"${profile.definingStory}"`, CW - 8);
-    fc(doc, secondary);
-    doc.rect(ML, y - 2, 1.5, storyLines.length * 5 + 4, 'F');
-    doc.text(storyLines, ML + 6, y);
-    y += storyLines.length * 5 + 8;
-  }
-
-  // ── Family & Endorsements ──────────────────────────────────────
-  const hasFamilyOrEndorsements = profile.familyStatus || profile.endorsements?.length > 0;
-  if (hasFamilyOrEndorsements) {
+  // ── Family status ──────────────────────────────────────────────
+  if (profile.familyStatus) {
     dc(doc, '#E5E7EB');
     doc.setLineWidth(0.25);
     doc.line(ML, y, W - MR, y);
     y += 8;
 
-    if (profile.familyStatus) {
-      sectionLabel(doc, 'FAMILY STATUS', ML, y, primary);
-      y += 7;
-      doc.setTextColor(60, 60, 60);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.text(profile.familyStatus, ML, y);
-      y += 8;
-    }
-
-    if (profile.endorsements?.length > 0) {
-      sectionLabel(doc, 'ENDORSEMENTS', ML, y, primary);
-      y += 7;
-      const endItems = profile.endorsements
-        .map(e => typeof e === 'string' ? e : e?.label || e?.id || '')
-        .filter(Boolean);
-      doc.setTextColor(60, 60, 60);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      const endLines = doc.splitTextToSize(endItems.join('  ·  '), CW);
-      doc.text(endLines, ML, y);
-      y += endLines.length * 5 + 5;
-    }
+    sectionLabel(doc, 'FAMILY STATUS', ML, y, primary);
+    y += 7;
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(profile.familyStatus, ML, y);
+    y += 8;
   }
 
   /* ════════════════════════════════════════════════════════════════

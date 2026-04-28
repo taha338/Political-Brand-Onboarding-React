@@ -33,6 +33,38 @@ export async function generateBrandPDF(node, fileName = 'brand-report.pdf') {
     'caretColor',
   ];
 
+  // html2canvas 1.4 cannot parse oklch/oklab/lab/lch/color(). To convert
+  // values returned by getComputedStyle that may contain them into safe
+  // rgb() we render each color into an off-screen canvas pixel and read
+  // it back. This handles every CSS color the browser understands.
+  const probeCtx = (() => {
+    const c = document.createElement('canvas');
+    c.width = 1; c.height = 1;
+    return c.getContext('2d', { willReadFrequently: true });
+  })();
+
+  const toRgb = (cssColor) => {
+    if (!cssColor || cssColor === 'transparent' || cssColor === 'rgba(0, 0, 0, 0)') return cssColor;
+    try {
+      probeCtx.clearRect(0, 0, 1, 1);
+      probeCtx.fillStyle = '#000';
+      probeCtx.fillStyle = cssColor; // browser parses it
+      probeCtx.fillRect(0, 0, 1, 1);
+      const [r, g, b, a] = probeCtx.getImageData(0, 0, 1, 1).data;
+      return a === 255 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(3)})`;
+    } catch {
+      return cssColor;
+    }
+  };
+
+  const UNSUPPORTED_RE = /\b(oklch|oklab|lab|lch|color\()/i;
+  const COLOR_TOKEN_RE = /(oklch|oklab|lab|lch)\([^)]*\)|color\([^)]*\)|#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|\b(?:[a-zA-Z]+)\b/g;
+
+  const sanitizeMulti = (value) => {
+    if (!value || !UNSUPPORTED_RE.test(value)) return value;
+    return value.replace(/(oklch|oklab|lab|lch)\([^)]*\)|color\([^)]*\)/gi, (m) => toRgb(m));
+  };
+
   const freezeColors = (clonedRoot, sourceRoot) => {
     if (!clonedRoot || !sourceRoot) return;
     const clonedAll = [clonedRoot, ...clonedRoot.querySelectorAll('*')];
@@ -40,18 +72,24 @@ export async function generateBrandPDF(node, fileName = 'brand-report.pdf') {
     const len = Math.min(clonedAll.length, sourceAll.length);
     for (let i = 0; i < len; i += 1) {
       const cs = window.getComputedStyle(sourceAll[i]);
+
       for (const prop of COLOR_PROPS) {
         const value = cs[prop];
-        if (value && value !== 'rgba(0, 0, 0, 0)' && !value.includes('oklch') && !value.includes('color(')) {
-          try { clonedAll[i].style[prop] = value; } catch { /* ignore */ }
-        } else if (value) {
-          try { clonedAll[i].style[prop] = value; } catch { /* ignore */ }
-        }
+        if (!value) continue;
+        const safe = UNSUPPORTED_RE.test(value) ? toRgb(value) : value;
+        try { clonedAll[i].style[prop] = safe; } catch { /* ignore */ }
       }
-      // Also freeze background-image gradients which can contain oklch.
+
       const bgImage = cs.backgroundImage;
-      if (bgImage && bgImage !== 'none' && !bgImage.includes('oklch') && !bgImage.includes('color(')) {
-        try { clonedAll[i].style.backgroundImage = bgImage; } catch { /* ignore */ }
+      if (bgImage && bgImage !== 'none') {
+        const safeBg = sanitizeMulti(bgImage);
+        try { clonedAll[i].style.backgroundImage = safeBg; } catch { /* ignore */ }
+      }
+
+      const boxShadow = cs.boxShadow;
+      if (boxShadow && boxShadow !== 'none') {
+        const safeShadow = UNSUPPORTED_RE.test(boxShadow) ? 'none' : boxShadow;
+        try { clonedAll[i].style.boxShadow = safeShadow; } catch { /* ignore */ }
       }
     }
   };

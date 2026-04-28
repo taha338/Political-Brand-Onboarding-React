@@ -4,7 +4,7 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import { saveSubmission } from '../../supabase/submissions';
 import { generateBrandPDF } from '../../utils/generateBrandPDF';
-import Stage6_VisualIdentity from './Stage6_VisualIdentity';
+import BrandReportTemplate from '../BrandReportTemplate';
 
 /* ------------------------------------------------------------------ */
 /*  Confetti - simple CSS-only falling pieces for Thank You page       */
@@ -228,9 +228,7 @@ export default function Stage9_FinalReview() {
       transition={{ duration: 0.4 }}
       className="min-h-screen bg-gray-50"
     >
-      {/* Off-screen Visual Identity render — used as the source for the PDF
-          so the exported file matches Stage 7 exactly. Wrapped in a fixed
-          0×0 overflow:hidden container so it cannot contribute to page scroll. */}
+      {/* Off-screen brand report template — source DOM for the PDF. */}
       <div
         aria-hidden="true"
         style={{
@@ -246,7 +244,7 @@ export default function Stage9_FinalReview() {
       >
         <div style={{ position: 'absolute', top: 0, left: 0, width: 1100 }}>
           <div ref={pdfCaptureRef}>
-            <Stage6_VisualIdentity />
+            <BrandReportTemplate />
           </div>
         </div>
       </div>

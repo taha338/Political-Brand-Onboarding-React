@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import { saveSubmission } from '../../supabase/submissions';
 import { generateBrandPDF } from '../../utils/generateBrandPDF';
+import Stage6_VisualIdentity from './Stage6_VisualIdentity';
 
 /* ------------------------------------------------------------------ */
 /*  Confetti - simple CSS-only falling pieces for Thank You page       */
@@ -171,13 +172,15 @@ export default function Stage9_FinalReview() {
   const [submitError, setSubmitError] = useState(null);
 
   const [pdfGenerating, setPdfGenerating] = useState(false);
+  const pdfCaptureRef = useRef(null);
 
   const handleDownloadPDF = async () => {
     setPdfGenerating(true);
     try {
-      const doc = generateBrandPDF(state, colors, brandCore);
+      // Give the off-screen Visual Identity tree a tick to mount/lay out.
+      await new Promise((r) => setTimeout(r, 150));
       const fileName = `${(state.candidate?.fullName || 'brand-summary').replace(/\s+/g, '-').toLowerCase()}-brand-report.pdf`;
-      doc.save(fileName);
+      await generateBrandPDF(pdfCaptureRef.current, fileName);
     } catch (err) {
       console.error('PDF generation error:', err);
     } finally {
@@ -219,6 +222,23 @@ export default function Stage9_FinalReview() {
       transition={{ duration: 0.4 }}
       className="min-h-screen bg-gray-50"
     >
+      {/* Off-screen Visual Identity render — used as the source for the PDF
+          so the exported file matches Stage 7 exactly. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: '-100000px',
+          top: 0,
+          width: 1100,
+          pointerEvents: 'none',
+        }}
+      >
+        <div ref={pdfCaptureRef}>
+          <Stage6_VisualIdentity />
+        </div>
+      </div>
+
       <div className="max-w-3xl mx-auto px-6 py-10 md:py-14">
         {/* Back button */}
         <button

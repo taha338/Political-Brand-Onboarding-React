@@ -308,13 +308,21 @@ export default function Stage9_FinalReview() {
             <SummaryCard title="Brand Core">
               <p className="text-lg font-semibold text-gray-900 mb-1">{brandCore.name}</p>
               <p className="text-sm text-gray-500">{brandCore.descriptor}</p>
-              {state.subDirection && (() => {
-                const subDir = brandCore.subDirections?.find((s) => s.id === state.subDirection);
-                if (!subDir) return null;
+              {(() => {
+                const ids = Array.isArray(state.subDirection)
+                  ? state.subDirection
+                  : (state.subDirection ? [state.subDirection] : []);
+                if (ids.length === 0) return null;
+                const names = ids
+                  .map((id) => brandCore.subDirections?.find((s) => s.id === id)?.name)
+                  .filter(Boolean);
+                if (names.length === 0) return null;
                 return (
                   <div className="mt-3 pt-3 border-t border-gray-100">
-                    <p className="text-xs text-gray-400 mb-1">Sub-direction</p>
-                    <p className="text-sm font-medium text-gray-700">{subDir.name}</p>
+                    <p className="text-xs text-gray-400 mb-1">
+                      {names.length > 1 ? 'Sub-directions' : 'Sub-direction'}
+                    </p>
+                    <p className="text-sm font-medium text-gray-700">{names.join(', ')}</p>
                   </div>
                 );
               })()}

@@ -94,6 +94,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['Stand With [Name]', 'Join the Fight', 'Enlist Now', 'Defend [State]'],
       vocabulary: ['protect', 'defend', 'secure', 'enforce', 'lead', 'fight', 'strong', 'bold', 'decisive', 'command'],
       avoid: ['maybe', 'hope', 'try', 'journey', 'collaborate', 'gentle', 'nurture', 'explore'],
+      party: {
+        headlineStyle: 'Short. Institutional. Declarative. 3-6 words. The party speaks with one voice.',
+        headlineExamples: ['Defend the Movement.', 'No Retreat. No Compromise.', 'Strength for [State].'],
+        bodyCopy: 'Direct sentences. Collective voice — "we", "our", "the party". Short paragraphs. Lead with the threat to the people we serve, then the platform.',
+        ctaLanguage: ['Join the [Party]', 'Stand With Us', 'Enlist in the Movement', 'Defend [State]'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Candidate name large. Bold declarative statement. Dark background, light text.', headline: '[NAME] Will Fight For [State]', cta: 'Stand With [Name]' },
@@ -142,6 +148,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['Defend Our Values', 'Preserve What Matters', 'Stand for [State]', 'Join the Legacy'],
       vocabulary: ['values', 'faith', 'family', 'heritage', 'freedom', 'constitution', 'tradition', 'honor', 'liberty'],
       avoid: ['disrupt', 'radical', 'change', 'modern', 'edgy', 'shake up', 'revolution'],
+      party: {
+        headlineStyle: 'Stately. Institutional. Heritage-forward. 4-8 words. The party as steward of values.',
+        headlineExamples: ['Faith. Family. Freedom.', 'The Party of Enduring Values', 'Defending What Was Built'],
+        bodyCopy: 'Warm, dignified, institutional. "We are the party of..." framing. Longer sentences allowed. Reflective and rooted.',
+        ctaLanguage: ['Join the Party', 'Defend Our Values', 'Become a Member', 'Stand With Us'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Warm, dignified, values-forward. Heritage-toned background.', headline: '[NAME] — Defending the Values That Built [State]', cta: 'Defend Our Future' },
@@ -190,6 +202,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['Demand Better', 'It\'s Time', 'Break the Cycle', 'Join the Movement'],
       vocabulary: ['change', 'reform', 'enough', 'broken', 'fix', 'outsider', 'truth', 'accountability', 'rebuild'],
       avoid: ['tradition', 'steady', 'heritage', 'safe', 'careful', 'moderate', 'compromise'],
+      party: {
+        headlineStyle: 'Bold. Confrontational. The party as the alternative. 3-7 words.',
+        headlineExamples: ['Enough.', 'They Broke It. We\'ll Fix It.', 'The Party of No More.'],
+        bodyCopy: 'Short, punchy paragraphs. "We" and "the movement" framing. Sentence fragments. Urgency.',
+        ctaLanguage: ['Join the Movement', 'Demand Better', 'Become a Founder', 'Break the Cycle'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Disruptive. Dark or stark white. Bold challenge statement.', headline: '[NAME] — Enough Talk.', cta: 'Join the Movement' },
@@ -238,6 +256,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['Join Our Community', 'Walk With Us', 'Your Help Matters', 'Be Part of This'],
       vocabulary: ['community', 'together', 'neighbor', 'family', 'listen', 'serve', 'care', 'local', 'real', 'people'],
       avoid: ['fight', 'destroy', 'dominate', 'crush', 'force', 'aggressive', 'command', 'demand'],
+      party: {
+        headlineStyle: 'Warm, inclusive, community-focused. The party as the neighbor. 4-8 words.',
+        headlineExamples: ['Your Neighbors. Your Voice.', 'People Over Politics.', 'A Party Built by Us.'],
+        bodyCopy: 'Conversational. "We" and "our community" framing. Tells stories of real members and the people they serve.',
+        ctaLanguage: ['Join the Party', 'Become a Member', 'Walk With Us', 'Be Part of This'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Warm, personal, community-centered. Candidate with people.', headline: '[FIRST NAME] — Your Neighbor. Your Advocate.', cta: 'Meet [First Name]' },
@@ -286,6 +310,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['See the Plan', 'Review the Record', 'Join a Winning Team', 'Invest in Results'],
       vocabulary: ['results', 'strategy', 'plan', 'efficient', 'growth', 'accountability', 'proven', 'deliver', 'build'],
       avoid: ['passion', 'heart', 'dream', 'fight', 'crusade', 'movement', 'revolution', 'radical'],
+      party: {
+        headlineStyle: 'Clean, factual, institutional. Data-friendly. 4-8 words.',
+        headlineExamples: ['Results, Not Rhetoric.', 'The Party of the Plan.', 'Governance Over Politics.'],
+        bodyCopy: 'Precise. Evidence-based. "The party stands for..." or "Our platform delivers..." framing. Professional, never emotional.',
+        ctaLanguage: ['See the Platform', 'Review the Record', 'Join the Party', 'Invest in Results'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Clean, professional, premium. Data point or credential in hero.', headline: '[NAME] — [X] Years of Results for [State]', cta: 'See the Plan' },
@@ -334,6 +364,12 @@ export const BRAND_CORES = {
       ctaLanguage: ['Learn More', 'Meet [Name]', 'See the Plan', 'Find Common Ground'],
       vocabulary: ['neighbors', 'community', 'practical', 'results', 'balance', 'stewardship', 'local', 'common sense', 'listen', 'solve'],
       avoid: ['fight', 'liberal', 'radical', 'MAGA', 'defeat', 'patriot', 'battle', 'woke', 'RINO', 'enemy', 'war'],
+      party: {
+        headlineStyle: 'Grounded, plain-spoken, common-ground. Never overtly partisan. 4-8 words.',
+        headlineExamples: ['Practical. Local. Ours.', 'The Work Comes First.', 'Built on Common Ground.'],
+        bodyCopy: 'Calm, measured, evidence-based. "We" and "our community" language. Leads with the problem and the people, not the party label.',
+        ctaLanguage: ['Learn More', 'See the Platform', 'Meet the Team', 'Find Common Ground'],
+      },
     },
     websiteCopy: {
       hero: { direction: 'Warm earth palette, candidate in natural setting, no flags. Plain-spoken headline.', headline: '[NAME] — Practical Leadership for [District]', cta: 'Meet [Name]' },

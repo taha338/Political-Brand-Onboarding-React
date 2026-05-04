@@ -83,7 +83,9 @@ export async function saveSubmission(state) {
 
     // Brand selections
     brand_core:         safeEnum(state.brandCore, VALID_BRAND_CORES),
-    sub_direction:      sanitizeShortText(state.subDirection),
+    sub_direction:      Array.isArray(state.subDirection)
+                          ? toCSV(state.subDirection)
+                          : sanitizeShortText(state.subDirection),
     logo_type:          state.hasExistingLogo ? null : safeEnum(state.logoType, VALID_LOGO_TYPES),
     has_existing_logo:  state.hasExistingLogo ?? null,
     existing_logo_url:  state.existingLogoUrl || null,

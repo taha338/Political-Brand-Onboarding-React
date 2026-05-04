@@ -14,6 +14,7 @@
 import { useEffect } from 'react';
 import { useBrand } from '../context/BrandContext';
 import { BRAND_CORES } from '../data/brandData';
+import { getResolvedVoiceTone } from '../utils/voiceTone';
 
 /* Load Google Fonts for the heading/body typefaces. */
 function useGoogleFonts(families) {
@@ -63,8 +64,11 @@ export default function BrandReportTemplate() {
 
   if (!coreData) return <div style={{ padding: 40 }}>Brand Core not selected.</div>;
 
-  const candidateName = state.candidate?.fullName || 'Candidate';
-  const voiceTone = coreData.voiceTone || {};
+  const isParty = state.subjectType === 'party';
+  const candidateName = isParty
+    ? (state.party?.name || state.party?.acronym || 'Party')
+    : (state.candidate?.fullName || 'Candidate');
+  const voiceTone = getResolvedVoiceTone(coreData, state) || coreData.voiceTone || {};
 
   const PAGE_BG = '#FFFFFF';
   const TEXT_DARK = '#1F2937';
@@ -129,8 +133,17 @@ export default function BrandReportTemplate() {
         {candidateName && (
           <p style={{ fontSize: 14, color: TEXT_DARK, margin: '10px 0 0', fontWeight: 600 }}>
             {candidateName}
-            {state.candidate?.office ? ` · ${state.candidate.office}` : ''}
-            {state.candidate?.state ? ` · ${state.candidate.state}` : ''}
+            {isParty
+              ? <>
+                  {state.party?.partyType ? ` · ${state.party.partyType.replace(/-/g, ' ')}` : ''}
+                  {state.party?.scope ? ` · ${state.party.scope.replace(/-/g, ' ')}` : ''}
+                  {state.party?.state ? ` · ${state.party.state}` : ''}
+                </>
+              : <>
+                  {state.candidate?.office ? ` · ${state.candidate.office}` : ''}
+                  {state.candidate?.state ? ` · ${state.candidate.state}` : ''}
+                </>
+            }
           </p>
         )}
       </div>

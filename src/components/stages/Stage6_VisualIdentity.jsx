@@ -4,6 +4,7 @@ import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
 import StageContainer from '../StageContainer';
 import TiltCard from '../TiltCard';
+import { getResolvedVoiceTone } from '../../utils/voiceTone';
 
 /* ── Premium design tokens ── */
 const headingGradient = {
@@ -986,7 +987,11 @@ export default function Stage6_VisualIdentity() {
 
   const activeColors = getActiveColors();
 
-  const candidateName = state.candidate?.fullName || 'John Smith';
+  const isParty = state.subjectType === 'party';
+  const candidateName = isParty
+    ? (state.party?.name || state.party?.acronym || 'Party')
+    : (state.candidate?.fullName || 'John Smith');
+  const resolvedVoiceTone = getResolvedVoiceTone(coreData, state) || coreData.voiceTone;
 
   if (!coreData) {
     return (
@@ -1024,7 +1029,7 @@ export default function Stage6_VisualIdentity() {
           fonts={{ heading: activeHeadingFont, body: activeBodyFont }}
           coreColors={activeColors}
           candidateName={candidateName}
-          voiceTone={coreData.voiceTone}
+          voiceTone={resolvedVoiceTone}
         />
 
         {/* 3. Color Palette */}
@@ -1035,7 +1040,7 @@ export default function Stage6_VisualIdentity() {
 
         {/* 4. Voice & Tone */}
         <VoiceToneEditorial
-          voiceTone={coreData.voiceTone}
+          voiceTone={resolvedVoiceTone}
           coreColors={activeColors}
           headingFont={activeHeadingFont}
           bodyFont={activeBodyFont}
@@ -1047,7 +1052,7 @@ export default function Stage6_VisualIdentity() {
           candidateName={candidateName}
           headingFont={activeHeadingFont}
           bodyFont={activeBodyFont}
-          voiceTone={coreData.voiceTone}
+          voiceTone={resolvedVoiceTone}
         />
       </motion.div>
     </StageContainer>

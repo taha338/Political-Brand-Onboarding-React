@@ -120,11 +120,31 @@ export default function Stage4_SubDirection() {
   }
 
   const subDirections = coreData.subDirections;
+  const isParty = state.subjectType === 'party';
+  // For parties, subDirection is an array (multi-select). For candidates,
+  // it stays a single string id. Normalize for the lookup logic below.
+  const selectedIds = Array.isArray(state.subDirection)
+    ? state.subDirection
+    : (state.subDirection ? [state.subDirection] : []);
+  const isIdSelected = (id) => selectedIds.includes(id);
+
+  const handleSelect = (id) => {
+    if (isParty) {
+      const next = isIdSelected(id)
+        ? selectedIds.filter((x) => x !== id)
+        : [...selectedIds, id];
+      dispatch({ type: 'SET_SUB_DIRECTION', payload: next });
+    } else {
+      dispatch({ type: 'SET_SUB_DIRECTION', payload: id });
+    }
+  };
 
   return (
     <StageContainer
-      title="Choose Your Sub-Direction"
-      subtitle={`Refine the visual personality and tone of your ${coreData.name} brand.`}
+      title={isParty ? 'Choose Your Sub-Directions' : 'Choose Your Sub-Direction'}
+      subtitle={isParty
+        ? `Pick one or more sub-directions to blend into your ${coreData.name} party brand.`
+        : `Refine the visual personality and tone of your ${coreData.name} brand.`}
       stageNumber={4}
     >
       {/* Brand Core Identity Banner — rounded 40px container */}
@@ -195,13 +215,13 @@ export default function Stage4_SubDirection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5" style={{ position: 'relative', zIndex: 1 }}>
           {subDirections.map((sub, index) => {
-            const isSelected = state.subDirection === sub.id;
+            const isSelected = isIdSelected(sub.id);
             const isLastOdd = index === subDirections.length - 1 && subDirections.length % 2 === 1;
 
             return (
               <TiltCard
                 key={sub.id}
-                onClick={() => dispatch({ type: 'SET_SUB_DIRECTION', payload: sub.id })}
+                onClick={() => handleSelect(sub.id)}
                 className={`
                   relative text-left rounded-2xl overflow-hidden transition-all duration-500 cursor-pointer group
                   ${isLastOdd ? 'md:col-span-2 md:max-w-[calc(50%-0.625rem)] md:mx-auto' : ''}
@@ -308,7 +328,7 @@ export default function Stage4_SubDirection() {
 
       {/* Selection confirmation */}
       <AnimatePresence>
-        {state.subDirection && (
+        {selectedIds.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -316,9 +336,12 @@ export default function Stage4_SubDirection() {
             className="mt-8 text-center"
           >
             <p className="text-sm" style={{ opacity: 0.7 }}>
-              Selected:{' '}
+              {isParty ? `Selected (${selectedIds.length}):` : 'Selected:'}{' '}
               <span className="font-semibold" style={{ color: coreData.colors.primary }}>
-                {subDirections.find(s => s.id === state.subDirection)?.name}
+                {selectedIds
+                  .map((id) => subDirections.find((s) => s.id === id)?.name)
+                  .filter(Boolean)
+                  .join(', ')}
               </span>
             </p>
           </motion.div>

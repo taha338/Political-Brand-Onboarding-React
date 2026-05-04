@@ -115,7 +115,11 @@ const hoverFill = '#1C2E5B';
 const selectedFill = '#8B1A2B';
 const navy = '#1C2E5B';
 
-export default function USMapSVG({ onSelect, selectedState }) {
+export default function USMapSVG({ onSelect, selectedState, selectedStates }) {
+  // selectedStates (array) is used for multi-select mode. selectedState
+  // (string) is the original single-select mode. They are mutually
+  // exclusive — pass exactly one.
+  const multi = Array.isArray(selectedStates);
   const [hoveredState, setHoveredState] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const svgRef = useRef(null);
@@ -149,10 +153,20 @@ export default function USMapSVG({ onSelect, selectedState }) {
     if (onSelect) onSelect(name);
   }, [onSelect]);
 
-  /* Find abbreviation for the selected full state name */
+  /* Find abbreviation(s) for the selected full state name(s) */
   const selectedAbbr = selectedState
     ? STATES.find((s) => s.name === selectedState)?.id ?? null
     : null;
+  const selectedAbbrSet = multi
+    ? new Set(
+        (selectedStates || [])
+          .map((n) => STATES.find((s) => s.name === n)?.id)
+          .filter(Boolean)
+      )
+    : null;
+  const isStateSelected = (id) => multi
+    ? selectedAbbrSet.has(id)
+    : id === selectedAbbr;
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
@@ -183,7 +197,7 @@ export default function USMapSVG({ onSelect, selectedState }) {
         xmlns="http://www.w3.org/2000/svg"
       >
         {STATES.map((st) => {
-          const isSelected = st.id === selectedAbbr;
+          const isSelected = isStateSelected(st.id);
           const isHovered = st.id === hoveredState;
 
           let fill = defaultFill;
@@ -211,7 +225,7 @@ export default function USMapSVG({ onSelect, selectedState }) {
 
         {/* State abbreviation labels */}
         {STATES.map((st) => {
-          const isSelected = st.id === selectedAbbr;
+          const isSelected = isStateSelected(st.id);
           const baseSize = st.small ? 8 : st.id === 'TX' || st.id === 'CA' || st.id === 'MT' || st.id === 'AK' ? 12 : 10;
           const fontSize = Math.round(baseSize * textScale);
 

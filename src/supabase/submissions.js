@@ -62,6 +62,8 @@ export async function saveSubmission(state) {
     party_type_other:        sanitizeShortText(party.partyTypeOther),
     party_scope:             safeEnum(party.scope, VALID_PARTY_SCOPES),
     party_state:             sanitizeShortText(party.state),
+    party_states:            toCSV(party.states),
+    party_city_county:       sanitizeShortText(party.cityCounty),
     party_founded_year:      safeYear(party.foundedYear),
     party_spokesperson:      sanitizeName(party.spokesperson),
 

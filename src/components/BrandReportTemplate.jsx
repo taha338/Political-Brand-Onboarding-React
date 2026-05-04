@@ -13,7 +13,13 @@
 
 import { useEffect } from 'react';
 import { useBrand } from '../context/BrandContext';
-import { BRAND_CORES } from '../data/brandData';
+import {
+  BRAND_CORES,
+  POLICY_PRIORITIES,
+  PROFESSIONAL_BACKGROUNDS,
+  PARTY_PLATFORM_PILLARS,
+  PARTY_TARGET_SEGMENTS,
+} from '../data/brandData';
 import { getResolvedVoiceTone } from '../utils/voiceTone';
 
 /* Load Google Fonts for the heading/body typefaces. */
@@ -134,11 +140,21 @@ export default function BrandReportTemplate() {
           <p style={{ fontSize: 14, color: TEXT_DARK, margin: '10px 0 0', fontWeight: 600 }}>
             {candidateName}
             {isParty
-              ? <>
-                  {state.party?.partyType ? ` · ${state.party.partyType.replace(/-/g, ' ')}` : ''}
-                  {state.party?.scope ? ` · ${state.party.scope.replace(/-/g, ' ')}` : ''}
-                  {state.party?.state ? ` · ${state.party.state}` : ''}
-                </>
+              ? (() => {
+                  const p = state.party || {};
+                  const parts = [];
+                  if (p.partyType) parts.push(p.partyType.replace(/-/g, ' '));
+                  if (p.scope) parts.push(p.scope.replace(/-/g, ' '));
+                  if (p.scope === 'multi-state' && Array.isArray(p.states) && p.states.length > 0) {
+                    parts.push(p.states.join(', '));
+                  } else if (p.scope === 'local') {
+                    if (p.cityCounty) parts.push(p.cityCounty);
+                    if (p.state) parts.push(p.state);
+                  } else if (p.state) {
+                    parts.push(p.state);
+                  }
+                  return parts.length > 0 ? ' · ' + parts.join(' · ') : '';
+                })()
               : <>
                   {state.candidate?.office ? ` · ${state.candidate.office}` : ''}
                   {state.candidate?.state ? ` · ${state.candidate.state}` : ''}
@@ -289,6 +305,105 @@ export default function BrandReportTemplate() {
           })}
         </div>
       </div>
+
+      {/* PLATFORM & AUDIENCE — pulls Stage 2 selections */}
+      {(() => {
+        const p = state.profile || {};
+        const sub = state.subDirection;
+        const subIds = Array.isArray(sub) ? sub : (sub ? [sub] : []);
+        const subNames = subIds
+          .map((id) => coreData.subDirections?.find((s) => s.id === id)?.name)
+          .filter(Boolean);
+
+        if (isParty) {
+          const pillarLabels = (p.platformPillars || [])
+            .map((id) => PARTY_PLATFORM_PILLARS.find((x) => x.id === id)?.label || id);
+          const segmentLabels = (p.targetSegments || [])
+            .map((id) => PARTY_TARGET_SEGMENTS.find((x) => x.id === id)?.label || id);
+          const showSection = pillarLabels.length || segmentLabels.length || p.coalitions || subNames.length;
+          if (!showSection) return null;
+          return (
+            <div style={{ marginBottom: 56 }}>
+              <SectionLabel>Platform &amp; Audience</SectionLabel>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+                {pillarLabels.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Platform Pillars</p>
+                    <ol style={{ margin: 0, paddingLeft: 18, color: TEXT_DARK, fontSize: 14, lineHeight: 1.7 }}>
+                      {pillarLabels.map((l) => (<li key={l}>{l}</li>))}
+                    </ol>
+                  </div>
+                )}
+                {segmentLabels.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Target Segments</p>
+                    <ul style={{ margin: 0, paddingLeft: 18, color: TEXT_DARK, fontSize: 14, lineHeight: 1.7 }}>
+                      {segmentLabels.map((l) => (<li key={l}>{l}</li>))}
+                    </ul>
+                  </div>
+                )}
+                {subNames.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Sub-Directions</p>
+                    <ul style={{ margin: 0, paddingLeft: 18, color: TEXT_DARK, fontSize: 14, lineHeight: 1.7 }}>
+                      {subNames.map((n) => (<li key={n}>{n}</li>))}
+                    </ul>
+                  </div>
+                )}
+                {p.coalitions && (
+                  <div>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Coalitions &amp; Partners</p>
+                    <p style={{ margin: 0, fontSize: 14, color: TEXT_DARK, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{p.coalitions}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // Candidate mode
+        const bgLabels = (p.backgrounds || [])
+          .map((id) => PROFESSIONAL_BACKGROUNDS.find((x) => x.id === id)?.label || id);
+        const priorityLabels = (p.policyPriorities || [])
+          .map((id) => id === 'other-policy'
+            ? (p.policyOther?.trim() || 'Other')
+            : (POLICY_PRIORITIES.find((x) => x.id === id)?.label || id));
+        const showSection = bgLabels.length || priorityLabels.length || subNames.length;
+        if (!showSection) return null;
+        return (
+          <div style={{ marginBottom: 56 }}>
+            <SectionLabel>Platform &amp; Background</SectionLabel>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+              {priorityLabels.length > 0 && (
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Policy Priorities (Ranked)</p>
+                  <ol style={{ margin: 0, paddingLeft: 18, color: TEXT_DARK, fontSize: 14, lineHeight: 1.7 }}>
+                    {priorityLabels.map((l, i) => (
+                      <li key={l + i} style={i === 0 ? { fontWeight: 700, color: primary } : undefined}>
+                        {l}{i === 0 ? ' — Top Priority' : ''}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+              {bgLabels.length > 0 && (
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Professional Background</p>
+                  <ul style={{ margin: 0, paddingLeft: 18, color: TEXT_DARK, fontSize: 14, lineHeight: 1.7 }}>
+                    {bgLabels.map((l) => (<li key={l}>{l}</li>))}
+                  </ul>
+                </div>
+              )}
+              {subNames.length > 0 && (
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, margin: '0 0 10px' }}>Sub-Direction</p>
+                  <p style={{ margin: 0, fontSize: 14, color: TEXT_DARK, lineHeight: 1.6 }}>{subNames.join(', ')}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* VOICE & TONE */}
       <div style={{ marginBottom: 56 }}>

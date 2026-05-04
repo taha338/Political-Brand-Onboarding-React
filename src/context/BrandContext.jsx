@@ -27,7 +27,9 @@ const initialState = {
     partyType: '',          // 'republican' | 'america-first' | 'non-partisan' | 'independent' | 'third-party' | 'coalition' | 'other'
     partyTypeOther: '',
     scope: '',              // 'national' | 'multi-state' | 'state' | 'local'
-    state: '',              // present when scope !== 'national'
+    state: '',              // single-select state (used for 'state' and 'local' scope)
+    states: [],             // multi-select state list (used for 'multi-state' scope)
+    cityCounty: '',         // local city / county name (used for 'local' scope)
     foundedYear: '',
     spokesperson: '',
   },

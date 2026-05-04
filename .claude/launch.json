@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "brand-discovery",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5180"],
-      "port": 5180
+      "name": "political-brand-discovery",
+      "runtimeExecutable": "/opt/homebrew/bin/npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
     }
   ]
 }

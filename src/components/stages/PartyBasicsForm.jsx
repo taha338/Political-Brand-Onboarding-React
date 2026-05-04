@@ -8,7 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { PARTY_TYPES, PARTY_SCOPES, US_STATES, FOUNDED_YEAR_RANGE } from '../../data/brandData';
 import { sanitizeName, sanitizeShortText } from '../../utils/sanitize';
-import { Flag, Users, Globe, MapPin, Megaphone, Coins, Star, Compass } from 'lucide-react';
+import { Flag, Users, Globe, MapPin, Megaphone, Coins, Star, Compass, X } from 'lucide-react';
+import USMapSVG from '../USMapSVG';
 
 const accent = '#8B1A2B';
 const navy = '#1C2E5B';
@@ -99,7 +100,22 @@ export default function PartyBasicsForm() {
     return US_STATES.filter((s) => s.toLowerCase().startsWith(stateQuery.toLowerCase()));
   }, [stateQuery]);
 
-  const showStatePicker = party.scope && party.scope !== 'national';
+  const scope = party.scope;
+  const useMap = scope === 'multi-state' || scope === 'state';
+  const useTypedState = scope === 'local';
+  const isMulti = scope === 'multi-state';
+
+  const handleMapClick = (stateName) => {
+    if (isMulti) {
+      const current = Array.isArray(party.states) ? party.states : [];
+      const next = current.includes(stateName)
+        ? current.filter((s) => s !== stateName)
+        : [...current, stateName];
+      update({ states: next });
+    } else {
+      update({ state: stateName });
+    }
+  };
 
   return (
     <div>
@@ -243,11 +259,94 @@ export default function PartyBasicsForm() {
         </div>
       </motion.section>
 
-      {/* 4. State (if scope !== national) */}
+      {/* 4a. Multi-state / Statewide → interactive USA map */}
       <AnimatePresence>
-        {showStatePicker && (
+        {useMap && (
           <motion.section
-            key="state-picker"
+            key="state-map"
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: 'auto', marginBottom: '2.5rem' }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ overflow: 'visible' }}
+          >
+            <FieldLabel>
+              {isMulti ? 'States Where You Operate' : 'Primary State'}
+            </FieldLabel>
+            <p style={{ fontSize: 13, color: '#6B7280', marginTop: -4, marginBottom: 12 }}>
+              {isMulti
+                ? 'Click each state your party operates in. Click again to deselect.'
+                : 'Click your state on the map.'}
+            </p>
+
+            <div style={{
+              border: `1px solid ${cardBorder}`,
+              borderRadius: 16,
+              padding: 12,
+              background: '#FAFAFA',
+            }}>
+              {isMulti ? (
+                <USMapSVG
+                  selectedStates={Array.isArray(party.states) ? party.states : []}
+                  onSelect={handleMapClick}
+                />
+              ) : (
+                <USMapSVG
+                  selectedState={party.state || ''}
+                  onSelect={handleMapClick}
+                />
+              )}
+            </div>
+
+            {/* Selected list (multi) or selected confirmation (single) */}
+            {isMulti && Array.isArray(party.states) && party.states.length > 0 && (
+              <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {party.states.map((s) => (
+                  <span
+                    key={s}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '6px 10px',
+                      background: '#fff',
+                      border: `1px solid ${accent}`,
+                      color: accent,
+                      borderRadius: 999,
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {s}
+                    <button
+                      type="button"
+                      onClick={() => update({ states: party.states.filter((x) => x !== s) })}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: 16, height: 16, borderRadius: '50%',
+                        border: 'none', background: 'transparent', color: accent,
+                        cursor: 'pointer', padding: 0,
+                      }}
+                      aria-label={`Remove ${s}`}
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            {!isMulti && party.state && (
+              <p style={{ marginTop: 10, fontSize: 13, color: navy, fontWeight: 600 }}>
+                Selected: <span style={{ color: accent }}>{party.state}</span>
+              </p>
+            )}
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {/* 4b. Local → typed state + city/county */}
+      <AnimatePresence>
+        {useTypedState && (
+          <motion.section
+            key="local-state"
             initial={{ opacity: 0, height: 0, marginBottom: 0 }}
             animate={{ opacity: 1, height: 'auto', marginBottom: '2.5rem' }}
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -255,7 +354,7 @@ export default function PartyBasicsForm() {
             style={{ overflow: 'visible' }}
           >
             <FieldLabel>Primary State</FieldLabel>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', marginBottom: 16 }}>
               <input
                 type="text"
                 value={party.state || stateQuery}
@@ -323,6 +422,13 @@ export default function PartyBasicsForm() {
                 </div>
               )}
             </div>
+
+            <FieldLabel>City / County</FieldLabel>
+            <TextInput
+              value={party.cityCounty || ''}
+              onChange={(e) => update({ cityCounty: sanitizeShortText(e.target.value) })}
+              placeholder="e.g. Travis County, City of Boise, Westchester"
+            />
           </motion.section>
         )}
       </AnimatePresence>

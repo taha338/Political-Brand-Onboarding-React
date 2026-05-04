@@ -7,9 +7,10 @@ const initialState = {
   currentStage: 0,
   completedStages: [],
   // Either 'candidate' (an individual running for office) or 'party'
-  // (a party / movement / political organization). Drives which form
-  // fields are shown in stages 1, 2, and the final review.
-  subjectType: 'candidate',
+  // (a party / movement / political organization). Empty until the
+  // user picks one on the SubjectTypeToggle in Stage 1 — Stage 1 hides
+  // its form fields until a choice is made.
+  subjectType: '',
   candidate: {
     fullName: '',
     office: '',
@@ -39,7 +40,6 @@ const initialState = {
     backgroundOther: '',
     policyPriorities: [],
     policyOther: '',
-    familyStatus: '',
     // Party-mode fields
     foundingStory: '',          // 'grassroots' | 'breakaway' | 'coalition' | 'think-tank' | 'movement' | 'other'
     foundingStoryOther: '',
@@ -53,16 +53,6 @@ const initialState = {
   subDirection: null,
   colorMode: null,
   customColors: { primary: null, secondary: null, accent: null, background: null, text: null, additional: null, textOnDark: null, accentOnDark: null },
-  websiteCopy: {
-    hero: '',
-    about: '',
-    issues: ['', '', ''],
-    endorsements: '',
-    volunteer: '',
-    donate: '',
-    events: '',
-    contact: '',
-  },
   customFonts: { heading: null, body: null },
   hasExistingLogo: null,
   existingLogoUrl: null,
@@ -96,8 +86,6 @@ function reducer(state, action) {
       return { ...state, colorMode: action.payload };
     case 'SET_CUSTOM_COLORS':
       return { ...state, customColors: { ...state.customColors, ...action.payload } };
-    case 'UPDATE_WEBSITE_COPY':
-      return { ...state, websiteCopy: { ...state.websiteCopy, ...action.payload } };
     case 'SET_CUSTOM_FONTS':
       return { ...state, customFonts: { ...state.customFonts, ...action.payload } };
     case 'SET_LOGO_STATUS':

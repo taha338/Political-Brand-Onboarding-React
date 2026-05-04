@@ -13,7 +13,8 @@ const cardBorder = '#E5E7EB';
 
 export default function SubjectTypeToggle() {
   const { state, dispatch } = useBrand();
-  const subjectType = state.subjectType || 'candidate';
+  // Empty until the user picks one — neither button is highlighted.
+  const subjectType = state.subjectType || '';
 
   const setType = (type) => dispatch({ type: 'SET_SUBJECT_TYPE', payload: type });
 

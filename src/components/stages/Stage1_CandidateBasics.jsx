@@ -310,16 +310,25 @@ export default function Stage1_CandidateBasics() {
     transition: { duration: 0.6, delay, ease },
   });
 
-  const subjectType = state.subjectType || 'candidate';
+  const subjectType = state.subjectType;
   const isParty = subjectType === 'party';
+  const isCandidate = subjectType === 'candidate';
+  const hasSubjectChoice = isParty || isCandidate;
 
   return (
     <StageContainer
       stageNumber={1}
-      title={isParty ? 'Party Basics' : 'Candidate Basics'}
-      subtitle={isParty
-        ? "Let's start with the essentials. What is this party, and who does it represent?"
-        : "Let's start with the essentials. Who's running, and what are they running for?"}
+      canContinue={hasSubjectChoice}
+      title={
+        isParty ? 'Party Basics'
+        : isCandidate ? 'Candidate Basics'
+        : "Let's Get Started"
+      }
+      subtitle={
+        isParty ? "Let's start with the essentials. What is this party, and who does it represent?"
+        : isCandidate ? "Let's start with the essentials. Who's running, and what are they running for?"
+        : 'First — tell us who this brand is for.'
+      }
     >
       {/* Inject keyframe animations */}
       <style>{styles.keyframes}</style>
@@ -327,11 +336,34 @@ export default function Stage1_CandidateBasics() {
       {/* Subject type toggle — always shown at top of Stage 1 */}
       <SubjectTypeToggle />
 
-      {/* ── PARTY MODE ── render the dedicated party form and return early. */}
+      {/* Until the user picks Candidate or Party, show a friendly prompt
+          and hide every downstream form section. */}
+      {!hasSubjectChoice && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{
+            marginTop: 16,
+            padding: '32px 24px',
+            borderRadius: 16,
+            border: `1px dashed ${cardBorder}`,
+            background: '#FAFAFA',
+            textAlign: 'center',
+            color: '#6B7280',
+          }}
+        >
+          <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, maxWidth: 480, marginInline: 'auto' }}>
+            Pick <strong style={{ color: navy }}>Candidate</strong> or <strong style={{ color: navy }}>Party / Movement</strong> above to start filling out the form.
+          </p>
+        </motion.div>
+      )}
+
+      {/* ── PARTY MODE ── render the dedicated party form. */}
       {isParty && <PartyBasicsForm />}
 
-      {/* ── CANDIDATE MODE ── original sections below render only when not party. */}
-      {!isParty && (
+      {/* ── CANDIDATE MODE ── original candidate sections render only when chosen. */}
+      {isCandidate && (
       <>
       {/* ──────────────────────────────────────────
           HERO: White House + Confetti + Heading

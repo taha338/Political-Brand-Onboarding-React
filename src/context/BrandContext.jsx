@@ -6,6 +6,10 @@ const BrandContext = createContext();
 const initialState = {
   currentStage: 0,
   completedStages: [],
+  // Either 'candidate' (an individual running for office) or 'party'
+  // (a party / movement / political organization). Drives which form
+  // fields are shown in stages 1, 2, and the final review.
+  subjectType: 'candidate',
   candidate: {
     fullName: '',
     office: '',
@@ -17,12 +21,31 @@ const initialState = {
     candidateType: '',
     partyAffiliation: 'Republican',
   },
+  party: {
+    name: '',
+    acronym: '',
+    partyType: '',          // 'republican' | 'america-first' | 'non-partisan' | 'independent' | 'third-party' | 'coalition' | 'other'
+    partyTypeOther: '',
+    scope: '',              // 'national' | 'multi-state' | 'state' | 'local'
+    state: '',              // present when scope !== 'national'
+    foundedYear: '',
+    spokesperson: '',
+  },
   profile: {
+    // Candidate-mode fields
     backgrounds: [],
     backgroundOther: '',
     policyPriorities: [],
     policyOther: '',
     familyStatus: '',
+    // Party-mode fields
+    foundingStory: '',          // 'grassroots' | 'breakaway' | 'coalition' | 'think-tank' | 'movement' | 'other'
+    foundingStoryOther: '',
+    platformPillars: [],         // up to 5 selected pillar IDs
+    platformPillarOther: '',
+    targetSegments: [],          // up to 3 segments
+    targetSegmentOther: '',
+    coalitions: '',              // free text — endorsing orgs / partners
   },
   brandCore: null,
   subDirection: null,
@@ -55,8 +78,12 @@ function reducer(state, action) {
         ...state,
         completedStages: [...new Set([...state.completedStages, action.payload])],
       };
+    case 'SET_SUBJECT_TYPE':
+      return { ...state, subjectType: action.payload };
     case 'UPDATE_CANDIDATE':
       return { ...state, candidate: { ...state.candidate, ...action.payload } };
+    case 'UPDATE_PARTY':
+      return { ...state, party: { ...state.party, ...action.payload } };
     case 'UPDATE_PROFILE':
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case 'SET_BRAND_CORE':

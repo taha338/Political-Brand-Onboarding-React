@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { OFFICES, US_STATES, ELECTION_YEARS, CANDIDATE_TYPES } from '../../data/brandData';
 import StageContainer from '../StageContainer';
+import SubjectTypeToggle from '../SubjectTypeToggle';
+import PartyBasicsForm from './PartyBasicsForm';
 import { sanitizeName, sanitizeDistrict, sanitizeShortText } from '../../utils/sanitize';
 import USMapSVG from '../USMapSVG';
 import { Building2, Home, Landmark, Star, Crown, ClipboardList, Users, Gavel } from 'lucide-react';
@@ -308,15 +310,29 @@ export default function Stage1_CandidateBasics() {
     transition: { duration: 0.6, delay, ease },
   });
 
+  const subjectType = state.subjectType || 'candidate';
+  const isParty = subjectType === 'party';
+
   return (
     <StageContainer
       stageNumber={1}
-      title="Candidate Basics"
-      subtitle="Let's start with the essentials. Who's running, and what are they running for?"
+      title={isParty ? 'Party Basics' : 'Candidate Basics'}
+      subtitle={isParty
+        ? "Let's start with the essentials. What is this party, and who does it represent?"
+        : "Let's start with the essentials. Who's running, and what are they running for?"}
     >
       {/* Inject keyframe animations */}
       <style>{styles.keyframes}</style>
 
+      {/* Subject type toggle — always shown at top of Stage 1 */}
+      <SubjectTypeToggle />
+
+      {/* ── PARTY MODE ── render the dedicated party form and return early. */}
+      {isParty && <PartyBasicsForm />}
+
+      {/* ── CANDIDATE MODE ── original sections below render only when not party. */}
+      {!isParty && (
+      <>
       {/* ──────────────────────────────────────────
           HERO: White House + Confetti + Heading
           ────────────────────────────────────────── */}
@@ -997,6 +1013,8 @@ export default function Stage1_CandidateBasics() {
           </span>
         </motion.div>
       </motion.section>
+      </>
+      )}
     </StageContainer>
   );
 }

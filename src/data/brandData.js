@@ -435,6 +435,80 @@ export const FONT_LIBRARY = {
   'Manrope':           { category: 'Sans-Serif',           weights: ['400','600','700'], assignedTo: 'EXECUTIVE' },
 };
 
+/* ─────────────────────────────────────────────────────────────────
+   PARTY MODE OPTIONS
+   Used when subjectType === 'party' on Stages 1 and 2.
+   ───────────────────────────────────────────────────────────────── */
+export const PARTY_TYPES = [
+  { id: 'republican',    label: 'Republican Party' },
+  { id: 'america-first', label: 'America First / MAGA' },
+  { id: 'non-partisan',  label: 'Non-Partisan' },
+  { id: 'independent',   label: 'Independent' },
+  { id: 'third-party',   label: 'Third Party' },
+  { id: 'coalition',     label: 'Coalition / Movement' },
+  { id: 'other',         label: 'Other' },
+];
+
+export const PARTY_SCOPES = [
+  { id: 'national',    label: 'National' },
+  { id: 'multi-state', label: 'Multi-State' },
+  { id: 'state',       label: 'Statewide' },
+  { id: 'local',       label: 'Local / County / City' },
+];
+
+export const PARTY_FOUNDING_STORIES = [
+  { id: 'grassroots',  label: 'Grassroots — built from the ground up' },
+  { id: 'breakaway',   label: 'Breakaway — split from an existing party' },
+  { id: 'coalition',   label: 'Coalition — formed by uniting groups' },
+  { id: 'think-tank',  label: 'Think tank / policy-driven origin' },
+  { id: 'movement',    label: 'Movement — issue or cause-driven' },
+  { id: 'legacy',      label: 'Legacy — long-established institution' },
+  { id: 'other',       label: 'Other' },
+];
+
+export const PARTY_PLATFORM_PILLARS = [
+  { id: 'border',           label: 'Border & Immigration' },
+  { id: 'economy',          label: 'Economy & Jobs' },
+  { id: 'tax',              label: 'Lower Taxes' },
+  { id: '2a',               label: '2nd Amendment' },
+  { id: 'pro-life',         label: 'Pro-Life' },
+  { id: 'religious-liberty',label: 'Religious Liberty' },
+  { id: 'parental-rights',  label: 'Parental Rights' },
+  { id: 'election',         label: 'Election Integrity' },
+  { id: 'law-order',        label: 'Law & Order' },
+  { id: 'energy',           label: 'Energy Independence' },
+  { id: 'education',        label: 'Education Reform' },
+  { id: 'healthcare',       label: 'Healthcare' },
+  { id: 'veterans',         label: 'Veterans' },
+  { id: 'limited-gov',      label: 'Limited Government' },
+  { id: 'free-speech',      label: 'Free Speech' },
+  { id: 'accountability',   label: 'Government Accountability' },
+  { id: 'agriculture',      label: 'Agriculture & Rural' },
+  { id: 'infrastructure',   label: 'Infrastructure' },
+  { id: 'other',            label: 'Other' },
+];
+
+export const PARTY_TARGET_SEGMENTS = [
+  { id: 'working-class',    label: 'Working Class' },
+  { id: 'suburban',         label: 'Suburban Families' },
+  { id: 'rural',            label: 'Rural Voters' },
+  { id: 'evangelical',      label: 'Evangelical / Faith Communities' },
+  { id: 'small-business',   label: 'Small Business Owners' },
+  { id: 'veterans',         label: 'Veterans & Military Families' },
+  { id: 'youth',            label: 'Youth (Under 35)' },
+  { id: 'minority',         label: 'Minority Communities' },
+  { id: 'parents',          label: 'Parents of School-Age Children' },
+  { id: 'libertarian',      label: 'Libertarian-Leaning' },
+  { id: 'independent',      label: 'Independent / Swing Voters' },
+  { id: 'first-time',       label: 'First-Time Voters' },
+  { id: 'other',            label: 'Other' },
+];
+
+export const FOUNDED_YEAR_RANGE = {
+  min: 1776,
+  max: new Date().getFullYear(),
+};
+
 export const US_STATES = [
   'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia',
   'Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland',

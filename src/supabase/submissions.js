@@ -14,11 +14,16 @@ import {
  */
 export async function saveSubmission(state) {
   const candidate    = state.candidate    || {};
+  const party        = state.party        || {};
   const profile      = state.profile      || {};
   const customColors = state.customColors || {};
   const customFonts  = state.customFonts  || {};
+  const subjectType  = state.subjectType === 'party' ? 'party' : 'candidate';
 
   // ── Allowed value sets (whitelist) ───────────────────────────
+  const VALID_SUBJECT_TYPES = ['candidate','party'];
+  const VALID_PARTY_TYPES   = ['republican','america-first','non-partisan','independent','third-party','coalition','other'];
+  const VALID_PARTY_SCOPES  = ['national','multi-state','state','local'];
   const VALID_BRAND_CORES = ['commander','patriot','reformer','community','executive','nonpartisan'];
   const VALID_LOGO_TYPES  = ['emblem','symbol-text','monogram','wordmark'];
   const VALID_RACE_FOCUS  = ['primary','general','runoff'];
@@ -36,7 +41,10 @@ export async function saveSubmission(state) {
 
   // ── Build sanitized payload ──────────────────────────────────
   const payload = {
-    // Candidate basics
+    // Subject type discriminator — distinguishes candidate vs party submissions.
+    subject_type:            safeEnum(subjectType, VALID_SUBJECT_TYPES),
+
+    // Candidate basics (populated only when subjectType === 'candidate')
     candidate_name:          sanitizeName(candidate.fullName),
     candidate_office:        sanitizeShortText(candidate.office),
     candidate_office_custom: sanitizeShortText(candidate.officeCustom),
@@ -47,12 +55,31 @@ export async function saveSubmission(state) {
     race_focus:              safeEnum(candidate.raceFocus, VALID_RACE_FOCUS),
     candidate_type:          sanitizeShortText(candidate.candidateType),
 
+    // Party basics (populated only when subjectType === 'party')
+    party_name:              sanitizeName(party.name),
+    party_acronym:           sanitizeShortText(party.acronym),
+    party_type:              safeEnum(party.partyType, VALID_PARTY_TYPES),
+    party_type_other:        sanitizeShortText(party.partyTypeOther),
+    party_scope:             safeEnum(party.scope, VALID_PARTY_SCOPES),
+    party_state:             sanitizeShortText(party.state),
+    party_founded_year:      safeYear(party.foundedYear),
+    party_spokesperson:      sanitizeName(party.spokesperson),
+
     // Candidate profile
     backgrounds:       toCSV(profile.backgrounds),
     background_other:  sanitizeFreeText(profile.backgroundOther),
     policy_priorities: toCSV(profile.policyPriorities),
     policy_other:      sanitizeFreeText(profile.policyOther),
     family_status:     sanitizeFreeText(profile.familyStatus),
+
+    // Party profile
+    party_founding_story:        sanitizeShortText(profile.foundingStory),
+    party_founding_story_other:  sanitizeFreeText(profile.foundingStoryOther),
+    party_platform_pillars:      toCSV(profile.platformPillars),
+    party_platform_pillar_other: sanitizeFreeText(profile.platformPillarOther),
+    party_target_segments:       toCSV(profile.targetSegments),
+    party_target_segment_other:  sanitizeFreeText(profile.targetSegmentOther),
+    party_coalitions:            sanitizeFreeText(profile.coalitions),
 
     // Brand selections
     brand_core:         safeEnum(state.brandCore, VALID_BRAND_CORES),
@@ -80,7 +107,11 @@ export async function saveSubmission(state) {
   };
 
   // ── Guard: require minimum valid data ────────────────────────
-  if (!payload.candidate_name || payload.candidate_name.trim().length < 2) {
+  if (subjectType === 'party') {
+    if (!payload.party_name || payload.party_name.trim().length < 2) {
+      return { data: null, error: { message: 'Party / organization name is required.' } };
+    }
+  } else if (!payload.candidate_name || payload.candidate_name.trim().length < 2) {
     return { data: null, error: { message: 'Candidate name is required.' } };
   }
   if (!payload.brand_core) {
@@ -98,7 +129,9 @@ export async function saveSubmission(state) {
 
 function buildSafeSnapshot(state) {
   return {
+    subjectType:          state.subjectType  || 'candidate',
     candidate:            state.candidate    || {},
+    party:                state.party        || {},
     profile:              state.profile      || {},
     brandCore:            state.brandCore    || null,
     subDirection:         state.subDirection || null,

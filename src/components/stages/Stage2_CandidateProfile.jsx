@@ -5,6 +5,7 @@ import { PROFESSIONAL_BACKGROUNDS, POLICY_PRIORITIES } from '../../data/brandDat
 import StageContainer from '../StageContainer';
 import TiltCard from '../TiltCard';
 import AnimatedCheckmark from '../AnimatedCheckmark';
+import PartyProfileForm from './PartyProfileForm';
 import {
   Shield, Briefcase, Scale, HeartPulse, Wheat, BookOpen,
   Church, Landmark, Wrench, Monitor, Medal,
@@ -86,6 +87,20 @@ export default function Stage2_CandidateProfile() {
   const priorities = profile.policyPriorities || [];
   const backgroundOtherSelected = backgrounds.includes('other');
   const policyOtherSelected = priorities.includes('other-policy');
+
+  const isParty = state.subjectType === 'party';
+
+  if (isParty) {
+    return (
+      <StageContainer
+        stageNumber={2}
+        title="Party Profile"
+        subtitle="Your origin, your platform, and the people you're built to reach."
+      >
+        <PartyProfileForm />
+      </StageContainer>
+    );
+  }
 
   return (
     <StageContainer

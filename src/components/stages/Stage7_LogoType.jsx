@@ -41,33 +41,52 @@ const keyframes = `
 `;
 
 /* ── Logo Type Data ── (ordered by ease — simplest first) */
+/* Logo types — `description` is for candidate mode; `partyDescription`
+   overrides the copy in party mode. The order shown in the UI is set
+   by getOrderedLogoTypes() below: wordmark/emblem-first for parties,
+   wordmark/monogram-first for candidates. */
 const LOGO_TYPES = [
   {
     id: 'wordmark',
     name: 'Wordmark',
     description: 'Pure typographic treatment of the candidate name. Elegant, direct, and lets the name speak for itself.',
+    partyDescription: 'Pure typographic treatment of the party name. Ideal for full party names and acronyms — works at every scale.',
     image: '/logos/wordmark.webp',
   },
   {
     id: 'monogram',
     name: 'Monogram',
     description: 'Stylized initials that create a bold, memorable mark. Clean and contemporary with strong brand recall.',
+    partyDescription: 'Stylized acronym (e.g. GOP, ASP) as a bold mark. Best for parties with a strong, recognizable initialism.',
     image: '/logos/monogram.webp',
   },
   {
     id: 'symbol-text',
     name: 'Symbol + Text',
     description: 'An iconic symbol paired with the candidate name. Versatile and modern, great for yard signs and digital.',
+    partyDescription: 'An iconic mark paired with the party name. Versatile and modern — works for digital, print, and member materials.',
     image: '/logos/symbol-text.webp',
     cropTop: true,
   },
   {
     id: 'emblem',
-    name: 'Emblem',
+    name: 'Emblem / Seal',
     description: 'Classic seal or badge design — circular, authoritative, and timeless. Ideal for official-feeling campaigns.',
+    partyDescription: 'Classic seal or crest — circular, authoritative, timeless. The traditional choice for parties and movements with institutional gravitas.',
     image: '/logos/emblem.webp',
   },
 ];
+
+/* Order logo types based on subject. Parties favor wordmark/emblem
+   (works for long names + institutional feel); candidates favor
+   wordmark/monogram. */
+function getOrderedLogoTypes(isParty) {
+  const byId = Object.fromEntries(LOGO_TYPES.map((t) => [t.id, t]));
+  const order = isParty
+    ? ['wordmark', 'emblem', 'symbol-text', 'monogram']
+    : ['wordmark', 'monogram', 'symbol-text', 'emblem'];
+  return order.map((id) => byId[id]).filter(Boolean);
+}
 
 const LOGO_NOTES_MAX = 100;
 
@@ -169,6 +188,8 @@ export default function Stage7_LogoType() {
   const hasExisting = state.hasExistingLogo;
   const existingUrl = state.existingLogoUrl;
   const uploadLater = state.uploadLogoLater || false;
+  const isParty = state.subjectType === 'party';
+  const orderedLogoTypes = getOrderedLogoTypes(isParty);
   const logoNotes = state.logoNotes || '';
 
   const fileInputRef = useRef(null);
@@ -463,8 +484,11 @@ export default function Stage7_LogoType() {
                 position: 'relative',
                 zIndex: 1,
               }}>
-                {LOGO_TYPES.map((logoType, index) => {
+                {orderedLogoTypes.map((logoType, index) => {
                   const isSelected = selected === logoType.id;
+                  const description = isParty && logoType.partyDescription
+                    ? logoType.partyDescription
+                    : logoType.description;
 
                   return (
                     <motion.div
@@ -552,7 +576,7 @@ export default function Stage7_LogoType() {
                           fontSize: 14, lineHeight: 1.55,
                           color: navy, opacity: 0.6, margin: 0,
                         }}>
-                          {logoType.description}
+                          {description}
                         </p>
                       </div>
 

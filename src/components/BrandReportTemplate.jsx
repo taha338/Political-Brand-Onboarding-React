@@ -76,6 +76,33 @@ export default function BrandReportTemplate() {
     : (state.candidate?.fullName || 'Candidate');
   const voiceTone = getResolvedVoiceTone(coreData, state) || coreData.voiceTone || {};
 
+  /* Party-aware mockup copy */
+  const partyShort = state.party?.acronym || state.party?.name || candidateName;
+  const yardTopWord = isParty ? 'JOIN' : 'ELECT';
+  const yardName = isParty
+    ? partyShort.toUpperCase().slice(0, 14)
+    : (candidateName || 'Candidate').toUpperCase().slice(0, 14);
+  const bumperName = isParty
+    ? partyShort.toUpperCase().slice(0, 10)
+    : (candidateName || 'NAME').toUpperCase().slice(0, 10);
+  const bannerSubLine = isParty
+    ? `${candidateName} · Official Party Communication`
+    : `${candidateName} for Office — Paid for by Friends of ${candidateName}`;
+  const socialEyebrow = isParty
+    ? `${candidateName.toUpperCase()} · OFFICIAL`
+    : `${(candidateName || 'Candidate').toUpperCase()} FOR OFFICE`;
+  const socialBody = isParty
+    ? 'It is time to stand together and build the movement.'
+    : 'It is time to bring real leadership back to our community.';
+  const fundraisingHeadline = isParty
+    ? `Your $50 fuels the movement.`
+    : `Your $50 puts ${candidateName} on 1,000 doors.`;
+  const eventTitle = isParty
+    ? `Town Hall with the ${candidateName}`
+    : `Town Hall with ${candidateName}`;
+  const officialTag = isParty ? 'Official Party' : 'Official Campaign';
+  const mockupSectionLabel = isParty ? 'Party Materials Preview' : 'Campaign Materials Preview';
+
   const PAGE_BG = '#FFFFFF';
   const TEXT_DARK = '#1F2937';
   const MUTED = '#6B7280';
@@ -132,7 +159,7 @@ export default function BrandReportTemplate() {
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           fontSize: 44, fontWeight: 800, color: '#1C2E5B',
           margin: 0, letterSpacing: '-0.02em',
-        }}>Your Visual Identity</h1>
+        }}>Your {isParty ? 'Party' : 'Campaign'} Visual Identity</h1>
         <p style={{ fontSize: 16, color: MUTED, margin: '10px 0 0' }}>
           Here is your complete brand system — fonts, colors, voice, and mockups.
         </p>
@@ -219,11 +246,11 @@ export default function BrandReportTemplate() {
               fontFamily: headingFont + ', serif',
               fontSize: 60, fontWeight: 800, lineHeight: 1, margin: 0,
               textTransform: 'uppercase', letterSpacing: '-0.01em',
-            }}>{(candidateName || 'Aa').slice(0, 12)}</p>
+            }}>Headline</p>
             <p style={{
               fontFamily: headingFont + ', serif',
               fontSize: 26, fontWeight: 600, margin: '12px 0 22px', lineHeight: 1.2,
-            }}>{voiceTone.headlineExamples?.[0] || 'Defend What Matters.'}</p>
+            }}>{voiceTone.headlineExamples?.[0] || (isParty ? 'Build the Movement.' : 'Defend What Matters.')}</p>
             <p style={{ fontSize: 13, fontFamily: headingFont + ', serif', margin: '0 0 4px', letterSpacing: '0.04em' }}>
               ABCDEFGHIJKLMNOPQRSTUVWXYZ
             </p>
@@ -251,11 +278,13 @@ export default function BrandReportTemplate() {
             <p style={{
               fontFamily: bodyFont + ', system-ui, sans-serif',
               fontSize: 36, fontWeight: 700, color: TEXT_DARK, lineHeight: 1.1, margin: '0 0 18px',
-            }}>{(candidateName || 'Sample').slice(0, 14)}</p>
+            }}>Body Copy</p>
             <p style={{
               fontFamily: bodyFont + ', system-ui, sans-serif',
               fontSize: 16, color: TEXT_DARK, margin: '0 0 22px', lineHeight: 1.6,
-            }}>{voiceTone.bodyCopy || 'Direct, intentional, on-message body copy that supports the brand voice.'}</p>
+            }}>{voiceTone.bodyCopy || (isParty
+              ? 'Direct, collective voice. The party speaks for the movement and the people it serves.'
+              : 'Direct, intentional, on-message body copy that supports the brand voice.')}</p>
             <div style={{ display: 'flex', gap: 8 }}>
               {[400, 600].map((w) => (
                 <span key={w} style={{
@@ -503,9 +532,9 @@ export default function BrandReportTemplate() {
         </div>
       </div>
 
-      {/* CAMPAIGN MOCKUPS */}
+      {/* CAMPAIGN / PARTY MOCKUPS */}
       <div>
-        <SectionLabel>Campaign Materials Preview</SectionLabel>
+        <SectionLabel>{mockupSectionLabel}</SectionLabel>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
           {/* Yard sign */}
@@ -517,11 +546,11 @@ export default function BrandReportTemplate() {
               textAlign: 'center', minHeight: 220,
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
-              <p style={{ fontSize: 11, letterSpacing: '0.3em', margin: '0 0 12px', opacity: 0.85 }}>ELECT</p>
+              <p style={{ fontSize: 11, letterSpacing: '0.3em', margin: '0 0 12px', opacity: 0.85 }}>{yardTopWord}</p>
               <p style={{
                 fontFamily: headingFont + ', serif', fontSize: 44, fontWeight: 900,
                 textTransform: 'uppercase', margin: 0, lineHeight: 1,
-              }}>{(candidateName || 'Candidate').toUpperCase().slice(0, 14)}</p>
+              }}>{yardName}</p>
               <div style={{ width: 50, height: 3, background: secondary, margin: '14px auto 0' }} />
             </div>
           </div>
@@ -538,7 +567,7 @@ export default function BrandReportTemplate() {
                   fontFamily: headingFont + ', serif', fontSize: 24, fontWeight: 900,
                   color: primary, textTransform: 'uppercase', letterSpacing: '-0.01em',
                   background: secondary, color: '#FFFFFF', padding: '4px 10px',
-                }}>{(candidateName || 'NAME').toUpperCase().slice(0, 10)}</span>
+                }}>{bumperName}</span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: TEXT_DARK, letterSpacing: '0.06em' }}>
                   {(voiceTone.headlineExamples?.[1] || 'No Retreat. No Compromise.').toUpperCase()}
                 </span>
@@ -555,7 +584,7 @@ export default function BrandReportTemplate() {
                     {voiceTone.headlineExamples?.[0] || 'Defend What Matters.'}
                   </p>
                   <p style={{ color: '#FFFFFF', fontSize: 11, margin: '4px 0 0', opacity: 0.7 }}>
-                    {candidateName} for Office — Paid for by Friends of {candidateName}
+                    {bannerSubLine}
                   </p>
                 </div>
                 <span style={{
@@ -577,7 +606,7 @@ export default function BrandReportTemplate() {
             }}>
               <div>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, margin: '0 0 12px', textAlign: 'center' }}>
-                  {(candidateName || 'Candidate').toUpperCase()} FOR OFFICE
+                  {socialEyebrow}
                 </p>
                 <p style={{
                   fontFamily: headingFont + ', serif',
@@ -585,7 +614,7 @@ export default function BrandReportTemplate() {
                   textAlign: 'center', lineHeight: 1.2,
                 }}>{voiceTone.headlineExamples?.[0] || 'Defend What Matters.'}</p>
                 <p style={{ fontSize: 12, color: MUTED, textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
-                  It is time to bring real leadership back to our community.
+                  {socialBody}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
@@ -621,7 +650,7 @@ export default function BrandReportTemplate() {
                   }}>{(candidateName || 'C')[0]?.toUpperCase()}</span>
                   <div>
                     <p style={{ fontSize: 11, fontWeight: 700, margin: 0 }}>{candidateName}</p>
-                    <p style={{ fontSize: 9, opacity: 0.7, margin: 0 }}>Official Campaign</p>
+                    <p style={{ fontSize: 9, opacity: 0.7, margin: 0 }}>{officialTag}</p>
                   </div>
                 </div>
                 <span style={{
@@ -639,7 +668,7 @@ export default function BrandReportTemplate() {
               <div style={{ background: secondary, color: '#FFFFFF', padding: 16, borderRadius: 10 }}>
                 <p style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 6px', opacity: 0.85 }}>Fundraising</p>
                 <p style={{ fontFamily: headingFont + ', serif', fontSize: 16, fontWeight: 700, margin: '0 0 10px', lineHeight: 1.2 }}>
-                  Your $50 puts {candidateName} on 1,000 doors.
+                  {fundraisingHeadline}
                 </p>
                 <span style={{
                   display: 'inline-block', background: '#FFFFFF', color: secondary,
@@ -649,7 +678,7 @@ export default function BrandReportTemplate() {
               <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, padding: 14, borderRadius: 10 }}>
                 <p style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 6px', color: MUTED }}>Event</p>
                 <p style={{ fontFamily: headingFont + ', serif', fontSize: 14, fontWeight: 700, color: primary, margin: '0 0 4px', lineHeight: 1.2 }}>
-                  Town Hall with {candidateName}
+                  {eventTitle}
                 </p>
                 <p style={{ fontSize: 11, color: MUTED, margin: '0 0 8px' }}>
                   Hear the plan. Ask questions. Get involved.

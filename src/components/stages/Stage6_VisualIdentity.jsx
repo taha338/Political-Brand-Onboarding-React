@@ -261,14 +261,15 @@ function HeroBrandReveal({ coreData, activeColors, candidateName, headingFont, b
 /* ------------------------------------------------------------------ */
 /*  FONT SHOWCASE                                                     */
 /* ------------------------------------------------------------------ */
-function FontShowcase({ fonts, coreColors, candidateName, voiceTone }) {
+function FontShowcase({ fonts, coreColors, candidateName, voiceTone, isParty }) {
   const headingFont = fonts?.heading;
   const bodyFont = fonts?.body;
   const headingMeta = FONT_LIBRARY[headingFont];
   const bodyMeta = FONT_LIBRARY[bodyFont];
   const heaviestWeight = headingMeta?.weights?.[headingMeta.weights.length - 1] || 700;
-  const lastName = candidateName?.split(' ').pop()?.toUpperCase() || 'SMITH';
-  const headline = voiceTone?.headlineExamples?.[0] || 'Lead With Conviction.';
+  const headingDisplay = 'Headline';
+  const bodyDisplay = 'Body Copy';
+  const headline = voiceTone?.headlineExamples?.[0] || (isParty ? 'Build the Movement.' : 'Lead With Conviction.');
 
   return (
     <motion.div
@@ -308,7 +309,7 @@ function FontShowcase({ fonts, coreColors, candidateName, voiceTone }) {
               className="text-white leading-none mb-1"
               style={{ fontFamily: `'${headingFont}', sans-serif`, fontWeight: heaviestWeight, fontSize: '4.5rem' }}
             >
-              {lastName}
+              {headingDisplay}
             </p>
             <p
               className="text-white leading-tight mb-6"
@@ -351,13 +352,15 @@ function FontShowcase({ fonts, coreColors, candidateName, voiceTone }) {
               className="text-3xl md:text-4xl text-gray-900 leading-tight mb-6"
               style={{ fontFamily: `'${bodyFont}', sans-serif`, fontWeight: bodyMeta?.weights?.[bodyMeta.weights.length - 1] || 700 }}
             >
-              {candidateName || 'John Smith'}
+              {bodyDisplay}
             </p>
             <p
               className="text-base md:text-lg leading-relaxed text-gray-600 mb-4"
               style={{ fontFamily: `'${bodyFont}', sans-serif`, fontWeight: bodyMeta?.weights?.[0] || 400 }}
             >
-              {voiceTone?.bodyCopy || 'Every campaign needs a clear message, a compelling story, and the discipline to deliver it consistently. Your brand is the foundation voters will build their trust upon.'}
+              {voiceTone?.bodyCopy || (isParty
+                ? 'Every movement needs a clear mission, a unifying voice, and the discipline to deliver consistently. Your brand is the foundation members and voters will build their trust upon.'
+                : 'Every campaign needs a clear message, a compelling story, and the discipline to deliver it consistently. Your brand is the foundation voters will build their trust upon.')}
             </p>
           </div>
           <div className="flex flex-wrap gap-3 mt-6">
@@ -593,14 +596,26 @@ function activeColorsFallback(color) {
 /* ------------------------------------------------------------------ */
 /*  MOCKUPS                                                           */
 /* ------------------------------------------------------------------ */
-function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTone }) {
+function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTone, isParty, partyAcronym }) {
   const headingMeta = FONT_LIBRARY[headingFont];
   const heaviestWeight = headingMeta?.weights?.[headingMeta.weights.length - 1] || 900;
-  const lastName = candidateName?.split(' ').pop()?.toUpperCase() || 'SMITH';
-  const firstName = candidateName?.split(' ')[0] || 'John';
-  const headline = voiceTone?.headlineExamples?.[0] || 'Stand With Us.';
-  const secondHeadline = voiceTone?.headlineExamples?.[1] || 'Lead. Protect. Deliver.';
-  const cta = voiceTone?.ctaLanguage?.[0] || 'Learn More';
+  const lastName = isParty
+    ? (partyAcronym || candidateName?.split(' ')[0] || 'PARTY').toUpperCase().slice(0, 8)
+    : (candidateName?.split(' ').pop()?.toUpperCase() || 'SMITH');
+  const firstName = candidateName?.split(' ')[0] || (isParty ? 'The Party' : 'John');
+  const headline = voiceTone?.headlineExamples?.[0] || (isParty ? 'Build the Movement.' : 'Stand With Us.');
+  const secondHeadline = voiceTone?.headlineExamples?.[1] || (isParty ? 'United. Principled. Local.' : 'Lead. Protect. Deliver.');
+  const cta = voiceTone?.ctaLanguage?.[0] || (isParty ? 'Join Us' : 'Learn More');
+  const yardEyebrow = isParty ? 'Join' : 'Elect';
+  const socialEyebrow = isParty ? `${candidateName} · Official` : `${firstName} for Office`;
+  const socialBody = isParty
+    ? 'It is time to stand together and build the future our community deserves.'
+    : 'It is time to bring real leadership back to our community.';
+  const bannerSubLine = isParty
+    ? `${candidateName} · Official Party Communication`
+    : `${firstName} for Office — Paid for by Friends of ${candidateName || 'Candidate'}`;
+  const officialTag = isParty ? 'Official Party' : 'Official Campaign';
+  const sectionLabel = isParty ? 'Party Materials Preview' : 'Campaign Materials Preview';
 
   return (
     <motion.div
@@ -613,7 +628,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
     >
       <DecorativeDots style={{ bottom: -10, right: -10 }} />
       <p className="text-xs font-bold uppercase tracking-[0.25em] mb-8 px-2" style={{ color: '#1C2E5B', opacity: 0.7 }}>
-        Campaign Materials Preview
+        {sectionLabel}
       </p>
 
       <div className="space-y-8">
@@ -641,7 +656,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     color: colors.accentOnDark || '#FFFFFF',
                   }}
                 >
-                  Elect
+                  {yardEyebrow}
                 </p>
                 {/* heading on dark: use textOnDark at full opacity */}
                 <h4
@@ -723,7 +738,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                   className="text-xs mt-1 opacity-70"
                   style={{ fontFamily: `'${bodyFont}', sans-serif`, color: '#FFFFFF' }}
                 >
-                  {firstName} for Office &mdash; Paid for by Friends of {candidateName || 'Candidate'}
+                  {bannerSubLine}
                 </p>
               </div>
               <span
@@ -758,7 +773,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     color: colors.secondary,
                   }}
                 >
-                  {firstName} for Office
+                  {socialEyebrow}
                 </p>
                 <h4
                   className="text-2xl md:text-3xl lg:text-4xl leading-[1.1] mb-3 md:mb-4"
@@ -777,7 +792,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     color: colors.text || '#4A4A4A',
                   }}
                 >
-                  It is time to bring real leadership back to our community.
+                  {socialBody}
                 </p>
               </div>
               {/* social post footer bar — primary dark background */}
@@ -856,7 +871,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     </p>
                     {/* muted label: textOnDark at 0.60 opacity */}
                     <p className="text-[10px] opacity-60" style={{ color: colors.textOnDark || '#FFFFFF' }}>
-                      Official Campaign
+                      {officialTag}
                     </p>
                   </div>
                 </div>
@@ -898,7 +913,9 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     color: textOnColor(colors.secondary),
                   }}
                 >
-                  Your $50 puts {firstName} on 1,000 doors.
+                  {isParty
+                    ? 'Your $50 fuels the movement.'
+                    : `Your $50 puts ${firstName} on 1,000 doors.`}
                 </p>
                 <div
                   className="inline-block px-4 py-2 rounded-lg text-xs font-bold"
@@ -933,7 +950,7 @@ function CampaignMockups({ colors, candidateName, headingFont, bodyFont, voiceTo
                     color: colors.primary,
                   }}
                 >
-                  Town Hall with {firstName}
+                  {isParty ? `Town Hall with the ${candidateName || 'Party'}` : `Town Hall with ${firstName}`}
                 </p>
                 <p className="text-xs text-gray-500 mb-3" style={{ fontFamily: `'${bodyFont}', sans-serif` }}>
                   Hear the plan. Ask questions. Get involved.
@@ -990,7 +1007,7 @@ export default function Stage6_VisualIdentity() {
   const isParty = state.subjectType === 'party';
   const candidateName = isParty
     ? (state.party?.name || state.party?.acronym || 'Party')
-    : (state.candidate?.fullName || 'John Smith');
+    : (state.candidate?.fullName || 'Your Candidate');
   const resolvedVoiceTone = getResolvedVoiceTone(coreData, state) || coreData.voiceTone;
 
   if (!coreData) {
@@ -1030,6 +1047,7 @@ export default function Stage6_VisualIdentity() {
           coreColors={activeColors}
           candidateName={candidateName}
           voiceTone={resolvedVoiceTone}
+          isParty={isParty}
         />
 
         {/* 3. Color Palette */}
@@ -1046,13 +1064,15 @@ export default function Stage6_VisualIdentity() {
           bodyFont={activeBodyFont}
         />
 
-        {/* 5. Campaign Mockups */}
+        {/* 5. Campaign / Party Mockups */}
         <CampaignMockups
           colors={activeColors}
           candidateName={candidateName}
           headingFont={activeHeadingFont}
           bodyFont={activeBodyFont}
           voiceTone={resolvedVoiceTone}
+          isParty={isParty}
+          partyAcronym={state.party?.acronym}
         />
       </motion.div>
     </StageContainer>

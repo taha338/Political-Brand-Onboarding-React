@@ -4,11 +4,23 @@ import { useBrand } from '../context/BrandContext';
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-const STAGE_NAMES = [
+const CANDIDATE_STAGE_NAMES = [
   'Candidate Basics',
   'Candidate Profile',
   'Brand Core',
   'Brand Direction',
+  'Color Palette',
+  'Font Selection',
+  'Visual Identity',
+  'Logo',
+  'Review',
+];
+
+const PARTY_STAGE_NAMES = [
+  'Party Basics',
+  'Party Profile',
+  'Brand Core',
+  'Brand Directions',
   'Color Palette',
   'Font Selection',
   'Visual Identity',
@@ -21,7 +33,8 @@ export default function ProgressBar() {
   const { currentStage, completedStages } = state;
   const totalStages = STAGES.length;
   const progress = ((currentStage + 1) / totalStages) * 100;
-  const displayNames = STAGE_NAMES.slice(0, totalStages);
+  const stageNames = state.subjectType === 'party' ? PARTY_STAGE_NAMES : CANDIDATE_STAGE_NAMES;
+  const displayNames = stageNames.slice(0, totalStages);
 
   // Dynamic color based on user's selected palette
   const activeColors = getActiveColors();

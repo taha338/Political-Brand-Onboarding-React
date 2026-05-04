@@ -469,6 +469,20 @@ export const FONT_LIBRARY = {
   'Plus Jakarta Sans': { category: 'Sans-Serif',           weights: ['400','600','700'], assignedTo: 'EXECUTIVE' },
   'Work Sans':         { category: 'Sans-Serif',           weights: ['400','500','600'], assignedTo: 'EXECUTIVE' },
   'Manrope':           { category: 'Sans-Serif',           weights: ['400','600','700'], assignedTo: 'EXECUTIVE' },
+
+  // ── Additional serif options (universal — available to any archetype) ──
+  'Playfair':          { category: 'Serif Display',        weights: ['400','600','700'], assignedTo: 'UNIVERSAL' },
+  'PT Serif':          { category: 'Serif',                weights: ['400','700'],       assignedTo: 'UNIVERSAL' },
+  'Bitter':            { category: 'Slab Serif',           weights: ['400','600','700'], assignedTo: 'UNIVERSAL' },
+  'Roboto Slab':       { category: 'Slab Serif',           weights: ['400','500','700'], assignedTo: 'UNIVERSAL' },
+  'Zilla Slab':        { category: 'Slab Serif',           weights: ['400','500','700'], assignedTo: 'UNIVERSAL' },
+  'Spectral':          { category: 'Serif',                weights: ['400','600','700'], assignedTo: 'UNIVERSAL' },
+  'Cormorant':         { category: 'Serif Display',        weights: ['400','500','700'], assignedTo: 'UNIVERSAL' },
+  'IBM Plex Serif':    { category: 'Serif',                weights: ['400','500','700'], assignedTo: 'UNIVERSAL' },
+  'Fraunces':          { category: 'Serif Display',        weights: ['400','600','700'], assignedTo: 'UNIVERSAL' },
+  'Cardo':             { category: 'Serif',                weights: ['400','700'],       assignedTo: 'UNIVERSAL' },
+  'Tinos':             { category: 'Serif',                weights: ['400','700'],       assignedTo: 'UNIVERSAL' },
+  'Noto Serif':        { category: 'Serif',                weights: ['400','600','700'], assignedTo: 'UNIVERSAL' },
 };
 
 /* ─────────────────────────────────────────────────────────────────

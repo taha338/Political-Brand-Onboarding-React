@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { GripVertical, X } from 'lucide-react';
 import { useBrand } from '../../context/BrandContext';
 import { sanitizeFreeText } from '../../utils/sanitize';
 import { PROFESSIONAL_BACKGROUNDS, POLICY_PRIORITIES } from '../../data/brandData';
@@ -68,7 +69,7 @@ export default function Stage2_CandidateProfile() {
     if (current.includes(id)) {
       const updated = current.filter((b) => b !== id);
       update({ backgrounds: updated, ...(id === 'other' ? { backgroundOther: '' } : {}) });
-    } else if (current.length < 2) {
+    } else {
       update({ backgrounds: [...current, id] });
     }
   };
@@ -78,9 +79,13 @@ export default function Stage2_CandidateProfile() {
     if (current.includes(id)) {
       const updated = current.filter((p) => p !== id);
       update({ policyPriorities: updated, ...(id === 'other-policy' ? { policyOther: '' } : {}) });
-    } else if (current.length < 3) {
+    } else {
       update({ policyPriorities: [...current, id] });
     }
+  };
+
+  const reorderPriorities = (newOrder) => {
+    update({ policyPriorities: newOrder });
   };
 
   const backgrounds = profile.backgrounds || [];
@@ -122,15 +127,14 @@ export default function Stage2_CandidateProfile() {
             Professional Background{' '}
           </span>
           <span className="text-sm font-semibold" style={{ color: PRIMARY }}>
-            (Select up to 2)
+            (Select all that apply)
           </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {PROFESSIONAL_BACKGROUNDS.map((bg) => {
             const selected = backgrounds.includes(bg.id);
-            const atMax = backgrounds.length >= 2;
-            const disabled = !selected && atMax;
+            const disabled = false;
             const icon = BACKGROUND_ICONS[bg.id];
 
             return (
@@ -169,8 +173,7 @@ export default function Stage2_CandidateProfile() {
           {/* Other — background */}
           {(() => {
             const selected = backgroundOtherSelected;
-            const atMax = backgrounds.length >= 2;
-            const disabled = !selected && atMax;
+            const disabled = false;
             return (
               <TiltCard
                 onClick={() => !disabled && toggleBackground('other')}
@@ -240,18 +243,17 @@ export default function Stage2_CandidateProfile() {
       >
         <div className="mb-5">
           <span className="text-sm font-semibold text-gray-700">
-            Top 3 Policy Priorities{' '}
+            Policy Priorities{' '}
           </span>
           <span className="text-sm font-semibold" style={{ color: PRIMARY }}>
-            (Select exactly 3)
+            (Select all that apply — you'll rank them next)
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {POLICY_PRIORITIES.map((policy) => {
             const selected = priorities.includes(policy.id);
-            const atMax = priorities.length >= 3;
-            const disabled = !selected && atMax;
+            const disabled = false;
             const icon = POLICY_ICONS[policy.id];
 
             return (
@@ -290,8 +292,7 @@ export default function Stage2_CandidateProfile() {
           {/* Other — policy */}
           {(() => {
             const selected = policyOtherSelected;
-            const atMax = priorities.length >= 3;
-            const disabled = !selected && atMax;
+            const disabled = false;
             return (
               <TiltCard
                 onClick={() => !disabled && togglePriority('other-policy')}
@@ -351,6 +352,101 @@ export default function Stage2_CandidateProfile() {
           )}
         </AnimatePresence>
       </motion.section>
+
+      {/* ── SECTION 3: Rank Priorities ── */}
+      <AnimatePresence>
+        {priorities.length > 0 && (
+          <motion.section
+            key="rank-priorities"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-12"
+          >
+            <div className="mb-2">
+              <span className="text-sm font-semibold text-gray-700">
+                Rank Your Priorities
+              </span>{' '}
+              <span className="text-sm font-semibold" style={{ color: PRIMARY }}>
+                (Drag to reorder)
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+              The top item is the priority your brand will lead with. Drag any row up or down to change the order.
+            </p>
+
+            <Reorder.Group
+              axis="y"
+              values={priorities}
+              onReorder={reorderPriorities}
+              className="flex flex-col gap-2"
+            >
+              {priorities.map((id, index) => {
+                const policy = POLICY_PRIORITIES.find((p) => p.id === id);
+                const label = id === 'other-policy'
+                  ? (profile.policyOther?.trim() || 'Other')
+                  : (policy?.label || id);
+                const icon = POLICY_ICONS[id] || <Target size={ICON_SIZE} />;
+                return (
+                  <Reorder.Item
+                    key={id}
+                    value={id}
+                    whileDrag={{ scale: 1.02, boxShadow: '0 12px 28px rgba(0,0,0,0.18)' }}
+                    className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-3 py-3 cursor-grab active:cursor-grabbing select-none"
+                    style={{ touchAction: 'none' }}
+                  >
+                    {/* Rank number */}
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
+                      style={{ background: PRIMARY, color: '#fff' }}
+                    >
+                      {index + 1}
+                    </div>
+
+                    {/* Icon */}
+                    <div className="flex-shrink-0 text-gray-500">
+                      {icon}
+                    </div>
+
+                    {/* Label */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {label}
+                      </p>
+                      {index === 0 && (
+                        <p className="text-[11px] uppercase tracking-wider font-semibold mt-0.5"
+                          style={{ color: PRIMARY }}>
+                          Top Priority
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Remove */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        togglePriority(id);
+                      }}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      className="flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                      aria-label={`Remove ${label}`}
+                    >
+                      <X size={16} />
+                    </button>
+
+                    {/* Drag handle */}
+                    <div className="flex-shrink-0 text-gray-300">
+                      <GripVertical size={18} />
+                    </div>
+                  </Reorder.Item>
+                );
+              })}
+            </Reorder.Group>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
     </StageContainer>
   );

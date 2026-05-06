@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useBrand } from '../../context/BrandContext';
 import { BRAND_CORES, FONT_LIBRARY } from '../../data/brandData';
-import { saveSubmission } from '../../supabase/submissions';
 import { generateBrandPDF } from '../../utils/generateBrandPDF';
 import BrandReportTemplate from '../BrandReportTemplate';
 
@@ -469,13 +468,28 @@ export default function Stage9_FinalReview() {
             onClick={async () => {
               setSubmitting(true);
               setSubmitError(null);
-              const { error } = await saveSubmission(state);
-              setSubmitting(false);
-              if (error) {
-                setSubmitError(`Submission failed: ${error.message || JSON.stringify(error)}`);
-                console.error('Supabase error:', error);
-              } else {
+              try {
+                const stateWithClientId = {
+                  ...state,
+                  clientId: new URLSearchParams(window.location.search).get('client_id') || null,
+                };
+                const res = await fetch('/api/submit', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ state: stateWithClientId }),
+                });
+                const result = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                  setSubmitting(false);
+                  setSubmitError(`Submission failed: ${result.error || res.statusText}`);
+                  return;
+                }
+                setSubmitting(false);
                 setSubmitted(true);
+              } catch (e) {
+                setSubmitting(false);
+                setSubmitError(`Submission failed: ${e.message || 'Network error'}`);
+                console.error('Submit error:', e);
               }
             }}
             disabled={!approved || submitting}

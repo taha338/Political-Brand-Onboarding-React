@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrandProvider, useBrand } from './context/BrandContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -24,6 +25,43 @@ const desktopVariants = {
   exit: { opacity: 0, x: -60 },
 };
 const desktopTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] };
+
+/**
+ * On boot, if the URL has ?client_id=, fetch /api/clickup-prefill and
+ * dispatch initial values into the form. User can edit any of them.
+ */
+function PrefillBoot() {
+  const { dispatch } = useBrand();
+  useEffect(() => {
+    const cid = new URLSearchParams(window.location.search).get('client_id')
+              || new URLSearchParams(window.location.search).get('clientId');
+    if (!cid) return;
+    fetch(`/api/clickup-prefill?clientId=${encodeURIComponent(cid)}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data?.found) return;
+        // Subject type drives the rest of the UI — set first.
+        if (data.subjectType === 'candidate' || data.subjectType === 'party') {
+          dispatch({ type: 'SET_SUBJECT_TYPE', payload: data.subjectType });
+        }
+        // Display name → maps to candidate.fullName OR party.name
+        const dn = data.tradeName;
+        if (dn) {
+          if (data.subjectType === 'party') {
+            dispatch({ type: 'UPDATE_PARTY', payload: { name: dn } });
+          } else {
+            dispatch({ type: 'UPDATE_CANDIDATE', payload: { fullName: dn } });
+          }
+        }
+        // Primary contact name → if party, use as spokesperson default
+        if (data.subjectType === 'party' && data.contact?.name) {
+          dispatch({ type: 'UPDATE_PARTY', payload: { spokesperson: data.contact.name } });
+        }
+      })
+      .catch(() => { /* silent — form remains fillable */ });
+  }, [dispatch]);
+  return null;
+}
 
 function AppContent() {
   const { state } = useBrand();
@@ -67,6 +105,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrandProvider>
+        <PrefillBoot />
         <AppContent />
         <LiveColorStrip />
       </BrandProvider>

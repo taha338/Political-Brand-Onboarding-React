@@ -78,34 +78,37 @@ export default function PartyProfileForm() {
 
   const partyName = party?.name || party?.acronym || 'Your Party';
 
-  /* Pillars: max 5 */
+  /* Pillars: multi-select (no cap) */
   const pillars = profile.platformPillars || [];
   const togglePillar = (id) => {
     if (pillars.includes(id)) {
       const next = pillars.filter((p) => p !== id);
       update({ platformPillars: next, ...(id === 'other' ? { platformPillarOther: '' } : {}) });
-    } else if (pillars.length < 5) {
+    } else {
       update({ platformPillars: [...pillars, id] });
     }
   };
 
-  /* Target segments: max 3 */
+  /* Target segments: multi-select (no cap) */
   const segments = profile.targetSegments || [];
   const toggleSegment = (id) => {
     if (segments.includes(id)) {
       const next = segments.filter((s) => s !== id);
       update({ targetSegments: next, ...(id === 'other' ? { targetSegmentOther: '' } : {}) });
-    } else if (segments.length < 3) {
+    } else {
       update({ targetSegments: [...segments, id] });
     }
   };
 
-  /* Founding story: single-select */
-  const setStory = (id) => {
-    update({
-      foundingStory: id,
-      ...(id !== 'other' ? { foundingStoryOther: '' } : {}),
-    });
+  /* Founding story: multi-select */
+  const stories = profile.foundingStories || [];
+  const toggleStory = (id) => {
+    if (stories.includes(id)) {
+      const next = stories.filter((s) => s !== id);
+      update({ foundingStories: next, ...(id === 'other' ? { foundingStoryOther: '' } : {}) });
+    } else {
+      update({ foundingStories: [...stories, id] });
+    }
   };
 
   return (
@@ -149,13 +152,13 @@ export default function PartyProfileForm() {
             <ChoiceCard
               key={s.id}
               option={s}
-              selected={profile.foundingStory === s.id}
-              onClick={() => setStory(s.id)}
+              selected={stories.includes(s.id)}
+              onClick={() => toggleStory(s.id)}
             />
           ))}
         </div>
         <AnimatePresence>
-          {profile.foundingStory === 'other' && (
+          {stories.includes('other') && (
             <motion.div
               initial={{ opacity: 0, height: 0, marginTop: 0 }}
               animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
@@ -194,8 +197,7 @@ export default function PartyProfileForm() {
         <SectionHeader
           index="02"
           title="Platform Pillars"
-          subtitle="The 3–5 issues your party is anchored on. These will inform headline copy and CTAs."
-          max={5}
+          subtitle="The issues your party is anchored on. These will inform headline copy and CTAs. Select as many as apply."
         />
         <div style={{
           display: 'grid',
@@ -204,20 +206,18 @@ export default function PartyProfileForm() {
         }}>
           {PARTY_PLATFORM_PILLARS.map((p) => {
             const selected = pillars.includes(p.id);
-            const disabled = !selected && pillars.length >= 5;
             return (
               <ChoiceCard
                 key={p.id}
                 option={p}
                 selected={selected}
-                disabled={disabled}
                 onClick={() => togglePillar(p.id)}
               />
             );
           })}
         </div>
         <p style={{ marginTop: 10, fontSize: 12, color: '#6B7280' }}>
-          {pillars.length} of 5 selected
+          {pillars.length} selected
         </p>
         <AnimatePresence>
           {pillars.includes('other') && (
@@ -254,8 +254,7 @@ export default function PartyProfileForm() {
         <SectionHeader
           index="03"
           title="Target Voter Segments"
-          subtitle="Who you're built to reach. We'll tune mockups and copy to feel native to these groups."
-          max={3}
+          subtitle="Who you're built to reach. We'll tune mockups and copy to feel native to these groups. Select as many as apply."
         />
         <div style={{
           display: 'grid',
@@ -264,20 +263,18 @@ export default function PartyProfileForm() {
         }}>
           {PARTY_TARGET_SEGMENTS.map((s) => {
             const selected = segments.includes(s.id);
-            const disabled = !selected && segments.length >= 3;
             return (
               <ChoiceCard
                 key={s.id}
                 option={s}
                 selected={selected}
-                disabled={disabled}
                 onClick={() => toggleSegment(s.id)}
               />
             );
           })}
         </div>
         <p style={{ marginTop: 10, fontSize: 12, color: '#6B7280' }}>
-          {segments.length} of 3 selected
+          {segments.length} selected
         </p>
         <AnimatePresence>
           {segments.includes('other') && (

@@ -59,7 +59,7 @@ function fillAll(dispatch, subjectType) {
     dispatch({
       type: 'UPDATE_PROFILE',
       payload: {
-        foundingStory: 'grassroots',
+        foundingStories: ['grassroots'],
         foundingStoryOther: '',
         platformPillars: ['liberty', 'fiscal-responsibility', 'localism'],
         platformPillarOther: '',

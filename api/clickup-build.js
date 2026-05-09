@@ -88,7 +88,9 @@ function flattenState(state, payload) {
     'Policy Priorities (ranked)': Array.isArray(profile.policyPriorities)
       ? profile.policyPriorities.join(', ') : profile.policyPriorities,
     'Policy Other':             profile.policyOther,
-    'Founding Story':           subjectType === 'party' ? profile.foundingStory : null,
+    'Founding Story':           subjectType === 'party'
+                                  ? (Array.isArray(profile.foundingStories) ? profile.foundingStories[0] : profile.foundingStories)
+                                  : null,
     'Founding Story Other':     profile.foundingStoryOther,
     'Platform Pillars':         profile.platformPillars,
     'Platform Pillar Other':    profile.platformPillarOther,

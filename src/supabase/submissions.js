@@ -74,7 +74,7 @@ export async function saveSubmission(state) {
     policy_other:      sanitizeFreeText(profile.policyOther),
 
     // Party profile
-    party_founding_story:        sanitizeShortText(profile.foundingStory),
+    party_founding_story:        toCSV(profile.foundingStories),
     party_founding_story_other:  sanitizeFreeText(profile.foundingStoryOther),
     party_platform_pillars:      toCSV(profile.platformPillars),
     party_platform_pillar_other: sanitizeFreeText(profile.platformPillarOther),

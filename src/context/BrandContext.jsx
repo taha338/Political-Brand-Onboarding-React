@@ -41,11 +41,11 @@ const initialState = {
     policyPriorities: [],
     policyOther: '',
     // Party-mode fields
-    foundingStory: '',          // 'grassroots' | 'breakaway' | 'coalition' | 'think-tank' | 'movement' | 'other'
+    foundingStories: [],         // multi-select founding story IDs
     foundingStoryOther: '',
-    platformPillars: [],         // up to 5 selected pillar IDs
+    platformPillars: [],         // selected pillar IDs (no cap)
     platformPillarOther: '',
-    targetSegments: [],          // up to 3 segments
+    targetSegments: [],          // selected segment IDs (no cap)
     targetSegmentOther: '',
     coalitions: '',              // free text — endorsing orgs / partners
   },

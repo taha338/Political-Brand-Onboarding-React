@@ -4,6 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { AnimatePresence, motion } from 'framer-motion';
 import ProgressBar from './components/ProgressBar';
 import LiveColorStrip from './components/LiveColorStrip';
+import AutofillButton from './components/AutofillButton';
 import Stage1 from './components/stages/Stage1_CandidateBasics';
 import Stage2 from './components/stages/Stage2_CandidateProfile';
 import Stage3 from './components/stages/Stage3_BrandCore';
@@ -106,6 +107,7 @@ export default function App() {
     <ErrorBoundary>
       <BrandProvider>
         <PrefillBoot />
+        <AutofillButton />
         <AppContent />
         <LiveColorStrip />
       </BrandProvider>

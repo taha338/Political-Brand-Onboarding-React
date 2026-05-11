@@ -54,8 +54,7 @@ create table if not exists brand_submissions (
   -- Full state snapshot (capped at ~50 KB to prevent abuse)
   full_data               jsonb not null,
 
-  -- Guard against duplicate submissions (same name + office within 5 minutes)
-  constraint no_rapid_duplicates unique (candidate_name, candidate_office, election_year)
+  -- (no unique constraint — clients can resubmit / edit; each submission is a new row)
 );
 
 
@@ -70,6 +69,11 @@ alter table brand_submissions
 alter table brand_submissions
   drop column if exists defining_story,
   drop column if exists endorsements;
+
+-- Drop legacy unique constraint that blocked resubmission. Form 2 is editable
+-- by design; each submission is a new row, and uniqueness is not desired.
+alter table brand_submissions
+  drop constraint if exists no_rapid_duplicates;
 
 --  Expand brand_core check constraint to include 'nonpartisan'
 do $$

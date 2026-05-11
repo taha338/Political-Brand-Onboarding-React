@@ -481,8 +481,7 @@ export default function Stage9_FinalReview() {
                 const result = await res.json().catch(() => ({}));
                 if (!res.ok) {
                   setSubmitting(false);
-                  const detail = result.detail ? ` — ${result.detail}` : '';
-                  setSubmitError(`Submission failed: ${result.error || res.statusText}${detail}`);
+                  setSubmitError(result.error || `Submission failed: ${res.statusText}`);
                   console.error('Submit failed response:', result);
                   return;
                 }

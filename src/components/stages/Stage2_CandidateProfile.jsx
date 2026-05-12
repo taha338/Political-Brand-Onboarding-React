@@ -7,6 +7,8 @@ import StageContainer from '../StageContainer';
 import TiltCard from '../TiltCard';
 import AnimatedCheckmark from '../AnimatedCheckmark';
 import PartyProfileForm from './PartyProfileForm';
+import PacProfileForm from './PacProfileForm';
+import NonprofitProfileForm from './NonprofitProfileForm';
 import {
   Shield, Briefcase, Scale, HeartPulse, Wheat, BookOpen,
   Church, Landmark, Wrench, Monitor, Medal,
@@ -94,6 +96,8 @@ export default function Stage2_CandidateProfile() {
   const policyOtherSelected = priorities.includes('other-policy');
 
   const isParty = state.subjectType === 'party';
+  const isPac = state.subjectType === 'pac';
+  const isNonprofit = state.subjectType === 'nonprofit';
 
   if (isParty) {
     return (
@@ -103,6 +107,30 @@ export default function Stage2_CandidateProfile() {
         subtitle="Your origin, your platform, and the people you're built to reach."
       >
         <PartyProfileForm />
+      </StageContainer>
+    );
+  }
+
+  if (isPac) {
+    return (
+      <StageContainer
+        stageNumber={2}
+        title="PAC Profile"
+        subtitle="Your origin, your issue focus, and the donors who fuel the fight."
+      >
+        <PacProfileForm />
+      </StageContainer>
+    );
+  }
+
+  if (isNonprofit) {
+    return (
+      <StageContainer
+        stageNumber={2}
+        title="Nonprofit Profile"
+        subtitle="Your origin, your cause areas, and the people you speak to."
+      >
+        <NonprofitProfileForm />
       </StageContainer>
     );
   }

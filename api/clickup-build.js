@@ -7,6 +7,72 @@
 
 import { FIELD_IDS, FIELD_TYPES, PRIMARY_LIST_ID } from './clickup-field-map.js';
 
+/** Other lists that hold dropdown definitions for workspace-shared fields
+ *  we now write from this form (PAC Type, Nonprofit Type, FEC Status, etc.).
+ *  Campaign Intake (Form 1) and Sales Active Deals both define these — we
+ *  pull from both so resolveOption can find the option set. */
+const SECONDARY_OPTION_LISTS = [
+  '901113726567', // Campaign Intake — defines most PAC + Nonprofit dropdowns
+  '901113549967', // Sales Active Deals — defines Subject Type, Election Year, signing-authority fields
+];
+
+/** Form sends short kebab IDs like `federal` or `c3` for some dropdowns,
+ *  but ClickUp's option names are full labels (`Federal PAC`,
+ *  `501(c)(3) - Charitable`). This per-field translation table maps the
+ *  form ID to the exact ClickUp option name so resolveOption matches by
+ *  name. Keyed by field name as it appears in FIELD_IDS. */
+const FORM_ID_TO_OPTION_NAME = {
+  'PAC Type': {
+    'federal':    'Federal PAC',
+    'state':      'State PAC',
+    'super':      'Super PAC',
+    'hybrid':     'Hybrid PAC',
+    'carey':      'Carey Committee',
+    'leadership': 'Leadership PAC',
+    'other':      'Other',
+  },
+  'FEC Registration Status': {
+    'registered':    'Registered',
+    'in-progress':   'In Progress',
+    'not-yet':       'Not Yet',
+    'na-state-only': 'N/A (state-only)',
+  },
+  'Nonprofit Type': {
+    'c3':    '501(c)(3) - Charitable',
+    'c4':    '501(c)(4) - Social Welfare / Advocacy',
+    'c6':    '501(c)(6) - Trade Association',
+    '527':   '527 / Political Org',
+    'other': 'Other',
+  },
+  'Lobbying Activity': {
+    'none':               'None',
+    'insubstantial':      'Insubstantial (c3 substantial-part test)',
+    '501h-elected':       '501(h) elected (c3)',
+    'primary-purpose-c4': 'Primary purpose (c4)',
+    'na':                 'N/A',
+  },
+  'IRS Determination Status': {
+    'approved':           'Approved',
+    'pending':            'Pending',
+    'revoked':            'Revoked',
+    'fiscally-sponsored': 'Fiscally Sponsored',
+    'na':                 'N/A',
+  },
+  'Nonprofit Tone Anchor': {
+    'advocacy': 'Advocacy',
+    'service':  'Service',
+    'research': 'Research / Policy',
+    'member':   'Member-Facing',
+    'donor':    'Donor-Facing',
+  },
+  'Subject Type': {
+    'candidate': 'Candidate',
+    'party':     'Party',
+    'pac':       'PAC',
+    'nonprofit': 'Nonprofit',
+  },
+};
+
 const empty = (v) =>
   v === undefined || v === null ||
   (typeof v === 'string' && v.trim() === '') ||
@@ -15,16 +81,24 @@ const empty = (v) =>
 export async function getDropdownOptionsMap() {
   const token = process.env.CLICKUP_API_TOKEN;
   if (!token) throw new Error('CLICKUP_API_TOKEN missing');
-  const r = await fetch(
-    `https://api.clickup.com/api/v2/list/${PRIMARY_LIST_ID}/field`,
-    { headers: { Authorization: token } },
-  );
-  const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(`ClickUp list fields ${r.status}: ${data?.err || ''}`);
+  const listIds = [PRIMARY_LIST_ID, ...SECONDARY_OPTION_LISTS];
   const map = {};
-  for (const f of data.fields || []) {
-    if (f.type === 'drop_down' || f.type === 'labels') {
-      map[f.id] = f.type_config?.options || [];
+  for (const listId of listIds) {
+    try {
+      const r = await fetch(
+        `https://api.clickup.com/api/v2/list/${listId}/field`,
+        { headers: { Authorization: token } },
+      );
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) continue;
+      for (const f of data.fields || []) {
+        if (f.type !== 'drop_down' && f.type !== 'labels') continue;
+        // First list wins — Brand list takes precedence so its option IDs
+        // are preferred when the same field UUID exists in multiple lists.
+        if (!map[f.id]) map[f.id] = f.type_config?.options || [];
+      }
+    } catch {
+      /* ignore — best-effort */
     }
   }
   return map;
@@ -70,33 +144,144 @@ function resolveLabels(raw, options) {
 function flattenState(state, payload) {
   const candidate    = state.candidate    || {};
   const party        = state.party        || {};
+  const pac          = state.pac          || {};
+  const nonprofit    = state.nonprofit    || {};
   const profile      = state.profile      || {};
   const customColors = state.customColors || {};
   const customFonts  = state.customFonts  || {};
   const subjectType  = payload.subject_type;
+  const isCandidate  = subjectType === 'candidate';
+  const isParty      = subjectType === 'party';
+  const isPac        = subjectType === 'pac';
+  const isNonprofit  = subjectType === 'nonprofit';
+
+  // Founding Story (single-select dropdown shared across party/pac/nonprofit).
+  // Each subject keeps its own multi-select array in state — we collapse to
+  // the first entry for the dropdown, then dump the full list into the matching
+  // "Other" text field as a CSV when there's overflow.
+  const pickFirst = (arr) => Array.isArray(arr) && arr.length ? arr[0] : (arr || null);
+  const foundingStoryValue =
+    isParty     ? pickFirst(profile.foundingStories)
+  : isPac       ? pickFirst(profile.pacFoundingStories)
+  : isNonprofit ? pickFirst(profile.nonprofitFoundingStories)
+  : null;
+  const foundingStoryOtherValue =
+    isParty     ? profile.foundingStoryOther
+  : isPac       ? (profile.pacFoundingStoryOther || (Array.isArray(profile.pacFoundingStories) && profile.pacFoundingStories.length > 1 ? profile.pacFoundingStories.slice(1).join(', ') : ''))
+  : isNonprofit ? (profile.nonprofitFoundingStoryOther || (Array.isArray(profile.nonprofitFoundingStories) && profile.nonprofitFoundingStories.length > 1 ? profile.nonprofitFoundingStories.slice(1).join(', ') : ''))
+  : null;
+
+  // Target Voter Segments (labels field on Brand list — reused for PAC donor
+  // segments and Nonprofit audiences). The label IDs come from the Brand list
+  // option set — for PAC/Nonprofit we send the segment IDs as plain strings;
+  // resolveLabels will skip any that don't match Brand-list labels.
+  const segmentsValue =
+    isParty     ? profile.targetSegments
+  : isPac       ? profile.pacTargetDonors
+  : isNonprofit ? profile.nonprofitAudiences
+  : null;
+  const segmentOtherValue =
+    isParty     ? profile.targetSegmentOther
+  : isPac       ? profile.pacTargetDonorOther
+  : isNonprofit ? profile.nonprofitAudienceOther
+  : null;
+
+  // Platform Pillars (labels field — reused for PAC issue focus).
+  const pillarsValue =
+    isParty ? profile.platformPillars
+  : isPac   ? profile.pacIssueFocus
+  : null;
+  const pillarOtherValue =
+    isParty ? profile.platformPillarOther
+  : isPac   ? profile.pacIssueFocusOther
+  : null;
+
+  // Coalitions / Partners (free text — reused for all 3 non-candidate subjects).
+  const coalitionsValue =
+    isParty     ? profile.coalitions
+  : isPac       ? profile.pacCoalitions
+  : isNonprofit ? profile.nonprofitCoalitions
+  : null;
+
+  // Geographic fields — PAC and Nonprofit each have state/states/cityCounty.
+  // Workspace-shared field "States Covered" is text; "City / County" is short_text.
+  const statesValue =
+    isPac       ? (Array.isArray(pac.states) && pac.states.length ? pac.states.join(', ') : pac.state || null)
+  : isNonprofit ? (Array.isArray(nonprofit.states) && nonprofit.states.length ? nonprofit.states.join(', ') : nonprofit.state || null)
+  : null;
+  // PAC has its own "PAC States Covered" short_text field; use that for pac too.
+  const pacStatesValue =
+    isPac ? (Array.isArray(pac.states) && pac.states.length ? pac.states.join(', ') : pac.state || null)
+  : null;
+  const cityCountyValue =
+    isPac       ? pac.cityCounty
+  : isNonprofit ? nonprofit.cityCounty
+  : null;
+
+  // Lead Spokesperson (workspace-shared short_text — used by party / pac / nonprofit).
+  const spokespersonValue =
+    isParty     ? party.spokesperson
+  : isPac       ? pac.spokesperson
+  : isNonprofit ? nonprofit.spokesperson
+  : null;
 
   const out = {
+    // Subject Type drives ClickUp views — workspace-shared dropdown.
+    'Subject Type':            payload.subject_type,
+
     // Candidate
-    'Race Focus':              subjectType === 'candidate' ? candidate.raceFocus : null,
-    'Candidate Type':          subjectType === 'candidate' ? candidate.candidateType : null,
-    'Party Affiliation (brand)': subjectType === 'candidate' ? candidate.partyAffiliation : null,
+    'Race Focus':              isCandidate ? candidate.raceFocus : null,
+    'Candidate Type':          isCandidate ? candidate.candidateType : null,
+    'Party Affiliation (brand)': isCandidate ? candidate.partyAffiliation : null,
+
     // Party
-    'Party Acronym (brand)':   subjectType === 'party' ? party.acronym : null,
-    // Profile (candidate-mode + party-mode)
+    'Party Acronym (brand)':   isParty ? party.acronym : null,
+
+    // PAC basics — workspace-shared field UUIDs (also live on Campaign Intake)
+    'PAC Legal Name':            isPac ? pac.legalName : null,
+    'PAC Type':                  isPac ? pac.pacType : null,
+    'PAC Scope':                 isPac ? pac.scope : null,
+    'PAC States Covered':        pacStatesValue,
+    'PAC Year Established':      isPac ? pac.yearEstablished : null,
+    'PAC Mission':               isPac ? pac.mission : null,
+    'PAC IE-Only?':              isPac ? pac.ieOnly : null,
+    'PAC Connected Status':      isPac ? pac.connectedStatus : null,
+    'PAC Affiliated Committees': isPac ? profile.pacAffiliatedCandidates : null,
+
+    // Nonprofit basics
+    'Legal organization name':    isNonprofit ? nonprofit.legalName : null,
+    'Nonprofit Type':             isNonprofit ? nonprofit.nonprofitType : null,
+    'Nonprofit Scope':            isNonprofit ? nonprofit.scope : null,
+    'Founded Year':               isNonprofit ? nonprofit.foundedYear : null,
+    'Nonprofit Mission':          isNonprofit ? nonprofit.mission : null,
+    'Nonprofit Membership-Based?':isNonprofit ? nonprofit.membershipBased : null,
+    'Lobbying Activity':          isNonprofit ? nonprofit.lobbyingActivity : null,
+    'IRS Determination Status':   isNonprofit ? nonprofit.irsDeterminationStatus : null,
+    'Nonprofit Cause Areas':      isNonprofit && Array.isArray(profile.nonprofitCauseAreas)
+                                    ? profile.nonprofitCauseAreas.join(', ')
+                                    : null,
+    'Nonprofit Tone Anchor':      isNonprofit ? profile.nonprofitToneAnchor : null,
+
+    // Shared across non-candidate subjects
+    'States Covered':          statesValue,
+    'City / County':           cityCountyValue,
+    'Election Year':           isPac ? pac.electionYear : (isCandidate ? candidate.electionYear : null),
+    'FEC Registration Status': isPac ? pac.fecRegistrationStatus : null,
+    'Lead Spokesperson':       spokespersonValue,
+
+    // Profile (candidate-mode + party-mode + reused for PAC/Nonprofit)
     'Professional Backgrounds': profile.backgrounds,
     'Background Other':         profile.backgroundOther,
     'Policy Priorities (ranked)': Array.isArray(profile.policyPriorities)
       ? profile.policyPriorities.join(', ') : profile.policyPriorities,
     'Policy Other':             profile.policyOther,
-    'Founding Story':           subjectType === 'party'
-                                  ? (Array.isArray(profile.foundingStories) ? profile.foundingStories[0] : profile.foundingStories)
-                                  : null,
-    'Founding Story Other':     profile.foundingStoryOther,
-    'Platform Pillars':         profile.platformPillars,
-    'Platform Pillar Other':    profile.platformPillarOther,
-    'Target Voter Segments':    profile.targetSegments,
-    'Target Segment Other':     profile.targetSegmentOther,
-    'Coalitions / Partners':    profile.coalitions,
+    'Founding Story':           foundingStoryValue,
+    'Founding Story Other':     foundingStoryOtherValue,
+    'Platform Pillars':         pillarsValue,
+    'Platform Pillar Other':    pillarOtherValue,
+    'Target Voter Segments':    segmentsValue,
+    'Target Segment Other':     segmentOtherValue,
+    'Coalitions / Partners':    coalitionsValue,
     // Brand
     'Brand Core':               state.brandCore,
     'Sub-Direction(s)':         Array.isArray(state.subDirection)
@@ -139,7 +324,8 @@ export function buildCustomFields(state, payload, optionsMap = {}) {
       if (isNaN(d.getTime())) continue;
       value = d.getTime();
     } else if (type === 'drop_down') {
-      const idx = resolveOption(raw, optionsMap[fid]);
+      const translated = FORM_ID_TO_OPTION_NAME[name]?.[String(raw)] ?? raw;
+      const idx = resolveOption(translated, optionsMap[fid]);
       if (idx === null || idx === undefined) {
         unresolved.push({ fieldName: name, fieldId: fid, value: String(raw) });
         continue;

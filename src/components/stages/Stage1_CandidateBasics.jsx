@@ -5,6 +5,8 @@ import { OFFICES, US_STATES, ELECTION_YEARS, CANDIDATE_TYPES } from '../../data/
 import StageContainer from '../StageContainer';
 import SubjectTypeToggle from '../SubjectTypeToggle';
 import PartyBasicsForm from './PartyBasicsForm';
+import PacBasicsForm from './PacBasicsForm';
+import NonprofitBasicsForm from './NonprofitBasicsForm';
 import { sanitizeName, sanitizeDistrict, sanitizeShortText } from '../../utils/sanitize';
 import USMapSVG from '../USMapSVG';
 import { Building2, Home, Landmark, Star, Crown, ClipboardList, Users, Gavel } from 'lucide-react';
@@ -313,7 +315,9 @@ export default function Stage1_CandidateBasics() {
   const subjectType = state.subjectType;
   const isParty = subjectType === 'party';
   const isCandidate = subjectType === 'candidate';
-  const hasSubjectChoice = isParty || isCandidate;
+  const isPac = subjectType === 'pac';
+  const isNonprofit = subjectType === 'nonprofit';
+  const hasSubjectChoice = isParty || isCandidate || isPac || isNonprofit;
 
   return (
     <StageContainer
@@ -322,11 +326,15 @@ export default function Stage1_CandidateBasics() {
       title={
         isParty ? 'Party Basics'
         : isCandidate ? 'Candidate Basics'
+        : isPac ? 'PAC Basics'
+        : isNonprofit ? 'Nonprofit Basics'
         : "Let's Get Started"
       }
       subtitle={
         isParty ? "Let's start with the essentials. What is this party, and who does it represent?"
         : isCandidate ? "Let's start with the essentials. Who's running, and what are they running for?"
+        : isPac ? "Let's start with the essentials. What is this committee, and who does it fight for?"
+        : isNonprofit ? "Let's start with the essentials. What is this organization, and who does it serve?"
         : 'First — tell us who this brand is for.'
       }
     >
@@ -361,6 +369,12 @@ export default function Stage1_CandidateBasics() {
 
       {/* ── PARTY MODE ── render the dedicated party form. */}
       {isParty && <PartyBasicsForm />}
+
+      {/* ── PAC MODE ── render the dedicated PAC form. */}
+      {isPac && <PacBasicsForm />}
+
+      {/* ── NONPROFIT MODE ── render the dedicated nonprofit form. */}
+      {isNonprofit && <NonprofitBasicsForm />}
 
       {/* ── CANDIDATE MODE ── original candidate sections render only when chosen. */}
       {isCandidate && (

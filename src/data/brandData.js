@@ -559,6 +559,186 @@ export const FOUNDED_YEAR_RANGE = {
   max: new Date().getFullYear(),
 };
 
+/* ─────────────────────────────────────────────────────────────────
+   PAC enums — Stage 1 + 2 when subjectType === 'pac'
+   Option IDs match ClickUp dropdown option names (case-insensitive)
+   for clean server-side mapping.
+   ───────────────────────────────────────────────────────────────── */
+export const PAC_TYPES = [
+  { id: 'federal',     label: 'Federal PAC' },
+  { id: 'state',       label: 'State PAC' },
+  { id: 'super',       label: 'Super PAC (Independent-Expenditure)' },
+  { id: 'hybrid',      label: 'Hybrid PAC' },
+  { id: 'carey',       label: 'Carey Committee' },
+  { id: 'leadership',  label: 'Leadership PAC' },
+  { id: 'other',       label: 'Other' },
+];
+
+export const PAC_SCOPES = [
+  { id: 'federal',     label: 'Federal' },
+  { id: 'multi-state', label: 'Multi-State' },
+  { id: 'state',       label: 'Statewide' },
+  { id: 'local',       label: 'Local / County / City' },
+];
+
+export const PAC_FOUNDING_STORIES = [
+  { id: 'grassroots',  label: 'Grassroots — built from the ground up' },
+  { id: 'coalition',   label: 'Coalition — uniting allied orgs or donors' },
+  { id: 'breakaway',   label: 'Breakaway — split from existing committee' },
+  { id: 'movement',    label: 'Movement — issue or cause-driven' },
+  { id: 'think-tank',  label: 'Policy / Think-Tank origin' },
+  { id: 'legacy',      label: 'Legacy — long-established committee' },
+  { id: 'other',       label: 'Other' },
+];
+
+/* Issues the PAC is built to advance — drives voice & headline tone. */
+export const PAC_ISSUE_FOCUS = [
+  { id: 'border',           label: 'Border & Immigration' },
+  { id: 'economy',          label: 'Economy & Jobs' },
+  { id: '2a',               label: '2nd Amendment' },
+  { id: 'pro-life',         label: 'Pro-Life' },
+  { id: 'election',         label: 'Election Integrity' },
+  { id: 'law-order',        label: 'Law & Order' },
+  { id: 'energy',           label: 'Energy Independence' },
+  { id: 'tax',              label: 'Tax Reform' },
+  { id: 'religious-liberty',label: 'Religious Liberty' },
+  { id: 'parental-rights',  label: 'Parental Rights' },
+  { id: 'veterans',         label: 'Veterans' },
+  { id: 'accountability',   label: 'Government Accountability' },
+  { id: 'free-speech',      label: 'Free Speech' },
+  { id: 'limited-gov',      label: 'Limited Government' },
+  { id: 'agriculture',      label: 'Agriculture & Rural' },
+  { id: 'healthcare',       label: 'Healthcare' },
+  { id: 'education',        label: 'Education Reform' },
+  { id: 'infrastructure',   label: 'Infrastructure' },
+  { id: 'other',            label: 'Other' },
+];
+
+/* Donor / supporter audience for the PAC. */
+export const PAC_TARGET_DONORS = [
+  { id: 'major-donors',     label: 'Major Donors (5-figure+)' },
+  { id: 'small-dollar',     label: 'Small-Dollar Online' },
+  { id: 'institutional',    label: 'Institutional / Corporate' },
+  { id: 'industry',         label: 'Industry Members (Trade)' },
+  { id: 'grassroots',       label: 'Grassroots Activists' },
+  { id: 'coalition',        label: 'Coalition Partners' },
+  { id: 'family-offices',   label: 'Family Offices / HNW' },
+  { id: 'pacs',             label: 'Other PACs / Committees' },
+  { id: 'unions',           label: 'Labor / Union Members' },
+  { id: 'faith',            label: 'Faith Communities' },
+  { id: 'other',            label: 'Other' },
+];
+
+/* ─────────────────────────────────────────────────────────────────
+   Nonprofit enums — Stage 1 + 2 when subjectType === 'nonprofit'
+   ───────────────────────────────────────────────────────────────── */
+export const NONPROFIT_TYPES = [
+  { id: 'c3',          label: '501(c)(3) — Charitable' },
+  { id: 'c4',          label: '501(c)(4) — Social Welfare / Advocacy' },
+  { id: 'c6',          label: '501(c)(6) — Trade Association' },
+  { id: '527',         label: '527 / Political Org' },
+  { id: 'other',       label: 'Other' },
+];
+
+export const NONPROFIT_SCOPES = [
+  { id: 'national',    label: 'National' },
+  { id: 'multi-state', label: 'Multi-State' },
+  { id: 'state',       label: 'Statewide' },
+  { id: 'local',       label: 'Local / County / City' },
+];
+
+export const NONPROFIT_FOUNDING_STORIES = [
+  { id: 'grassroots',  label: 'Grassroots — community-built' },
+  { id: 'movement',    label: 'Movement — cause-driven' },
+  { id: 'coalition',   label: 'Coalition — uniting allied orgs' },
+  { id: 'think-tank',  label: 'Think-Tank / Research-driven' },
+  { id: 'legacy',      label: 'Legacy — long-established institution' },
+  { id: 'response',    label: 'Response — born from a specific incident' },
+  { id: 'other',       label: 'Other' },
+];
+
+/* Mission / cause areas — multi-select. */
+export const NONPROFIT_CAUSE_AREAS = [
+  { id: 'religious-liberty', label: 'Religious Liberty' },
+  { id: 'pro-life',          label: 'Pro-Life / Family' },
+  { id: 'free-speech',       label: 'Free Speech / Civil Liberties' },
+  { id: 'election-integrity',label: 'Election Integrity' },
+  { id: 'parental-rights',   label: 'Parental Rights / Education' },
+  { id: 'second-amendment',  label: '2nd Amendment' },
+  { id: 'limited-gov',       label: 'Limited Government' },
+  { id: 'free-market',       label: 'Free-Market / Economic Liberty' },
+  { id: 'veterans',          label: 'Veterans / Military Families' },
+  { id: 'faith',             label: 'Faith-Based Service' },
+  { id: 'community-service', label: 'Community Service / Poverty Relief' },
+  { id: 'health',            label: 'Health / Medical' },
+  { id: 'environment',       label: 'Environment / Conservation' },
+  { id: 'youth',             label: 'Youth / Education' },
+  { id: 'arts-culture',      label: 'Arts & Culture' },
+  { id: 'public-policy',     label: 'Public Policy / Research' },
+  { id: 'legal-advocacy',    label: 'Legal Advocacy' },
+  { id: 'international',     label: 'International / Foreign Aid' },
+  { id: 'other',             label: 'Other' },
+];
+
+/* Who the nonprofit primarily speaks to. */
+export const NONPROFIT_AUDIENCES = [
+  { id: 'donors',         label: 'Donors' },
+  { id: 'members',        label: 'Members' },
+  { id: 'beneficiaries',  label: 'Beneficiaries / Communities Served' },
+  { id: 'policymakers',   label: 'Policymakers / Legislators' },
+  { id: 'media',          label: 'Media' },
+  { id: 'general-public', label: 'General Public' },
+  { id: 'volunteers',     label: 'Volunteers' },
+  { id: 'coalition',      label: 'Coalition Partners' },
+  { id: 'faith',          label: 'Faith Communities' },
+  { id: 'industry',       label: 'Industry / Trade' },
+  { id: 'other',          label: 'Other' },
+];
+
+/* Tone anchor — drives Brand Core selection for nonprofits. */
+export const NONPROFIT_TONE_ANCHORS = [
+  { id: 'advocacy', label: 'Advocacy',         desc: 'Persuasive, mission-forward, calls for action.' },
+  { id: 'service',  label: 'Service',          desc: 'Warm, community-rooted, focused on the people you serve.' },
+  { id: 'research', label: 'Research / Policy',desc: 'Authoritative, data-driven, institutional voice.' },
+  { id: 'member',   label: 'Member-Facing',    desc: 'Belonging-driven; speaks to dues-paying members.' },
+  { id: 'donor',    label: 'Donor-Facing',     desc: 'Impact-driven; speaks to funders and major donors.' },
+];
+
+/* Shared dropdown enums (mirror Campaign Intake / Sales options). */
+export const LOBBYING_ACTIVITY = [
+  { id: 'none',                  label: 'None' },
+  { id: 'insubstantial',         label: 'Insubstantial (c3 substantial-part test)' },
+  { id: '501h-elected',          label: '501(h) elected (c3)' },
+  { id: 'primary-purpose-c4',    label: 'Primary purpose (c4)' },
+  { id: 'na',                    label: 'N/A' },
+];
+
+export const IRS_DETERMINATION_STATUS = [
+  { id: 'approved',           label: 'Approved' },
+  { id: 'pending',            label: 'Pending' },
+  { id: 'revoked',            label: 'Revoked' },
+  { id: 'fiscally-sponsored', label: 'Fiscally Sponsored' },
+  { id: 'na',                 label: 'N/A' },
+];
+
+export const PAC_CONNECTED_STATUS = [
+  { id: 'connected',     label: 'Connected (sponsored by a corp/union/assoc)' },
+  { id: 'non-connected', label: 'Non-Connected (independent)' },
+  { id: 'na',            label: 'N/A' },
+];
+
+export const FEC_REGISTRATION_STATUS = [
+  { id: 'registered',     label: 'Registered' },
+  { id: 'in-progress',    label: 'In Progress' },
+  { id: 'not-yet',        label: 'Not Yet' },
+  { id: 'na-state-only',  label: 'N/A (state-only)' },
+];
+
+export const YES_NO = [
+  { id: 'yes', label: 'Yes' },
+  { id: 'no',  label: 'No' },
+];
+
 export const US_STATES = [
   'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia',
   'Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland',

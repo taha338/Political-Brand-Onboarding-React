@@ -34,6 +34,37 @@ const initialState = {
     foundedYear: '',
     spokesperson: '',
   },
+  pac: {
+    legalName: '',
+    pacType: '',              // 'federal' | 'state' | 'super' | 'hybrid' | 'carey' | 'leadership' | 'other'
+    pacTypeOther: '',
+    scope: '',                // 'federal' | 'multi-state' | 'state' | 'local'
+    state: '',
+    states: [],
+    cityCounty: '',
+    yearEstablished: '',
+    electionYear: '',
+    mission: '',              // 1-line issue focus
+    ieOnly: '',               // 'yes' | 'no'
+    connectedStatus: '',      // 'connected' | 'non-connected' | 'na'
+    fecRegistrationStatus: '',
+    spokesperson: '',
+  },
+  nonprofit: {
+    legalName: '',
+    nonprofitType: '',        // 'c3' | 'c4' | 'c6' | '527' | 'other'
+    nonprofitTypeOther: '',
+    scope: '',
+    state: '',
+    states: [],
+    cityCounty: '',
+    foundedYear: '',
+    mission: '',              // 2-3 sentence mission statement
+    membershipBased: '',      // 'yes' | 'no'
+    lobbyingActivity: '',
+    irsDeterminationStatus: '',
+    spokesperson: '',
+  },
   profile: {
     // Candidate-mode fields
     backgrounds: [],
@@ -48,6 +79,24 @@ const initialState = {
     targetSegments: [],          // selected segment IDs (no cap)
     targetSegmentOther: '',
     coalitions: '',              // free text — endorsing orgs / partners
+    // PAC-mode fields
+    pacFoundingStories: [],
+    pacFoundingStoryOther: '',
+    pacIssueFocus: [],
+    pacIssueFocusOther: '',
+    pacTargetDonors: [],
+    pacTargetDonorOther: '',
+    pacAffiliatedCandidates: '', // free text — who they back
+    pacCoalitions: '',           // free text — allied committees / orgs
+    // Nonprofit-mode fields
+    nonprofitFoundingStories: [],
+    nonprofitFoundingStoryOther: '',
+    nonprofitCauseAreas: [],
+    nonprofitCauseAreaOther: '',
+    nonprofitAudiences: [],
+    nonprofitAudienceOther: '',
+    nonprofitToneAnchor: '',     // 'advocacy' | 'service' | 'research' | 'member' | 'donor'
+    nonprofitCoalitions: '',     // free text — partners
   },
   brandCore: null,
   subDirection: null,
@@ -76,6 +125,10 @@ function reducer(state, action) {
       return { ...state, candidate: { ...state.candidate, ...action.payload } };
     case 'UPDATE_PARTY':
       return { ...state, party: { ...state.party, ...action.payload } };
+    case 'UPDATE_PAC':
+      return { ...state, pac: { ...state.pac, ...action.payload } };
+    case 'UPDATE_NONPROFIT':
+      return { ...state, nonprofit: { ...state.nonprofit, ...action.payload } };
     case 'UPDATE_PROFILE':
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case 'SET_BRAND_CORE':

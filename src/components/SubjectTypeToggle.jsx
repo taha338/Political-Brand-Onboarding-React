@@ -5,7 +5,7 @@
  * organization. Sits at the top of Stage 1.
  */
 import { useBrand } from '../context/BrandContext';
-import { User, Flag } from 'lucide-react';
+import { User, Flag, Megaphone, HeartHandshake } from 'lucide-react';
 
 const accent = '#8B1A2B';
 const navy = '#1C2E5B';
@@ -31,6 +31,18 @@ export default function SubjectTypeToggle() {
       desc: 'A party, coalition, or political organization',
       icon: <Flag size={22} />,
     },
+    {
+      id: 'pac',
+      label: 'PAC / Super PAC',
+      desc: 'A political action or independent-expenditure committee',
+      icon: <Megaphone size={22} />,
+    },
+    {
+      id: 'nonprofit',
+      label: 'Nonprofit',
+      desc: 'A 501(c)(3), (c)(4), (c)(6), 527, or similar org',
+      icon: <HeartHandshake size={22} />,
+    },
   ];
 
   return (
@@ -42,7 +54,7 @@ export default function SubjectTypeToggle() {
         marginBottom: '0.75rem',
       }}>Who is this brand for?</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
         {options.map((opt) => {
           const selected = subjectType === opt.id;
           return (

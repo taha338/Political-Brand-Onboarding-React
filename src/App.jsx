@@ -42,21 +42,32 @@ function PrefillBoot() {
       .then((data) => {
         if (!data?.found) return;
         // Subject type drives the rest of the UI — set first.
-        if (data.subjectType === 'candidate' || data.subjectType === 'party') {
+        const validSubjects = ['candidate', 'party', 'pac', 'nonprofit'];
+        if (validSubjects.includes(data.subjectType)) {
           dispatch({ type: 'SET_SUBJECT_TYPE', payload: data.subjectType });
         }
-        // Display name → maps to candidate.fullName OR party.name
+        // Display name → maps to candidate.fullName / party.name / pac.legalName / nonprofit.legalName
         const dn = data.tradeName;
         if (dn) {
           if (data.subjectType === 'party') {
             dispatch({ type: 'UPDATE_PARTY', payload: { name: dn } });
+          } else if (data.subjectType === 'pac') {
+            dispatch({ type: 'UPDATE_PAC', payload: { legalName: dn } });
+          } else if (data.subjectType === 'nonprofit') {
+            dispatch({ type: 'UPDATE_NONPROFIT', payload: { legalName: dn } });
           } else {
             dispatch({ type: 'UPDATE_CANDIDATE', payload: { fullName: dn } });
           }
         }
-        // Primary contact name → if party, use as spokesperson default
-        if (data.subjectType === 'party' && data.contact?.name) {
-          dispatch({ type: 'UPDATE_PARTY', payload: { spokesperson: data.contact.name } });
+        // Primary contact name → spokesperson default for party / pac / nonprofit
+        if (data.contact?.name) {
+          if (data.subjectType === 'party') {
+            dispatch({ type: 'UPDATE_PARTY', payload: { spokesperson: data.contact.name } });
+          } else if (data.subjectType === 'pac') {
+            dispatch({ type: 'UPDATE_PAC', payload: { spokesperson: data.contact.name } });
+          } else if (data.subjectType === 'nonprofit') {
+            dispatch({ type: 'UPDATE_NONPROFIT', payload: { spokesperson: data.contact.name } });
+          }
         }
       })
       .catch(() => { /* silent — form remains fillable */ });

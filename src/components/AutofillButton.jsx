@@ -10,7 +10,7 @@ function fillAll(dispatch, subjectType) {
   // 1. Subject type
   dispatch({ type: 'SET_SUBJECT_TYPE', payload: subjectType });
 
-  // 2. Candidate or party basics
+  // 2. Subject-specific basics
   if (subjectType === 'candidate') {
     dispatch({
       type: 'UPDATE_CANDIDATE',
@@ -26,7 +26,7 @@ function fillAll(dispatch, subjectType) {
         partyAffiliation: 'Republican',
       },
     });
-  } else {
+  } else if (subjectType === 'party') {
     dispatch({
       type: 'UPDATE_PARTY',
       payload: {
@@ -42,6 +42,45 @@ function fillAll(dispatch, subjectType) {
         spokesperson: 'Pat Spokesperson',
       },
     });
+  } else if (subjectType === 'pac') {
+    dispatch({
+      type: 'UPDATE_PAC',
+      payload: {
+        legalName: 'Citizens for American Renewal PAC',
+        pacType: 'super',
+        pacTypeOther: '',
+        scope: 'multi-state',
+        state: '',
+        states: ['Florida', 'Georgia', 'North Carolina'],
+        cityCounty: '',
+        yearEstablished: '2023',
+        electionYear: '2026',
+        mission: 'Elect America-First candidates to U.S. House seats in swing districts.',
+        ieOnly: 'yes',
+        connectedStatus: 'non-connected',
+        fecRegistrationStatus: 'registered',
+        spokesperson: 'Sam Treasurer',
+      },
+    });
+  } else if (subjectType === 'nonprofit') {
+    dispatch({
+      type: 'UPDATE_NONPROFIT',
+      payload: {
+        legalName: 'American Liberty Foundation',
+        nonprofitType: 'c3',
+        nonprofitTypeOther: '',
+        scope: 'national',
+        state: '',
+        states: [],
+        cityCounty: '',
+        foundedYear: '2015',
+        mission: 'We defend religious liberty through litigation, education, and policy advocacy.',
+        membershipBased: 'no',
+        lobbyingActivity: '501h-elected',
+        irsDeterminationStatus: 'approved',
+        spokesperson: 'Alex Director',
+      },
+    });
   }
 
   // 3. Profile (subject-conditional)
@@ -55,7 +94,7 @@ function fillAll(dispatch, subjectType) {
         policyOther: '',
       },
     });
-  } else {
+  } else if (subjectType === 'party') {
     dispatch({
       type: 'UPDATE_PROFILE',
       payload: {
@@ -66,6 +105,34 @@ function fillAll(dispatch, subjectType) {
         targetSegments: ['independent-voters', 'small-business'],
         targetSegmentOther: '',
         coalitions: 'Test Coalition for Local Liberty; Sample Civic League',
+      },
+    });
+  } else if (subjectType === 'pac') {
+    dispatch({
+      type: 'UPDATE_PROFILE',
+      payload: {
+        pacFoundingStories: ['grassroots', 'movement'],
+        pacFoundingStoryOther: '',
+        pacIssueFocus: ['economy', 'border', 'election', '2a'],
+        pacIssueFocusOther: '',
+        pacTargetDonors: ['major-donors', 'small-dollar', 'grassroots'],
+        pacTargetDonorOther: '',
+        pacAffiliatedCandidates: 'Sen. Jane Doe (FL-Sen), Rep. John Smith (NC-08), 2026 freshman House class',
+        pacCoalitions: 'America First Inc., Heritage Action, FL Realtors PAC',
+      },
+    });
+  } else if (subjectType === 'nonprofit') {
+    dispatch({
+      type: 'UPDATE_PROFILE',
+      payload: {
+        nonprofitFoundingStories: ['movement', 'response'],
+        nonprofitFoundingStoryOther: '',
+        nonprofitCauseAreas: ['religious-liberty', 'free-speech', 'parental-rights'],
+        nonprofitCauseAreaOther: '',
+        nonprofitAudiences: ['donors', 'policymakers', 'media'],
+        nonprofitAudienceOther: '',
+        nonprofitToneAnchor: 'advocacy',
+        nonprofitCoalitions: 'Alliance Defending Freedom, FIRE, sister c4 American Liberty Action',
       },
     });
   }
@@ -101,6 +168,8 @@ function fillAll(dispatch, subjectType) {
   });
 }
 
+const VALID_SUBJECTS = ['candidate', 'party', 'pac', 'nonprofit'];
+
 export default function AutofillButton() {
   const { state, dispatch } = useBrand();
   const [open, setOpen] = useState(false);
@@ -120,16 +189,23 @@ export default function AutofillButton() {
   const handleClick = () => {
     const params = new URLSearchParams(window.location.search);
     const urlSubject = (params.get('subject') || '').toLowerCase();
-    if (urlSubject === 'candidate' || urlSubject === 'party') {
+    if (VALID_SUBJECTS.includes(urlSubject)) {
       fill(urlSubject);
       return;
     }
-    if (state.subjectType === 'candidate' || state.subjectType === 'party') {
+    if (VALID_SUBJECTS.includes(state.subjectType)) {
       fill(state.subjectType);
       return;
     }
     setOpen(true);
   };
+
+  const subjectButtons = [
+    { id: 'candidate', label: 'Candidate', bg: '#1C2E5B' },
+    { id: 'party',     label: 'Party',     bg: '#B22234' },
+    { id: 'pac',       label: 'PAC',       bg: '#8B1A2B' },
+    { id: 'nonprofit', label: 'Nonprofit', bg: '#0F766E' },
+  ];
 
   return (
     <>
@@ -169,24 +245,26 @@ export default function AutofillButton() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#fff', borderRadius: 12, padding: 24, minWidth: 320,
+              background: '#fff', borderRadius: 12, padding: 24, minWidth: 360,
               boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             }}
           >
             <p style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: '#111' }}>
               Autofill: subject type?
             </p>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button
-                type="button"
-                onClick={() => { setOpen(false); fill('candidate'); }}
-                style={{ flex: 1, padding: '12px 16px', borderRadius: 8, border: '1px solid #1C2E5B', background: '#1C2E5B', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
-              >Candidate</button>
-              <button
-                type="button"
-                onClick={() => { setOpen(false); fill('party'); }}
-                style={{ flex: 1, padding: '12px 16px', borderRadius: 8, border: '1px solid #B22234', background: '#B22234', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
-              >Party</button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {subjectButtons.map((b) => (
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => { setOpen(false); fill(b.id); }}
+                  style={{
+                    padding: '12px 16px', borderRadius: 8,
+                    border: `1px solid ${b.bg}`, background: b.bg,
+                    color: '#fff', fontWeight: 700, cursor: 'pointer',
+                  }}
+                >{b.label}</button>
+              ))}
             </div>
             <button
               type="button"

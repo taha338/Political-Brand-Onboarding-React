@@ -469,9 +469,14 @@ export default function Stage9_FinalReview() {
               setSubmitting(true);
               setSubmitError(null);
               try {
+                const params = new URLSearchParams(window.location.search);
                 const stateWithClientId = {
                   ...state,
-                  clientId: new URLSearchParams(window.location.search).get('client_id') || null,
+                  clientId:
+                    state.clientId ||
+                    params.get('client_id') ||
+                    params.get('clientId') ||
+                    null,
                 };
                 const res = await fetch('/api/submit', {
                   method: 'POST',

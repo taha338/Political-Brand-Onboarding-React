@@ -396,6 +396,14 @@ let clickupRetryCount = 0;
 export function resetClickupRetryCount() { clickupRetryCount = 0; }
 export function getClickupRetryCount() { return clickupRetryCount; }
 
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+// Min spacing between sequential ClickUp writes. Form 2 fires 40-60+ calls per
+// submission (per-field POSTs + propagateWorkspaceFields + master updates) on a
+// single token shared with Forms 1 & 3 — without spacing, the back half of the
+// field-write loop 429s and fields get silently dropped into fieldFailures.
+const CLICKUP_WRITE_THROTTLE_MS = 130;
+
 async function clickupFetch(path, opts = {}) {
   const token = process.env.CLICKUP_API_TOKEN;
   if (!token) throw new Error('CLICKUP_API_TOKEN not set');
@@ -501,6 +509,7 @@ async function syncClickUp({ state, payload, clientId, submittedAt, supabaseRowI
       console.warn('[political-brand] field write failed:', detail);
       fieldFailures.push(detail);
     }
+    await sleep(CLICKUP_WRITE_THROTTLE_MS);
   }
 
   if (activeClientTask && FIELD_IDS['Linked Client']) {
@@ -650,6 +659,7 @@ async function propagateWorkspaceFields({ sourceTask, destTaskId, clientId, skip
     await setCustomField(destTaskId, fid, writeValue).catch((e) =>
       console.error(`[${label}] propagate field "${f.name}" failed:`, e.message),
     );
+    await sleep(CLICKUP_WRITE_THROTTLE_MS);
   }
 }
 
